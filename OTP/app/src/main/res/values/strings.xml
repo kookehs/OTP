@@ -1,10 +1,16 @@
 <resources>
-    <string name="app_name">OTP</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name">OTP</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
 
-    <string name="default_content_description">Content Unavailable</string>
-    <string name="title_match_list">Matches</string>
-    <string name="title_match_detail">Match Detail</string>
+    <!-- Fragment section titles -->
+    <string name="title_section1">Main</string>
+    <string name="title_section2">Matches</string>
+    <string name="title_section3">Matchmaker</string>
+    <string name="title_section4">Settings</string>
+    <string name="title_section5">Share</string>
+
 </resources>

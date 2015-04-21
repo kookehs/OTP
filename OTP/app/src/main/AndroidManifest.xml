@@ -16,18 +16,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MatchListActivity"
-            android:label="@string/title_match_list" >
-        </activity>
-        <activity
-            android:name=".MatchDetailActivity"
-            android:label="@string/title_match_detail"
-            android:parentActivityName=".MatchListActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.mrcornman.otp.MatchListActivity" />
-        </activity>
     </application>
 
 </manifest>
