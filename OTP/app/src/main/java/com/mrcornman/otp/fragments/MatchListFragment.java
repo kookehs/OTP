@@ -205,7 +205,7 @@ public class MatchListFragment extends BaseFragment implements AbsListView.OnIte
      * to supply the text it should use.
      */
     public void setEmptyText() {
-        mEmptyTextView.setText("No Photos!");
+        mEmptyTextView.setText("You don't have any matches yet. Don't worry buddy, it'll come soon!");
     }
 
     /**

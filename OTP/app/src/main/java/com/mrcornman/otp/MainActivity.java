@@ -31,12 +31,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.mrcornman.otp.fragments.BaseFragment;
+import com.mrcornman.otp.fragments.GameFragment;
 import com.mrcornman.otp.fragments.HorizontalPhotoGalleryFragment;
 import com.mrcornman.otp.fragments.MatchListFragment;
 import com.mrcornman.otp.fragments.NativeCameraFragment;
 import com.mrcornman.otp.fragments.NavigationDrawerFragment;
-import com.mrcornman.otp.fragments.SimpleAndroidImagePickerFragment;
-import com.mrcornman.otp.fragments.SimpleCameraIntentFragment;
 
 public class MainActivity extends CameraActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks, BaseFragment.OnFragmentInteractionListener {
@@ -47,13 +46,13 @@ public class MainActivity extends CameraActivity
     public static final int SELECT_PHOTO_ACTION = 0;
 
     /**
-     * Fragment Identifiers
+     * Navigation Identifiers
      */
-    public static final int SIMPLE_CAMERA_INTENT_FRAGMENT = 0;
-    public static final int SIMPLE_PHOTO_GALLERY_FRAGMENT = 1;
-    public static final int SIMPLE_PHOTO_PICKER_FRAGMENT = 2;
-    public static final int NATIVE_CAMERA_FRAGMENT = 3;
-    public static final int HORIZONTAL_GALLERY_FRAGMENT = 4;
+    public static final int NAV_GAME = 0;
+    public static final int NAV_MATCHES = 1;
+    public static final int NAV_MATCHMAKER = 2;
+    public static final int NAV_SETTINGS = 3;
+    public static final int NAV_SHARE = 4;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -74,12 +73,10 @@ public class MainActivity extends CameraActivity
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
-        // Set up the drawer.
-
+        // Set up nav
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
-
     }
 
     @Override
@@ -91,27 +88,20 @@ public class MainActivity extends CameraActivity
 
         // Populate the fragment
         switch (position) {
-            case SIMPLE_CAMERA_INTENT_FRAGMENT: {
-                targetFragment = SimpleCameraIntentFragment.newInstance(position + 1);
+            case NAV_GAME:
+                targetFragment = GameFragment.newInstance(position + 1);
                 break;
-            }
-            case SIMPLE_PHOTO_GALLERY_FRAGMENT: {
+            case NAV_MATCHES:
                 targetFragment = MatchListFragment.newInstance(position + 1);
                 break;
-            }
-            case SIMPLE_PHOTO_PICKER_FRAGMENT: {
-                targetFragment = SimpleAndroidImagePickerFragment.newInstance(position + 1);
+            case NAV_MATCHMAKER:
+                targetFragment = MatchListFragment.newInstance(position + 1);
                 break;
-            }
-            case NATIVE_CAMERA_FRAGMENT: {
+            case NAV_SETTINGS:
                 targetFragment = NativeCameraFragment.newInstance(position + 1);
                 break;
-            }
-            case HORIZONTAL_GALLERY_FRAGMENT:{
+            case NAV_SHARE:
                 targetFragment = HorizontalPhotoGalleryFragment.newInstance(position + 1);
-                break;
-            }
-            default:
                 break;
         }
 
