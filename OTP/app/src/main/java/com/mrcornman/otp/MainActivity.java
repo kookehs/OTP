@@ -1,63 +1,36 @@
-/*
- * Copyright (c) 2014 Rex St. John on behalf of AirPair.com
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 package com.mrcornman.otp;
 
+import android.app.ActionBar;
+import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
-import android.net.Uri;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
-import com.mrcornman.otp.fragments.BaseFragment;
-import com.mrcornman.otp.fragments.GameFragment;
-import com.mrcornman.otp.fragments.HorizontalPhotoGalleryFragment;
-import com.mrcornman.otp.fragments.MatchListFragment;
-import com.mrcornman.otp.fragments.NativeCameraFragment;
-import com.mrcornman.otp.fragments.NavigationDrawerFragment;
+import com.mrcornman.otp.adapters.ProductListAdapterWithACursor;
+import com.mrcornman.otp.models.MyntraCategory;
+import com.mrcornman.otp.utils.DatabaseHelper;
 
-public class MainActivity extends CameraActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks, BaseFragment.OnFragmentInteractionListener {
-
-    /**
-     * Actions
-     */
-    public static final int SELECT_PHOTO_ACTION = 0;
+public class MainActivity extends Activity implements NavigationDrawerFragmentSingleElv.NavigationDrawerCallbacks {
 
     /**
      * Navigation Identifiers
      */
     public static final int NAV_GAME = 0;
-    public static final int NAV_MATCHES = 1;
-    public static final int NAV_MATCHMAKER = 2;
-    public static final int NAV_SETTINGS = 3;
-    public static final int NAV_SHARE = 4;
+    public static final int NAV_SETTINGS = 1;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
-    private NavigationDrawerFragment mNavigationDrawerFragment;
+    private com.mrcornman.otp.NavigationDrawerFragmentSingleElv mNavigationDrawerFragment;
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -67,13 +40,13 @@ public class MainActivity extends CameraActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_myntra_tinder);
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        mNavigationDrawerFragment = (com.mrcornman.otp.NavigationDrawerFragmentSingleElv)
+                getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
-        // Set up nav
+        // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
@@ -81,62 +54,56 @@ public class MainActivity extends CameraActivity
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getFragmentManager();
-        BaseFragment targetFragment = null;
+        Fragment fragment = null;
 
-        // Populate the fragment
-        switch (position) {
+        switch(position) {
             case NAV_GAME:
-                targetFragment = GameFragment.newInstance(position + 1);
-                break;
-            case NAV_MATCHES:
-                targetFragment = MatchListFragment.newInstance(position + 1);
-                break;
-            case NAV_MATCHMAKER:
-                targetFragment = MatchListFragment.newInstance(position + 1);
+                fragment = GameFragment.newInstance();
                 break;
             case NAV_SETTINGS:
-                targetFragment = NativeCameraFragment.newInstance(position + 1);
-                break;
-            case NAV_SHARE:
-                targetFragment = HorizontalPhotoGalleryFragment.newInstance(position + 1);
+                fragment = GameFragment.newInstance();
                 break;
         }
 
-        // Select the fragment.
         fragmentManager.beginTransaction()
-                .replace(R.id.container, targetFragment)
+                .replace(R.id.container, fragment)
+                //.addToBackStack(null)
                 .commit();
+        onSectionAttached(position+1);
+        restoreActionBar();
+    }
+
+    @Override
+    public void onMenuItemToGetLikedPictures(MyntraCategory.ProductGroup productGroup) {
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, LikedProductsFragment.newInstance(1, productGroup.getUniqueGroupLabel()))
+                //.addToBackStack(null)
+                .commit();
+        mTitle = productGroup.getGroupLabel();
+        restoreActionBar();
     }
 
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
-                mTitle = getString(R.string.title_section1);
+                mTitle = "Game";
                 break;
             case 2:
-                mTitle = getString(R.string.title_section2);
-                break;
-            case 3:
-                mTitle = getString(R.string.title_section3);
-                break;
-            case 4:
-                mTitle = getString(R.string.title_section4);
-                break;
-            case 5:
-                mTitle = getString(R.string.title_section5);
+                mTitle = "Settings";
                 break;
         }
     }
 
     public void restoreActionBar() {
-        ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -144,7 +111,7 @@ public class MainActivity extends CameraActivity
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.menu_main, menu);
+            getMenuInflater().inflate(R.menu.myntra_tinder, menu);
             restoreActionBar();
             return true;
         }
@@ -157,25 +124,74 @@ public class MainActivity extends CameraActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
+    public void onTinderFragmentAttached(String groupLabel) {
+        mTitle = groupLabel;
+    }
+
     /**
-     * Handle Incoming messages from contained fragments.
+     * A placeholder fragment containing a simple view.
      */
+    public static class LikedProductsFragment extends Fragment {
+        /**
+         * The fragment argument representing the section number for this
+         * fragment.
+         */
+        private static final String ARG_SECTION_NUMBER = "section_number";
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
+        private static final String ARG_PRODUCT_GROUP = "product_group";
 
+        private String productGroup;
+        private String sectionNumber;
+
+        /**
+         * Returns a new instance of this fragment for the given section
+         * number.
+         */
+        public static LikedProductsFragment newInstance(int sectionNumber, String productGroup) {
+            LikedProductsFragment fragment = new LikedProductsFragment();
+            Bundle args = new Bundle();
+            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            args.putString(ARG_PRODUCT_GROUP, productGroup);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        public LikedProductsFragment() {
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.activity_product_list_view, container, false);
+            ListView listView = (ListView) rootView.findViewById(R.id.productList);
+            DatabaseHelper db = new DatabaseHelper(getActivity().getApplicationContext());
+            Cursor cursor = db.getLikedProductsFromGroup(productGroup);
+            ListAdapter adapter = new ProductListAdapterWithACursor(getActivity(), cursor, false);
+            listView.setAdapter(adapter);
+            return rootView;
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            if (getArguments() != null){
+                productGroup = getArguments().getString(ARG_PRODUCT_GROUP);
+                sectionNumber = getArguments().getString(ARG_SECTION_NUMBER);
+            }
+        }
+
+        @Override
+        public void onAttach(Activity activity) {
+            super.onAttach(activity);
+            ((MainActivity) activity).onSectionAttached(
+                    getArguments().getInt(ARG_SECTION_NUMBER));
+        }
     }
 
-    @Override
-    public void onFragmentInteraction(String id) {
-
-    }
-
-    @Override
-    public void onFragmentInteraction(int actionId) {
-
-    }
 }
