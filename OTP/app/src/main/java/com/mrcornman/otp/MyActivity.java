@@ -41,15 +41,6 @@ public class MyActivity extends Activity {
             }
         });
 
-        Button cardButton = (Button)findViewById(R.id.card_activity_btn);
-        cardButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent cardActivityIntent = new Intent(getBaseContext(), ProductCardViewActivity_.class);
-                startActivity(cardActivityIntent);
-            }
-        });
-
         Button myntraTinderButton = (Button)findViewById(R.id.tinder_button);
         myntraTinderButton.setOnClickListener(new View.OnClickListener() {
             @Override

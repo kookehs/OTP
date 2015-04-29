@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.mrcornman.otp.models.MatchItem;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,8 +15,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.mrcornman.otp.models.Product;
 
 /**
  * Created by Anil on 7/18/2014.
@@ -46,13 +46,13 @@ import com.mrcornman.otp.models.Product;
  */
 public class ProductsJSONPullParser {
 
-    public static List<Product> getProductsFromFile(Context context, String filename){
+    public static List<MatchItem> getProductsFromFile(Context context, String filename){
         /* todo: check if the we are parsing the json properly. extract extra info for each property if needed
          * http://www.androidhive.info/2012/01/android-json-parsing-tutorial/
          */
-        List<Product> products = new ArrayList<Product>();
+        List<MatchItem> matchItems = new ArrayList<MatchItem>();
         String json = null;
-        Product product = null;
+        MatchItem matchItem = null;
         try {
             FileInputStream fis = context.openFileInput(filename);
             int size = fis.available();
@@ -66,15 +66,15 @@ public class ProductsJSONPullParser {
                 JSONArray productObjects = response1.getJSONArray("products");
                 for (int i = 0; i < productObjects.length(); i++) {
                     JSONObject p = productObjects.getJSONObject(i);
-                    product = new Product(i);
-                    product.setDiscount(p.getString("discount"));
-                    product.setPrice(p.getString("price"));
-                    product.setStyleId(p.getString("styleid"));
-                    product.setDreLandingPageUrl(p.getString("dre_landing_page_url"));
-                    product.setImageUrl(p.getString("search_image"));
-                    product.setDiscountedPrice(p.getString("discounted_price"));
-                    product.setStyleName(p.getString("stylename"));
-                    products.add(product);
+                    matchItem = new MatchItem(i);
+                    matchItem.setDiscount(p.getString("discount"));
+                    matchItem.setPrice(p.getString("price"));
+                    matchItem.setStyleId(p.getString("styleid"));
+                    matchItem.setDreLandingPageUrl(p.getString("dre_landing_page_url"));
+                    matchItem.setImageUrl(p.getString("search_image"));
+                    matchItem.setDiscountedPrice(p.getString("discounted_price"));
+                    matchItem.setStyleName(p.getString("stylename"));
+                    matchItems.add(matchItem);
                     /*
                      * todo: get image url from the json object imageEntry_default, rather than search_image
                      * todo: add more getter and setters to the Product class to extract even more data from json object
@@ -89,17 +89,17 @@ public class ProductsJSONPullParser {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return products;
+        return matchItems;
     }
 
-    public static List<Product> getProductsFromFileAndInsertGroupLabel(Context context, String filename, String groupLabel){
+    public static List<MatchItem> getProductsFromFileAndInsertGroupLabel(Context context, String filename, String groupLabel){
         /* todo: check if the we are parsing the json properly. extract extra info for each property if needed
          * http://www.androidhive.info/2012/01/android-json-parsing-tutorial/
          */
         Log.e("getting products from file", filename);
-        List<Product> products = new ArrayList<Product>();
+        List<MatchItem> matchItems = new ArrayList<MatchItem>();
         String json = null;
-        Product product = null;
+        MatchItem matchItem = null;
         try {
             FileInputStream fis = context.openFileInput(filename);
             int size = fis.available();
@@ -113,16 +113,16 @@ public class ProductsJSONPullParser {
                 JSONArray productObjects = response1.getJSONArray("products");
                 for (int i = 0; i < productObjects.length(); i++) {
                     JSONObject p = productObjects.getJSONObject(i);
-                    product = new Product(groupLabel);
-                    product.setDiscount(p.getString("discount"));
-                    product.setPrice(p.getString("price"));
-                    product.setStyleId(p.getString("styleid"));
-                    product.setDreLandingPageUrl(p.getString("dre_landing_page_url"));
-                    product.setImageUrl(p.getString("search_image"));
-                    product.setDiscountedPrice(p.getString("discounted_price"));
-                    product.setStyleName(p.getString("stylename"));
-                    Log.e("product returned", product.getStyleName());
-                    products.add(product);
+                    matchItem = new MatchItem(groupLabel);
+                    matchItem.setDiscount(p.getString("discount"));
+                    matchItem.setPrice(p.getString("price"));
+                    matchItem.setStyleId(p.getString("styleid"));
+                    matchItem.setDreLandingPageUrl(p.getString("dre_landing_page_url"));
+                    matchItem.setImageUrl(p.getString("search_image"));
+                    matchItem.setDiscountedPrice(p.getString("discounted_price"));
+                    matchItem.setStyleName(p.getString("stylename"));
+                    Log.e("product returned", matchItem.getStyleName());
+                    matchItems.add(matchItem);
                     /*
                      * todo: get image url from the json object imageEntry_default, rather than search_image
                      * todo: add more getter and setters to the Product class to extract even more data from json object
@@ -137,17 +137,17 @@ public class ProductsJSONPullParser {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return products;
+        return matchItems;
     }
 
-    public static List<Product> getProdutsFromFileAndUpdateMaxProducts(Context context, String filename, String uniqueGroupLabel, String groupLabel, String maxProductsKey, SharedPreferences sharedPreferences){
+    public static List<MatchItem> getMatchesFromFileAndUpdateMaxMatches(Context context, String filename, String uniqueGroupLabel, String groupLabel, String maxProductsKey, SharedPreferences sharedPreferences){
         /* todo: check if the we are parsing the json properly. extract extra info for each property if needed
          * http://www.androidhive.info/2012/01/android-json-parsing-tutorial/
          */
         Log.e("getting products from file", filename);
-        List<Product> products = new ArrayList<Product>();
+        List<MatchItem> matchItems = new ArrayList<MatchItem>();
         String json = null;
-        Product product = null;
+        MatchItem matchItem = null;
         SharedPreferences.Editor editor = sharedPreferences.edit();
         try {
             FileInputStream fis = context.openFileInput(filename);
@@ -164,18 +164,18 @@ public class ProductsJSONPullParser {
                 JSONArray productObjects = response1.getJSONArray("products");
                 for (int i = 0; i < productObjects.length(); i++) {
                     JSONObject p = productObjects.getJSONObject(i);
-                    product = new Product(uniqueGroupLabel);
-                    product.setProductGroup(groupLabel);
-                    product.setDiscount(p.getString("discount"));
-                    product.setPrice(p.getString("price"));
-                    product.setStyleId(p.getString("styleid"));
-                    product.setDreLandingPageUrl(p.getString("dre_landing_page_url"));
+                    matchItem = new MatchItem(uniqueGroupLabel);
+                    matchItem.setProductGroup(groupLabel);
+                    matchItem.setDiscount(p.getString("discount"));
+                    matchItem.setPrice(p.getString("price"));
+                    matchItem.setStyleId(p.getString("styleid"));
+                    matchItem.setDreLandingPageUrl(p.getString("dre_landing_page_url"));
                     // product.setImageUrl(p.getString("search_image"));
-                    product.setImageUrl(getImageUrlFromJson(p.getString("imageEntry_default")));
-                    product.setDiscountedPrice(p.getString("discounted_price"));
-                    product.setStyleName(p.getString("stylename"));
-                    Log.e("product returned", product.getStyleName());
-                    products.add(product);
+                    matchItem.setImageUrl(getImageUrlFromJson(p.getString("imageEntry_default")));
+                    matchItem.setDiscountedPrice(p.getString("discounted_price"));
+                    matchItem.setStyleName(p.getString("stylename"));
+                    Log.e("product returned", matchItem.getStyleName());
+                    matchItems.add(matchItem);
                     /*
                      * todo: get image url from the json object imageEntry_default, rather than search_image
                      * todo: add more getter and setters to the Product class to extract even more data from json object
@@ -190,17 +190,17 @@ public class ProductsJSONPullParser {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return products;
+        return matchItems;
     }
 
-    public static List<Product> getProdutsFromFileAndUpdateMaxProductsNewApi(Context context, String filename, String groupLabel, String maxProductsKey, SharedPreferences sharedPreferences){
+    public static List<MatchItem> getProdutsFromFileAndUpdateMaxProductsNewApi(Context context, String filename, String groupLabel, String maxProductsKey, SharedPreferences sharedPreferences){
         /* todo: check if the we are parsing the json properly. extract extra info for each property if needed
          * http://www.androidhive.info/2012/01/android-json-parsing-tutorial/
          */
         Log.e("getting products from file", filename);
-        List<Product> products = new ArrayList<Product>();
+        List<MatchItem> matchItems = new ArrayList<MatchItem>();
         String json = null;
-        Product product = null;
+        MatchItem matchItem = null;
         SharedPreferences.Editor editor = sharedPreferences.edit();
         try {
             FileInputStream fis = context.openFileInput(filename);
@@ -218,16 +218,16 @@ public class ProductsJSONPullParser {
                 JSONArray productObjects = response1.getJSONArray("products");
                 for (int i = 0; i < productObjects.length(); i++) {
                     JSONObject p = productObjects.getJSONObject(i);
-                    product = new Product(groupLabel);
-                    product.setDiscount(p.getString("discount"));
-                    product.setPrice(p.getString("price"));
-                    product.setStyleId(p.getString("styleid"));
-                    product.setDreLandingPageUrl(p.getString("dre_landing_page_url"));
-                    product.setImageUrl(p.getString("search_image"));
-                    product.setDiscountedPrice(p.getString("discounted_price"));
-                    product.setStyleName(p.getString("stylename"));
-                    Log.e("product returned", product.getStyleName());
-                    products.add(product);
+                    matchItem = new MatchItem(groupLabel);
+                    matchItem.setDiscount(p.getString("discount"));
+                    matchItem.setPrice(p.getString("price"));
+                    matchItem.setStyleId(p.getString("styleid"));
+                    matchItem.setDreLandingPageUrl(p.getString("dre_landing_page_url"));
+                    matchItem.setImageUrl(p.getString("search_image"));
+                    matchItem.setDiscountedPrice(p.getString("discounted_price"));
+                    matchItem.setStyleName(p.getString("stylename"));
+                    Log.e("product returned", matchItem.getStyleName());
+                    matchItems.add(matchItem);
                     /*
                      * todo: get image url from the json object imageEntry_default, rather than search_image
                      * todo: add more getter and setters to the Product class to extract even more data from json object
@@ -242,7 +242,7 @@ public class ProductsJSONPullParser {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return products;
+        return matchItems;
     }
 
 

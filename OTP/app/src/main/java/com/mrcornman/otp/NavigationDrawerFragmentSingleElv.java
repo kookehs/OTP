@@ -24,9 +24,9 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 
+import com.mrcornman.otp.models.MatchItem;
 import com.mrcornman.otp.models.MyntraCategory;
-import com.mrcornman.otp.models.Product;
-import com.mrcornman.otp.views.ProductStackView;
+import com.mrcornman.otp.views.CardStackView;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -268,11 +268,11 @@ public class NavigationDrawerFragmentSingleElv extends Fragment {
             Activity myntraActivity = getActivity();
             //fixme: get productGroup from container not from curGroup, curChild
             View containerView = myntraActivity.findViewById(R.id.container);
-            ProductStackView productStackView = (ProductStackView) containerView.findViewById(R.id.tinder_mProductStack);
+            CardStackView productStackView = (CardStackView) containerView.findViewById(R.id.cardstack_first);
             if (productStackView != null){
                 BaseAdapter adapter = productStackView.getAdapter();
-                Product product = (Product) adapter.getItem(0);
-                MyntraCategory.ProductGroup productGroup = new MyntraCategory.ProductGroup(product.getProductGroup(), product.getUniqueProductGroup(), "", "", "", "", "");
+                MatchItem matchItem = (MatchItem) adapter.getItem(0);
+                MyntraCategory.ProductGroup productGroup = new MyntraCategory.ProductGroup(matchItem.getProductGroup(), matchItem.getUniqueProductGroup(), "", "", "", "", "");
                 mCallbacks.onMenuItemToGetLikedPictures(productGroup);
             }
 //            View navigationDrawerFragment = myntraActivity.findViewById(R.id.navigation_drawer); // todo: get the productCardView directly from here instead of this way of doing it

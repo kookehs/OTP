@@ -130,10 +130,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragmentSi
         return super.onOptionsItemSelected(item);
     }
 
-    public void onTinderFragmentAttached(String groupLabel) {
-        mTitle = groupLabel;
-    }
-
     /**
      * A placeholder fragment containing a simple view.
      */

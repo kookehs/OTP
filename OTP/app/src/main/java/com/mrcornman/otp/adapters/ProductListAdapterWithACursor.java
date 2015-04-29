@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.mrcornman.otp.models.MatchItem;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -21,7 +22,6 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.models.Product;
 import com.mrcornman.otp.utils.DatabaseHelper;
 
 /**
@@ -87,29 +87,29 @@ public class ProductListAdapterWithACursor extends CursorAdapter {
 
             }
         };
-        final Product product = new Product(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.KEY_ID)));
-        product.setUniqueProductGroup(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_UNIQUE_PRODUCT_GROUP)));
-        product.setDiscountedPrice(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_DISCOUNTED_PRICE)));
-        product.setStyleName(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_STYLE_NAME)));
-        product.setDiscount(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_DISCOUNT)));
-        product.setPrice(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_PRICE)));
-        product.setStyleId(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_STYLE_ID)));
-        product.setImageUrl(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_IMAGE_URL)));
-        product.setDreLandingPageUrl(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_LANDING_PAGE_URL)));
-        product.setLiked(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.KEY_LIKED)));
+        final MatchItem matchItem = new MatchItem(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.KEY_ID)));
+        matchItem.setUniqueProductGroup(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_UNIQUE_PRODUCT_GROUP)));
+        matchItem.setDiscountedPrice(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_DISCOUNTED_PRICE)));
+        matchItem.setStyleName(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_STYLE_NAME)));
+        matchItem.setDiscount(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_DISCOUNT)));
+        matchItem.setPrice(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_PRICE)));
+        matchItem.setStyleId(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_STYLE_ID)));
+        matchItem.setImageUrl(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_IMAGE_URL)));
+        matchItem.setDreLandingPageUrl(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_LANDING_PAGE_URL)));
+        matchItem.setLiked(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.KEY_LIKED)));
 
-        imageLoader.displayImage(product.getImageUrl(),productImage, options, listener);
+        imageLoader.displayImage(matchItem.getImageUrl(),productImage, options, listener);
         productImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String url = "http://www.myntra.com/" + product.getDreLandingPageUrl();
+                String url = "http://www.myntra.com/" + matchItem.getDreLandingPageUrl();
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
                 context.startActivity(i);
             }
         });
-        productName.setText(product.getStyleName());
-        productPrice.setText(product.getDiscountedPrice());
+        productName.setText(matchItem.getStyleName());
+        productPrice.setText(matchItem.getDiscountedPrice());
 
     }
 }

@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.models.Product;
+import com.mrcornman.otp.models.MatchItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.mrcornman.otp.utils.Downloader;
 import com.mrcornman.otp.utils.ProductsJSONPullParser;
@@ -27,26 +27,23 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.Background;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Anil on 7/18/2014.
- */
 @EBean
-public class ProductCardAdapter extends BaseAdapter {
+public class CardAdapter extends BaseAdapter {
 
-    List<Product> mItems;
+    List<MatchItem> mItems;
     //fixme: should I add @RootContext annotation for mContext below?
     Context mContext;
     ImageLoader imageLoader;
     DisplayImageOptions options;
 
-    public ProductCardAdapter(Context context) {
+    public CardAdapter(Context context) {
         // fixme: should we download the json file here?
         mContext = context;
 
@@ -69,9 +66,9 @@ public class ProductCardAdapter extends BaseAdapter {
         } else {
             // fixme: figure out what happens when network is not available
             // fixme: here we are loading the same random product 15 times,
-            mItems = new ArrayList<Product>();
+            mItems = new ArrayList<MatchItem>();
             for (int i = 1; i < 15; i++){
-                Product p = new Product(i);
+                MatchItem p = new MatchItem(i);
                 p.setImageUrl("sampleImageurl"); //fixme: add sample image url here
                 mItems.add(p);
             }
@@ -81,11 +78,11 @@ public class ProductCardAdapter extends BaseAdapter {
     public void initFromDatabase(String url, String postData, DatabaseHelper db, String fileName){
         // todo: fill the adapter from the database instead of file system..
         // fixme: here we are downloading data to filesystem and then updating the database.. can we update the database from the network?
-        List<Product> productsFromDb = db.getUnseenProductsFromGroup(db.MEN_SHOES_GROUP_LABEL, 20); // fixme: add one more where clause so that we only poll the products that are null liked
+        List<MatchItem> productsFromDb = db.getUnseenProductsFromGroup(db.MEN_SHOES_GROUP_LABEL, 20); // fixme: add one more where clause so that we only poll the products that are null liked
         if (productsFromDb.isEmpty()){
             if (isNetworkAvailable()){
                 downloadJsonToFile(url, postData, fileName);
-                List<Product> productsFromFile = ProductsJSONPullParser.getProductsFromFileAndInsertGroupLabel(mContext, "products.json", db.MEN_SHOES_GROUP_LABEL);
+                List<MatchItem> productsFromFile = ProductsJSONPullParser.getProductsFromFileAndInsertGroupLabel(mContext, "products.json", db.MEN_SHOES_GROUP_LABEL);
                 updateDatabaseAndSetAdapter(db, productsFromFile);
             } else {
                 // notify network is not available.
@@ -98,7 +95,7 @@ public class ProductCardAdapter extends BaseAdapter {
 
 
     public void initFromDatabaseUsingSharedPref(String url, String updatedPostData, DatabaseHelper db, String fileName, SharedPreferences sharedPreferences) {
-        List<Product> productsFromDb = db.getUnseenProductsFromGroup(db.MEN_SHOES_GROUP_LABEL, 20);
+        List<MatchItem> productsFromDb = db.getUnseenProductsFromGroup(db.MEN_SHOES_GROUP_LABEL, 20);
         if (productsFromDb.isEmpty()){
             if (isNetworkAvailable()){
                 // fixme: downloadJsonToFileAndUpdateDb is a background task that downloads new products and updates the db, perhaps it should also query products from the db and return
@@ -107,7 +104,7 @@ public class ProductCardAdapter extends BaseAdapter {
                 mItems = db.getUnseenProductsFromGroup(db.MEN_SHOES_GROUP_LABEL, 20);
             } else {
                 Log.d("productCardAdapter", "network is not available");
-                mItems = new ArrayList<Product>();
+                mItems = new ArrayList<MatchItem>();
             }
         } else {
             mItems = productsFromDb;
@@ -115,7 +112,7 @@ public class ProductCardAdapter extends BaseAdapter {
     }
 
     public void initForTinderFragment(String url, String postData, String fileName, String uniqueGroupLabel, String groupLabel, DatabaseHelper db, SharedPreferences sharedPreferences, String maxProductsKey, String startFromKey){
-        List<Product> productsFromDb = db.getUnseenProductsFromGroup(uniqueGroupLabel, 20);
+        List<MatchItem> productsFromDb = db.getUnseenProductsFromGroup(uniqueGroupLabel, 20);
         if (productsFromDb.isEmpty()){
             if (isNetworkAvailable()) {
                 downloadJsonToFileAndUpdateDbWithGivenKeys(url, postData, fileName, uniqueGroupLabel, groupLabel, db, sharedPreferences, maxProductsKey, startFromKey);
@@ -123,7 +120,7 @@ public class ProductCardAdapter extends BaseAdapter {
                 mItems = db.getUnseenProductsFromGroup(uniqueGroupLabel, 20);
             } else {
                 Log.d("product card adapter for tinder fragment", "network is not available");
-                mItems = new ArrayList<Product>();
+                mItems = new ArrayList<MatchItem>();
             }
         } else {
             mItems = productsFromDb;
@@ -137,7 +134,8 @@ public class ProductCardAdapter extends BaseAdapter {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        List<Product> productsFromFile = ProductsJSONPullParser.getProdutsFromFileAndUpdateMaxProducts(mContext, fileName, uniqueGroupLabel, groupLabel, maxProductsKey, sharedPreferences);
+        Log.i("heyo", fileName + ":" + uniqueGroupLabel + ":" + maxProductsKey + ":" + startFromKey);
+        List<MatchItem> productsFromFile = ProductsJSONPullParser.getMatchesFromFileAndUpdateMaxMatches(mContext, fileName, uniqueGroupLabel, groupLabel, maxProductsKey, sharedPreferences);
         db.insertOrIgnoreProducts(productsFromFile, db.TABLE_NAME);
         int startFrom = sharedPreferences.getInt(startFromKey, 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -154,7 +152,7 @@ public class ProductCardAdapter extends BaseAdapter {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        List<Product> productsFromFile = ProductsJSONPullParser.getProductsFromFileAndInsertGroupLabel(mContext, fileName, db.MEN_SHOES_GROUP_LABEL);
+        List<MatchItem> productsFromFile = ProductsJSONPullParser.getProductsFromFileAndInsertGroupLabel(mContext, fileName, db.MEN_SHOES_GROUP_LABEL);
         db.insertOrIgnoreProducts(productsFromFile, db.TABLE_NAME);
         int startFrom = sharedPreferences.getInt(mContext.getString(R.string.men_shoes_start_from_key), 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -166,8 +164,8 @@ public class ProductCardAdapter extends BaseAdapter {
     }
 
 
-    public void updateDatabaseAndSetAdapter(DatabaseHelper db, List<Product> products) {
-        db.insertOrIgnoreProducts(products, db.TABLE_NAME);
+    public void updateDatabaseAndSetAdapter(DatabaseHelper db, List<MatchItem> matchItems) {
+        db.insertOrIgnoreProducts(matchItems, db.TABLE_NAME);
         mItems = db.getUnseenProductsFromGroup(db.MEN_SHOES_GROUP_LABEL, 20);
     }
 
@@ -193,7 +191,7 @@ public class ProductCardAdapter extends BaseAdapter {
     }
 
     @Override
-    public Product getItem(int i) {
+    public MatchItem getItem(int i) {
         return mItems.get(i);
     }
 
@@ -210,8 +208,8 @@ public class ProductCardAdapter extends BaseAdapter {
         } else {
             singleProductView = (SingleProductView) convertView;
         }
-        Product product = getItem(position);
-        singleProductView.bind(product);
+        MatchItem matchItem = getItem(position);
+        singleProductView.bind(matchItem);
 
         ImageView productImage = (ImageView)singleProductView.findViewById(R.id.picture);
         // fixme: maybe we need a progressbar when the image is loading?
@@ -240,12 +238,12 @@ public class ProductCardAdapter extends BaseAdapter {
 
             }
         };
-        imageLoader.displayImage(product.getImageUrl(), productImage, options, listener);
-        styleName.setText(product.getStyleName());
+        imageLoader.displayImage(matchItem.getImageUrl(), productImage, options, listener);
+        styleName.setText(matchItem.getStyleName());
         //todo: update Product class to add additional properties like discounted price, discount, actual price
         //fixme: here we used product.getPrice() for everything, fix this.
-        discountedPrice.setText(product.getDiscountedPrice());
-        actualPrice.setText(product.getPrice());
+        discountedPrice.setText(matchItem.getDiscountedPrice());
+        actualPrice.setText(matchItem.getPrice());
         actualPrice.setPaintFlags(actualPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG); // http://stackoverflow.com/questions/8033316/to-draw-an-underline-below-the-textview-in-android
 
         return singleProductView;

@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.mrcornman.otp.models.MatchItem;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -20,18 +21,17 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import java.util.List;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.models.Product;
 
 /**
  * Created by Anil on 7/18/2014.
  */
-public class ProductListAdapter extends ArrayAdapter<Product> {
+public class ProductListAdapter extends ArrayAdapter<MatchItem> {
 
     ImageLoader imageLoader;
     DisplayImageOptions options;
 
-    public ProductListAdapter(Context context, int resource, List<Product> products) {
-        super(context, resource, products);
+    public ProductListAdapter(Context context, int resource, List<MatchItem> matchItems) {
+        super(context, resource, matchItems);
 
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).build();
         imageLoader = ImageLoader.getInstance();

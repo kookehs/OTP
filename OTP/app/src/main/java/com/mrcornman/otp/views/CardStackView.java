@@ -8,7 +8,6 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,13 +27,13 @@ import java.util.List;
 /**
  * Created by Anil on 7/18/2014.
  */
-public class ProductStackView extends RelativeLayout{
+public class CardStackView extends RelativeLayout{
 
     public BaseAdapter getAdapter() {
         return mAdapter;
     }
 
-    public interface ProductStackListener{
+    public interface CardStackListener {
         void onUpdateProgress(boolean positif, float percent, View view);
         void onCancelled(View beingDragged);
         void onChoiceMade(boolean choice, View beingDragged);
@@ -53,7 +52,7 @@ public class ProductStackView extends RelativeLayout{
     protected LinkedList<View> mProducts = new LinkedList<View>();
     protected LinkedList<View> mRecycledProducts = new LinkedList<View>();
 
-    private ProductStackListener mProductStackListener;
+    private CardStackListener mProductStackListener;
 
     protected LinkedList<Object> mProductStack = new LinkedList<Object>();
     private int mXStart;
@@ -63,17 +62,17 @@ public class ProductStackView extends RelativeLayout{
     private MyOnTouchListener mMyOnTouchListener;
 
 
-    public ProductStackView(Context context) {
+    public CardStackView(Context context) {
         super(context);
         setup();
     }
 
-    public ProductStackView(Context context, AttributeSet attrs) {
+    public CardStackView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setup();
     }
 
-    public ProductStackView(Context context, AttributeSet attrs, int defStyle) {
+    public CardStackView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         setup();
     }
@@ -115,11 +114,11 @@ public class ProductStackView extends RelativeLayout{
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
-    public ProductStackListener getmProductStackListener() {
+    public CardStackListener getmProductStackListener() {
         return mProductStackListener;
     }
 
-    public void setmProductStackListener(ProductStackListener mProductStackListener) {
+    public void setmProductStackListener(CardStackListener mProductStackListener) {
         this.mProductStackListener = mProductStackListener;
     }
 
@@ -216,7 +215,7 @@ public class ProductStackView extends RelativeLayout{
 
             RelativeLayout.LayoutParams params = new LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            params.addRule(RelativeLayout.CENTER_IN_PARENT);
+            //params.addRule(RelativeLayout.CENTER_IN_PARENT);
             addView(product, 0, params);
 
             mMyOnTouchListener = new MyOnTouchListener();
@@ -379,7 +378,7 @@ public class ProductStackView extends RelativeLayout{
 
     private boolean getStackChoice() {
         boolean result = Math.abs(mXDelta) < mMinAcceptDistance && mYDelta > 0;
-        Log.i("Stack Choice", Boolean.toString(result));
+        //Log.i("Stack Choice", Boolean.toString(result));
         return result;
     }
 
