@@ -30,10 +30,7 @@ package com.mrcornman.otp.models;
         ]
  * }
  */
-public class Product {
-    //fixme: update properties of Product, add required properties and remove useless ones like mIndex;
-    // discount, discounted price, actual price, image url.. etc, unique id
-    // remove mId, mIndex;
+public class MatchItem {
     private int mId;
     private String styleName;
     private String discountedPrice;
@@ -42,25 +39,7 @@ public class Product {
     private String styleId;
     private String imageUrl;
     private String dreLandingPageUrl;
-    private String uniqueProductGroup;
-    private String productGroup;
     private int liked;
-
-    public String getUniqueProductGroup() {
-        return uniqueProductGroup;
-    }
-
-    public void setUniqueProductGroup(String uniqueProductGroup) {
-        this.uniqueProductGroup = uniqueProductGroup;
-    }
-
-    public String getProductGroup() {
-        return productGroup;
-    }
-
-    public void setProductGroup(String productGroup) {
-        this.productGroup = productGroup;
-    }
 
     public int getLiked() {
         return liked;
@@ -107,13 +86,11 @@ public class Product {
         return styleName;
     }
 
-    public Product(int mId){
+    public MatchItem(int mId){
         this.mId = mId;
     }
 
-    public Product(String groupLabel){
-        this.uniqueProductGroup = groupLabel;
-    }
+    public MatchItem(){}
 
     public int getmId() {
         return mId;

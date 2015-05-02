@@ -6,17 +6,17 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.mrcornman.otp.R;
+import com.mrcornman.otp.models.MatchItem;
+
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
-
-import com.mrcornman.otp.R;
-import com.mrcornman.otp.models.Product;
 
 /**
  * Created by Anil on 7/18/2014.
  */
-@EViewGroup(R.layout.product_card)
-public class SingleProductView extends RelativeLayout implements ProductStackView.ProductStackListener{
+@EViewGroup(R.layout.card)
+public class SingleProductView extends RelativeLayout implements CardStackLayout.CardStackListener {
 
     @ViewById
     ImageView picture;
@@ -42,14 +42,14 @@ public class SingleProductView extends RelativeLayout implements ProductStackVie
     @ViewById
     ImageView noicon;
 
-    public Product product;
+    public MatchItem matchItem;
 
     public SingleProductView(Context context) {
         super(context);
     }
 
-    public void bind(Product mProduct){
-        product = mProduct;
+    public void bind(MatchItem mMatchItem){
+        matchItem = mMatchItem;
         return;
     }
 

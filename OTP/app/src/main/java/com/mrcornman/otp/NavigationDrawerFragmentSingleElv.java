@@ -19,14 +19,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
-
-import com.mrcornman.otp.models.MyntraCategory;
-import com.mrcornman.otp.models.Product;
-import com.mrcornman.otp.views.ProductStackView;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -259,28 +254,10 @@ public class NavigationDrawerFragmentSingleElv extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // todo: code to handle menu clicks
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
+        if (mDrawerToggle.onOptionsItemSelected(item)) return true;
 
         if (item.getItemId() == R.id.action_example) {
-            // Toast.makeText(getActivity(), "Example action.", Toast.LENGTH_SHORT).show();
-            Activity myntraActivity = getActivity();
-            //fixme: get productGroup from container not from curGroup, curChild
-            View containerView = myntraActivity.findViewById(R.id.container);
-            ProductStackView productStackView = (ProductStackView) containerView.findViewById(R.id.tinder_mProductStack);
-            if (productStackView != null){
-                BaseAdapter adapter = productStackView.getAdapter();
-                Product product = (Product) adapter.getItem(0);
-                MyntraCategory.ProductGroup productGroup = new MyntraCategory.ProductGroup(product.getProductGroup(), product.getUniqueProductGroup(), "", "", "", "", "");
-                mCallbacks.onMenuItemToGetLikedPictures(productGroup);
-            }
-//            View navigationDrawerFragment = myntraActivity.findViewById(R.id.navigation_drawer); // todo: get the productCardView directly from here instead of this way of doing it
-//            ExpandableListView elv = (ExpandableListView) navigationDrawerFragment.findViewById(R.id.expandableListView);
-//            if (elv != null){
-//                MyntraCategory.ProductGroup productGroup = (MyntraCategory.ProductGroup) elv.getExpandableListAdapter().getChild(curGroupPosition, curChildPosition);
-//                mCallbacks.onMenuItemToGetLikedPictures(productGroup);
-//            }
+            mCallbacks.onMenuItemMatches();
             return true;
         }
 
@@ -311,6 +288,6 @@ public class NavigationDrawerFragmentSingleElv extends Fragment {
          */
         void onNavigationDrawerItemSelected(int position);
 
-        void onMenuItemToGetLikedPictures(MyntraCategory.ProductGroup productGroup);
+        void onMenuItemMatches();
     }
 }

@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.mrcornman.otp.models.MatchItem;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -20,18 +21,17 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import java.util.List;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.models.Product;
 
 /**
  * Created by Anil on 7/18/2014.
  */
-public class ProductListAdapter extends ArrayAdapter<Product> {
+public class ProductListAdapter extends ArrayAdapter<MatchItem> {
 
     ImageLoader imageLoader;
     DisplayImageOptions options;
 
-    public ProductListAdapter(Context context, int resource, List<Product> products) {
-        super(context, resource, products);
+    public ProductListAdapter(Context context, int resource, List<MatchItem> matchItems) {
+        super(context, resource, matchItems);
 
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).build();
         imageLoader = ImageLoader.getInstance();
@@ -50,11 +50,11 @@ public class ProductListAdapter extends ArrayAdapter<Product> {
         RelativeLayout row = (RelativeLayout)convertView;
         if (row == null) {
             LayoutInflater inflater =(LayoutInflater)parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = (RelativeLayout)inflater.inflate(R.layout.row_product, null);
+            row = (RelativeLayout)inflater.inflate(R.layout.row_match, null);
         }
 
-        final ImageView productImage = (ImageView)row.findViewById(R.id.productImage);
-        TextView productName = (TextView)row.findViewById(R.id.productName);
+        final ImageView productImage = (ImageView)row.findViewById(R.id.second_image);
+        TextView productName = (TextView)row.findViewById(R.id.second_name);
         TextView productPrice = (TextView)row.findViewById(R.id.productPrice);
         final ProgressBar progressBar = (ProgressBar)row.findViewById(R.id.listRowProgress);
 
