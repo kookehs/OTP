@@ -67,11 +67,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/styleName"
-        android:layout_below="@id/picture"
         tools:text="Fila Men Grey Unique Casual Shoes"
         android:textSize="25sp"
         android:textStyle="bold"
-        android:paddingLeft="10dp"/>
+        android:paddingLeft="10dp"
+        android:layout_alignBottom="@+id/picture" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -59,49 +59,14 @@ public class CardAdapter extends BaseAdapter {
 
     }
 
-    public void init(String url, String postData, String fileName) {
-        if (isNetworkAvailable()){
-            downloadJsonToFile(url, postData, fileName);
-            mItems = ProductsJSONPullParser.getProductsFromFile(mContext, "products.json");
-        } else {
-            // fixme: figure out what happens when network is not available
-            // fixme: here we are loading the same random product 15 times,
-            mItems = new ArrayList<MatchItem>();
-            for (int i = 1; i < 15; i++){
-                MatchItem p = new MatchItem(i);
-                p.setImageUrl("sampleImageurl"); //fixme: add sample image url here
-                mItems.add(p);
-            }
-        }
-    }
-
-    public void initFromDatabase(String url, String postData, DatabaseHelper db, String fileName){
-        // todo: fill the adapter from the database instead of file system..
-        // fixme: here we are downloading data to filesystem and then updating the database.. can we update the database from the network?
-        List<MatchItem> productsFromDb = db.getUnseenProductsFromGroup(db.MEN_SHOES_GROUP_LABEL, 20); // fixme: add one more where clause so that we only poll the products that are null liked
-        if (productsFromDb.isEmpty()){
-            if (isNetworkAvailable()){
-                downloadJsonToFile(url, postData, fileName);
-                List<MatchItem> productsFromFile = ProductsJSONPullParser.getProductsFromFileAndInsertGroupLabel(mContext, "products.json", db.MEN_SHOES_GROUP_LABEL);
-                updateDatabaseAndSetAdapter(db, productsFromFile);
-            } else {
-                // notify network is not available.
-                Log.d("product card adapter", "network is not available");
-            }
-        } else {
-            mItems = productsFromDb;
-        }
-    }
-
-
-    public void initFromDatabaseUsingSharedPref(String url, String updatedPostData, DatabaseHelper db, String fileName, SharedPreferences sharedPreferences) {
-        List<MatchItem> productsFromDb = db.getUnseenProductsFromGroup(db.MEN_SHOES_GROUP_LABEL, 20);
+    public void initFromDatabaseUsingSharedPref(String url, String postData, String fileName, DatabaseHelper db, SharedPreferences sharedPreferences, String maxProductsKey, String startFromKey){
+        List<MatchItem> productsFromDb = db.getUnseenProductsFromGroup(20);
         if (productsFromDb.isEmpty()){
             if (isNetworkAvailable()){
                 // fixme: downloadJsonToFileAndUpdateDb is a background task that downloads new products and updates the db, perhaps it should also query products from the db and return
-                downloadJsonToFileAndUpdateDb(url, updatedPostData, fileName, db, sharedPreferences);
+                downloadJsonToFileAndUpdateDbWithGivenKeys(url, postData, fileName, db, sharedPreferences, maxProductsKey, startFromKey);
                 SystemClock.sleep(2000);
-                mItems = db.getUnseenProductsFromGroup(db.MEN_SHOES_GROUP_LABEL, 20);
+                mItems = db.getUnseenProductsFromGroup(20);
             } else {
                 Log.d("productCardAdapter", "network is not available");
                 mItems = new ArrayList<MatchItem>();
@@ -111,64 +76,21 @@ public class CardAdapter extends BaseAdapter {
         }
     }
 
-    public void initForTinderFragment(String url, String postData, String fileName, String uniqueGroupLabel, String groupLabel, DatabaseHelper db, SharedPreferences sharedPreferences, String maxProductsKey, String startFromKey){
-        List<MatchItem> productsFromDb = db.getUnseenProductsFromGroup(uniqueGroupLabel, 20);
-        if (productsFromDb.isEmpty()){
-            if (isNetworkAvailable()) {
-                downloadJsonToFileAndUpdateDbWithGivenKeys(url, postData, fileName, uniqueGroupLabel, groupLabel, db, sharedPreferences, maxProductsKey, startFromKey);
-                SystemClock.sleep(2000);
-                mItems = db.getUnseenProductsFromGroup(uniqueGroupLabel, 20);
-            } else {
-                Log.d("product card adapter for tinder fragment", "network is not available");
-                mItems = new ArrayList<MatchItem>();
-            }
-        } else {
-            mItems = productsFromDb;
-        }
-    }
-
     @Background
-    public void downloadJsonToFileAndUpdateDbWithGivenKeys(String url, String postData, String fileName, String uniqueGroupLabel, String groupLabel, DatabaseHelper db, SharedPreferences sharedPreferences, String maxProductsKey, String startFromKey) {
+    public void downloadJsonToFileAndUpdateDbWithGivenKeys(String url, String postData, String fileName, DatabaseHelper db, SharedPreferences sharedPreferences, String maxProductsKey, String startFromKey) {
         try {
             Downloader.downloadFromUrl(url, postData, mContext.openFileOutput(fileName, Context.MODE_PRIVATE));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        Log.i("heyo", fileName + ":" + uniqueGroupLabel + ":" + maxProductsKey + ":" + startFromKey);
-        List<MatchItem> productsFromFile = ProductsJSONPullParser.getMatchesFromFileAndUpdateMaxMatches(mContext, fileName, uniqueGroupLabel, groupLabel, maxProductsKey, sharedPreferences);
+
+        List<MatchItem> productsFromFile = ProductsJSONPullParser.getMatchesFromFileAndUpdateMaxMatches(mContext, fileName, maxProductsKey, sharedPreferences);
         db.insertOrIgnoreProducts(productsFromFile, db.TABLE_NAME);
         int startFrom = sharedPreferences.getInt(startFromKey, 0);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt(startFromKey, startFrom + 96);
         editor.commit();
     }
-
-
-    @Background
-    public void downloadJsonToFileAndUpdateDb(String url, String updatedPostData, String fileName, DatabaseHelper db, SharedPreferences sharedPreferences) {
-        try {
-            Downloader.downloadFromUrl(url, updatedPostData, mContext.openFileOutput(fileName, Context.MODE_PRIVATE));
-            // List<Product> productsFromFile = ProductsJSONPullParser.getProductsFromFileAndInsertGroupLabel(mContext, fileName, db.MEN_SHOES_GROUP_LABEL);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        List<MatchItem> productsFromFile = ProductsJSONPullParser.getProductsFromFileAndInsertGroupLabel(mContext, fileName, db.MEN_SHOES_GROUP_LABEL);
-        db.insertOrIgnoreProducts(productsFromFile, db.TABLE_NAME);
-        int startFrom = sharedPreferences.getInt(mContext.getString(R.string.men_shoes_start_from_key), 0);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(mContext.getString(R.string.men_shoes_start_from_key), startFrom + 96);
-        editor.commit();
-        // SystemClock.sleep(1500);
-        // mItems = db.getUnseenProductsFromGroup(db.MEN_SHOES_GROUP_LABEL, 20);
-        //return db.getUnseenProductsFromGroup(db.MEN_SHOES_GROUP_LABEL, 20);
-    }
-
-
-    public void updateDatabaseAndSetAdapter(DatabaseHelper db, List<MatchItem> matchItems) {
-        db.insertOrIgnoreProducts(matchItems, db.TABLE_NAME);
-        mItems = db.getUnseenProductsFromGroup(db.MEN_SHOES_GROUP_LABEL, 20);
-    }
-
 
     @Background
     public void downloadJsonToFile(String url, String postdata, String filename) {

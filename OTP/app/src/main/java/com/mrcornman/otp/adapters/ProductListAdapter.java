@@ -50,11 +50,11 @@ public class ProductListAdapter extends ArrayAdapter<MatchItem> {
         RelativeLayout row = (RelativeLayout)convertView;
         if (row == null) {
             LayoutInflater inflater =(LayoutInflater)parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = (RelativeLayout)inflater.inflate(R.layout.row_product, null);
+            row = (RelativeLayout)inflater.inflate(R.layout.row_match, null);
         }
 
-        final ImageView productImage = (ImageView)row.findViewById(R.id.productImage);
-        TextView productName = (TextView)row.findViewById(R.id.productName);
+        final ImageView productImage = (ImageView)row.findViewById(R.id.second_image);
+        TextView productName = (TextView)row.findViewById(R.id.second_name);
         TextView productPrice = (TextView)row.findViewById(R.id.productPrice);
         final ProgressBar progressBar = (ProgressBar)row.findViewById(R.id.listRowProgress);
 

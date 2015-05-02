@@ -15,25 +15,25 @@
     <ImageView
         android:layout_width="350dp"
         android:layout_height="350dp"
-        android:id="@+id/productImage"
+        android:id="@+id/second_image"
         tools:src="@drawable/ic_launcher"
         />
 
     <TextView
         android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:id="@+id/productName"
-        android:layout_below="@id/productImage"
+        android:id="@+id/second_name"
+        android:layout_below="@id/second_image"
         android:textSize="30sp"
         android:textColor="#ffb44633"
-        tools:text="lol asdfkjas askdfj asdfa sdk"
+        tools:text="Denise"
         />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/productPrice"
-        android:layout_below="@id/productName"
-        android:textSize="40dp"
+        android:layout_below="@id/second_name"
+        android:textSize="40sp"
         android:textStyle="bold"
         tools:text="1000Rs"/>
 

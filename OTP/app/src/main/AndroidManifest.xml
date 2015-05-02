@@ -23,22 +23,6 @@
             </intent-filter>-->
         </activity>
         <activity
-            android:name="com.mrcornman.otp.ProductListViewActivity"
-            android:label="@string/title_activity_product_list_view"
-            android:parentActivityName="com.mrcornman.otp.MyActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.mrcornman.otp.MyActivity" />
-        </activity>
-        <activity
-            android:name=".ProductCardViewActivity_"
-            android:label="@string/title_activity_product_card_view"
-            android:parentActivityName="com.mrcornman.otp.MyActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.mrcornman.otp.MyActivity" />
-        </activity>
-        <activity
             android:name="com.mrcornman.otp.ProductDetailActivity"
             android:label="@string/title_activity_product_detail" >
         </activity>

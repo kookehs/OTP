@@ -43,7 +43,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.mrcornman.otp.views.CardStackView
+            <com.mrcornman.otp.views.CardStackLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/cardstack_first"
@@ -52,9 +52,9 @@
                 android:layout_weight="1"
                 android:layout_centerHorizontal="true"
                 android:padding="8dp">
-            </com.mrcornman.otp.views.CardStackView>
+            </com.mrcornman.otp.views.CardStackLayout>
 
-            <com.mrcornman.otp.views.CardStackView
+            <com.mrcornman.otp.views.CardStackLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/cardstack_second"
@@ -63,7 +63,7 @@
                 android:layout_weight="1"
                 android:layout_centerHorizontal="true"
                 android:padding="8dp">
-            </com.mrcornman.otp.views.CardStackView>
+            </com.mrcornman.otp.views.CardStackLayout>
         </LinearLayout>
 
     </RelativeLayout>

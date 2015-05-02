@@ -113,7 +113,7 @@ public class ProductsJSONPullParser {
                 JSONArray productObjects = response1.getJSONArray("products");
                 for (int i = 0; i < productObjects.length(); i++) {
                     JSONObject p = productObjects.getJSONObject(i);
-                    matchItem = new MatchItem(groupLabel);
+                    matchItem = new MatchItem();
                     matchItem.setDiscount(p.getString("discount"));
                     matchItem.setPrice(p.getString("price"));
                     matchItem.setStyleId(p.getString("styleid"));
@@ -140,7 +140,7 @@ public class ProductsJSONPullParser {
         return matchItems;
     }
 
-    public static List<MatchItem> getMatchesFromFileAndUpdateMaxMatches(Context context, String filename, String uniqueGroupLabel, String groupLabel, String maxProductsKey, SharedPreferences sharedPreferences){
+    public static List<MatchItem> getMatchesFromFileAndUpdateMaxMatches(Context context, String filename, String maxProductsKey, SharedPreferences sharedPreferences) {
         /* todo: check if the we are parsing the json properly. extract extra info for each property if needed
          * http://www.androidhive.info/2012/01/android-json-parsing-tutorial/
          */
@@ -156,7 +156,7 @@ public class ProductsJSONPullParser {
             fis.read(buffer);
             fis.close();
             json = new String(buffer, "UTF-8");
-            if (json != null){
+            if (json != null) {
                 JSONObject jsonObject = new JSONObject(json);
                 JSONObject response1 = jsonObject.getJSONObject("response1");
                 editor.putString(maxProductsKey, response1.getString("totalProductsCount"));
@@ -164,66 +164,13 @@ public class ProductsJSONPullParser {
                 JSONArray productObjects = response1.getJSONArray("products");
                 for (int i = 0; i < productObjects.length(); i++) {
                     JSONObject p = productObjects.getJSONObject(i);
-                    matchItem = new MatchItem(uniqueGroupLabel);
-                    matchItem.setProductGroup(groupLabel);
+                    matchItem = new MatchItem();
                     matchItem.setDiscount(p.getString("discount"));
                     matchItem.setPrice(p.getString("price"));
                     matchItem.setStyleId(p.getString("styleid"));
                     matchItem.setDreLandingPageUrl(p.getString("dre_landing_page_url"));
                     // product.setImageUrl(p.getString("search_image"));
                     matchItem.setImageUrl(getImageUrlFromJson(p.getString("imageEntry_default")));
-                    matchItem.setDiscountedPrice(p.getString("discounted_price"));
-                    matchItem.setStyleName(p.getString("stylename"));
-                    Log.e("product returned", matchItem.getStyleName());
-                    matchItems.add(matchItem);
-                    /*
-                     * todo: get image url from the json object imageEntry_default, rather than search_image
-                     * todo: add more getter and setters to the Product class to extract even more data from json object
-                     */
-                }
-
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return matchItems;
-    }
-
-    public static List<MatchItem> getProdutsFromFileAndUpdateMaxProductsNewApi(Context context, String filename, String groupLabel, String maxProductsKey, SharedPreferences sharedPreferences){
-        /* todo: check if the we are parsing the json properly. extract extra info for each property if needed
-         * http://www.androidhive.info/2012/01/android-json-parsing-tutorial/
-         */
-        Log.e("getting products from file", filename);
-        List<MatchItem> matchItems = new ArrayList<MatchItem>();
-        String json = null;
-        MatchItem matchItem = null;
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        try {
-            FileInputStream fis = context.openFileInput(filename);
-            int size = fis.available();
-            byte[] buffer = new byte[size];
-            fis.read(buffer);
-            fis.close();
-            json = new String(buffer, "UTF-8");
-            if (json != null){
-                JSONObject postResponse = new JSONObject(json);
-                JSONObject jsonObject = new JSONObject(postResponse.getString("queryResult"));
-                JSONObject response1 = jsonObject.getJSONObject("response1");
-                editor.putString(maxProductsKey, response1.getString("totalProductsCount"));
-                editor.commit();
-                JSONArray productObjects = response1.getJSONArray("products");
-                for (int i = 0; i < productObjects.length(); i++) {
-                    JSONObject p = productObjects.getJSONObject(i);
-                    matchItem = new MatchItem(groupLabel);
-                    matchItem.setDiscount(p.getString("discount"));
-                    matchItem.setPrice(p.getString("price"));
-                    matchItem.setStyleId(p.getString("styleid"));
-                    matchItem.setDreLandingPageUrl(p.getString("dre_landing_page_url"));
-                    matchItem.setImageUrl(p.getString("search_image"));
                     matchItem.setDiscountedPrice(p.getString("discounted_price"));
                     matchItem.setStyleName(p.getString("stylename"));
                     Log.e("product returned", matchItem.getStyleName());

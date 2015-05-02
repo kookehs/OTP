@@ -32,15 +32,6 @@ public class MyActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
 
-        Button listButton = (Button)findViewById(R.id.list_activity_btn);
-        listButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent listActivityIntent = new Intent(getBaseContext(), com.mrcornman.otp.ProductListViewActivity.class);
-                startActivity(listActivityIntent);
-            }
-        });
-
         Button myntraTinderButton = (Button)findViewById(R.id.tinder_button);
         myntraTinderButton.setOnClickListener(new View.OnClickListener() {
             @Override

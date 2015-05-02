@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * Created by Anil on 7/18/2014.
  */
-public class CardStackView extends RelativeLayout{
+public class CardStackLayout extends RelativeLayout{
 
     public BaseAdapter getAdapter() {
         return mAdapter;
@@ -62,17 +62,17 @@ public class CardStackView extends RelativeLayout{
     private MyOnTouchListener mMyOnTouchListener;
 
 
-    public CardStackView(Context context) {
+    public CardStackLayout(Context context) {
         super(context);
         setup();
     }
 
-    public CardStackView(Context context, AttributeSet attrs) {
+    public CardStackLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         setup();
     }
 
-    public CardStackView(Context context, AttributeSet attrs, int defStyle) {
+    public CardStackLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         setup();
     }
@@ -213,10 +213,7 @@ public class CardStackView extends RelativeLayout{
             View product = mAdapter.getView(position, null, null);
             mProducts.offer(product);
 
-            RelativeLayout.LayoutParams params = new LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            //params.addRule(RelativeLayout.CENTER_IN_PARENT);
-            addView(product, 0, params);
+            addView(product, 0);
 
             mMyOnTouchListener = new MyOnTouchListener();
         }

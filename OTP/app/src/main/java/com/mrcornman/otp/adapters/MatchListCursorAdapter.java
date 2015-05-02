@@ -27,12 +27,12 @@ import com.mrcornman.otp.utils.DatabaseHelper;
 /**
  * Created by Anil on 8/29/2014.
  */
-public class ProductListAdapterWithACursor extends CursorAdapter {
+public class MatchListCursorAdapter extends CursorAdapter {
 
     ImageLoader imageLoader;
     DisplayImageOptions options;
 
-    public ProductListAdapterWithACursor(Context context, Cursor c, boolean autoRequery) {
+    public MatchListCursorAdapter(Context context, Cursor c, boolean autoRequery) {
         super(context, c, autoRequery);
 
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).build();
@@ -49,7 +49,7 @@ public class ProductListAdapterWithACursor extends CursorAdapter {
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
 
         LayoutInflater inflater =(LayoutInflater)parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        RelativeLayout row = (RelativeLayout)inflater.inflate(R.layout.row_product, null);
+        RelativeLayout row = (RelativeLayout)inflater.inflate(R.layout.row_match, null);
         return row;
 
     }
@@ -57,8 +57,8 @@ public class ProductListAdapterWithACursor extends CursorAdapter {
     @Override
     public void bindView(View row, final Context context, Cursor cursor) {
 
-        final ImageView productImage = (ImageView)row.findViewById(R.id.productImage);
-        TextView productName = (TextView)row.findViewById(R.id.productName);
+        final ImageView productImage = (ImageView)row.findViewById(R.id.second_image);
+        TextView productName = (TextView)row.findViewById(R.id.second_name);
         TextView productPrice = (TextView)row.findViewById(R.id.productPrice);
         final ProgressBar progressBar = (ProgressBar)row.findViewById(R.id.listRowProgress);
 
@@ -88,7 +88,6 @@ public class ProductListAdapterWithACursor extends CursorAdapter {
             }
         };
         final MatchItem matchItem = new MatchItem(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.KEY_ID)));
-        matchItem.setUniqueProductGroup(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_UNIQUE_PRODUCT_GROUP)));
         matchItem.setDiscountedPrice(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_DISCOUNTED_PRICE)));
         matchItem.setStyleName(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_STYLE_NAME)));
         matchItem.setDiscount(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_DISCOUNT)));

@@ -7,10 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.mrcornman.otp.models.MatchItem;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.mrcornman.otp.models.MatchItem;
 
 import static android.database.DatabaseUtils.sqlEscapeString;
 
@@ -30,8 +30,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // column names
     public static final String KEY_ID = "id";
-    public static final String KEY_UNIQUE_PRODUCT_GROUP = "unique_product_group";
-    public static final String KEY_PRODUCT_GROUP = "product_group";
     public static final String KEY_STYLE_NAME = "style_name";
     public static final String KEY_DISCOUNTED_PRICE = "discounted_price";
     public static final String KEY_DISCOUNT = "discount";
@@ -50,8 +48,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // table create statements
     private static final String CREATE_TABLE = "CREATE TABLE "
             + TABLE_NAME + "(" + KEY_ID + " INTEGER PRIMARY KEY,"
-            + KEY_UNIQUE_PRODUCT_GROUP + " TEXT,"
-            + KEY_PRODUCT_GROUP + " TEXT,"
             + KEY_STYLE_NAME + " TEXT,"
             + KEY_DISCOUNTED_PRICE + " TEXT,"
             + KEY_DISCOUNT + " TEXT,"
@@ -96,8 +92,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_UNIQUE_PRODUCT_GROUP, matchItem.getUniqueProductGroup());
-        values.put(KEY_PRODUCT_GROUP, matchItem.getProductGroup());
         values.put(KEY_STYLE_NAME, matchItem.getStyleName());
         values.put(KEY_DISCOUNTED_PRICE, matchItem.getDiscountedPrice());
         values.put(KEY_DISCOUNT, matchItem.getDiscount());
@@ -122,8 +116,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         for (int i = 0; i < length; i++) {
             MatchItem matchItem = matchItems.get(i);
             valuesString += "("
-                     + sqlEscapeString(matchItem.getUniqueProductGroup()) + ","
-                     + sqlEscapeString(matchItem.getProductGroup()) + ","
                      + sqlEscapeString(matchItem.getStyleName()) + ","
                      + sqlEscapeString(matchItem.getDiscountedPrice()) + ","
                      + sqlEscapeString(matchItem.getDiscount()) + ","
@@ -137,8 +129,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (valuesString.length() > 0) {
             valuesString = valuesString.substring(0, valuesString.length() - 1);
             String SQL_INSERT_OR_IGNORE = "INSERT OR IGNORE INTO " + table + " ("
-                    + KEY_UNIQUE_PRODUCT_GROUP + ","
-                    + KEY_PRODUCT_GROUP + ","
                     + KEY_STYLE_NAME + ","
                     + KEY_DISCOUNTED_PRICE + ","
                     + KEY_DISCOUNT + ","
@@ -163,8 +153,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (c != null)
             c.moveToFirst();
         MatchItem matchItem = new MatchItem(c.getInt(c.getColumnIndex(KEY_ID))); // fixme: this is wrong, confusion betweet KEY_ID, mId, unique style id from the website
-        matchItem.setUniqueProductGroup(c.getString(c.getColumnIndex(KEY_UNIQUE_PRODUCT_GROUP)));
-        matchItem.setProductGroup(c.getString(c.getColumnIndex(KEY_PRODUCT_GROUP)));
         matchItem.setDiscountedPrice(c.getString(c.getColumnIndex(KEY_DISCOUNTED_PRICE)));
         matchItem.setStyleName(c.getString(c.getColumnIndex(KEY_STYLE_NAME)));
         matchItem.setDiscount(c.getString(c.getColumnIndex(KEY_DISCOUNT)));
@@ -180,7 +168,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //todo: add an extra parameter to limit number of products
     //fixed: the columns are a mess, done in a hurry, fix this shit..
-    public List<MatchItem> getProducts(String tableName, String columnName, String value, String limit){
+    public List<MatchItem> getProducts(String tableName, String columnName, String value, String limit) {
         List<MatchItem> matchItems = new ArrayList<MatchItem>();
         String selectQuery = "SELECT * FROM " + tableName + " WHERE "
                 + columnName + " = '" + value + "' LIMIT " + limit;
@@ -190,8 +178,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (c.moveToFirst()) {
             do {
                 MatchItem matchItem = new MatchItem(c.getInt(c.getColumnIndex(KEY_ID)));
-                matchItem.setUniqueProductGroup(c.getString(c.getColumnIndex(KEY_UNIQUE_PRODUCT_GROUP)));
-                matchItem.setProductGroup(c.getString(c.getColumnIndex(KEY_PRODUCT_GROUP)));
                 matchItem.setDiscountedPrice(c.getString(c.getColumnIndex(KEY_DISCOUNTED_PRICE)));
                 matchItem.setStyleName(c.getString(c.getColumnIndex(KEY_STYLE_NAME)));
                 matchItem.setDiscount(c.getString(c.getColumnIndex(KEY_DISCOUNT)));
@@ -208,17 +194,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return matchItems;
     }
 
-    public List<MatchItem> getProductsFromGroup(String productGroup, int limit){
-        String limitString = String.valueOf(limit);
-        return getProducts(TABLE_NAME, KEY_UNIQUE_PRODUCT_GROUP, productGroup, limitString);
-    }
-
-    public List<MatchItem> getUnseenProductsFromGroup(String productGroup, int limit) {
+    public List<MatchItem> getUnseenProductsFromGroup(int limit) {
         String limitString = String.valueOf(limit);
         List<MatchItem> matchItems = new ArrayList<MatchItem>();
         String selectQuery = "SELECT * FROM " + TABLE_NAME + " WHERE "
-                + KEY_UNIQUE_PRODUCT_GROUP + " = '" + productGroup
-                + "' AND " + KEY_LIKED + " = 0"
+                + KEY_LIKED + " = 0"
                 + " LIMIT " + limit;
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
         Cursor c = sqLiteDatabase.rawQuery(selectQuery, null);
@@ -226,8 +206,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (c.moveToFirst()) {
             do {
                 MatchItem matchItem = new MatchItem(c.getInt(c.getColumnIndex(KEY_ID)));
-                matchItem.setUniqueProductGroup(c.getString(c.getColumnIndex(KEY_UNIQUE_PRODUCT_GROUP)));
-                matchItem.setProductGroup(c.getString(c.getColumnIndex(KEY_PRODUCT_GROUP)));
                 matchItem.setDiscountedPrice(c.getString(c.getColumnIndex(KEY_DISCOUNTED_PRICE)));
                 matchItem.setStyleName(c.getString(c.getColumnIndex(KEY_STYLE_NAME)));
                 matchItem.setDiscount(c.getString(c.getColumnIndex(KEY_DISCOUNT)));
@@ -245,7 +223,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return matchItems;
     }
 
-    public Cursor getLikedProductsFromGroup(String productGroupName){
+    public Cursor getLikedProductsFromGroup(){
         // a cursor object that is fed into a cursor adapter must have a column name "_id"
         // for that instead of changing our model, we can do
         // SELECT id _id, * FROM // instead of
@@ -253,8 +231,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // in the above query "id" is our actual column name
         // http://stackoverflow.com/a/7494398/544102
         String selectQuery = "SELECT id _id, * FROM " + TABLE_NAME + " WHERE "
-                + KEY_UNIQUE_PRODUCT_GROUP + " = '" + productGroupName
-                + "' AND " + KEY_LIKED + " = 1";
+                + KEY_LIKED + " = 1";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(selectQuery, null);
         return c;

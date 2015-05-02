@@ -16,7 +16,7 @@ import org.androidannotations.annotations.ViewById;
  * Created by Anil on 7/18/2014.
  */
 @EViewGroup(R.layout.card)
-public class SingleProductView extends RelativeLayout implements CardStackView.CardStackListener {
+public class SingleProductView extends RelativeLayout implements CardStackLayout.CardStackListener {
 
     @ViewById
     ImageView picture;

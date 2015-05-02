@@ -14,7 +14,7 @@ import android.widget.Button;
 import com.mrcornman.otp.adapters.CardAdapter;
 import com.mrcornman.otp.adapters.CardAdapter_;
 import com.mrcornman.otp.utils.DatabaseHelper;
-import com.mrcornman.otp.views.CardStackView;
+import com.mrcornman.otp.views.CardStackLayout;
 import com.mrcornman.otp.views.SingleProductView;
 
 
@@ -35,8 +35,8 @@ public class GameFragment extends Fragment {
     private static final String SAMPLE_POST_DATA_HEAD_ = "[{\"query\":\"(global_attr_age_group:(\\\"Adults-Men\\\" OR \\\"Adults-Unisex\\\") AND global_attr_sub_category:(\\\"Eyewear\\\"))\",\"start\":";
     private static final String SAMPLE_POST_DATA_TAIL_ = ",\"rows\":96,\"facetField\":[],\"fq\":[\"count_options_availbale:[1 TO *]\"],\"sort\":[{\"sort_field\":\"count_options_availbale\",\"order_by\":\"desc\"},{\"sort_field\":\"style_store21_male_sort_field\",\"order_by\":\"desc\"},{\"sort_field\":\"potential_revenue_male_sort_field\",\"order_by\":\"desc\"},{\"sort_field\":\"global_attr_catalog_add_date\",\"order_by\":\"desc\"}],\"return_docs\":true,\"colour_grouping\":true,\"facet\":true}]";
 
-    CardStackView mCardStackViewFirst;
-    CardStackView mCardStackViewSecond;
+    CardStackLayout mCardStackLayoutFirst;
+    CardStackLayout mCardStackLayoutSecond;
     CardAdapter mCardAdapterFirst;
     CardAdapter mCardAdapterSecond;
     DatabaseHelper db;
@@ -66,8 +66,8 @@ public class GameFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_game, container, false);
-        mCardStackViewFirst = (CardStackView) view.findViewById(R.id.cardstack_first);
-        mCardStackViewSecond = (CardStackView) view.findViewById(R.id.cardstack_second);
+        mCardStackLayoutFirst = (CardStackLayout) view.findViewById(R.id.cardstack_first);
+        mCardStackLayoutSecond = (CardStackLayout) view.findViewById(R.id.cardstack_second);
 
         db = new DatabaseHelper(getActivity().getApplicationContext());
         // List<Product> products = db.getUnseenProductsFromGroup(getString(R.string.men_shoes_group_label), 5);
@@ -98,7 +98,7 @@ public class GameFragment extends Fragment {
             }
         });
 
-        mCardStackViewFirst.setmProductStackListener(new CardStackView.CardStackListener() {
+        mCardStackLayoutFirst.setmProductStackListener(new CardStackLayout.CardStackListener() {
             @Override
             public void onUpdateProgress(boolean positif, float percent, View view) {
                 SingleProductView item = (SingleProductView) view;
@@ -125,7 +125,7 @@ public class GameFragment extends Fragment {
             }
         });
 
-        mCardStackViewSecond.setmProductStackListener(new CardStackView.CardStackListener() {
+        mCardStackLayoutSecond.setmProductStackListener(new CardStackLayout.CardStackListener() {
             @Override
             public void onUpdateProgress(boolean positif, float percent, View view) {
                 SingleProductView item = (SingleProductView) view;
@@ -177,9 +177,9 @@ public class GameFragment extends Fragment {
             editor.commit();
         }
         String postData = SAMPLE_POST_DATA_HEAD + String.valueOf(startFromFirst) + SAMPLE_POST_DATA_TAIL;
-        mCardAdapterFirst.initForTinderFragment(url, postData, SAMPLE_FILE_NAME, SAMPLE_UNIQUE_LABEL, "Jewellery", db, sharedPreferences, SAMPLE_MAX_PRODUCTS_KEY, SAMPLE_START_FROM_KEY);
+        mCardAdapterFirst.initFromDatabaseUsingSharedPref(url, postData, SAMPLE_FILE_NAME, db, sharedPreferences, SAMPLE_MAX_PRODUCTS_KEY, SAMPLE_START_FROM_KEY);
         if (!mCardAdapterFirst.isEmpty()) {
-            mCardStackViewFirst.setAdapter(mCardAdapterFirst);
+            mCardStackLayoutFirst.setAdapter(mCardAdapterFirst);
         }
     }
 
@@ -195,19 +195,14 @@ public class GameFragment extends Fragment {
             editor.commit();
         }
         String postData = SAMPLE_POST_DATA_HEAD_ + String.valueOf(startFromSecond) + SAMPLE_POST_DATA_TAIL_;
-        mCardAdapterSecond.initForTinderFragment(url,postData,SAMPLE_FILE_NAME_,SAMPLE_UNIQUE_LABEL_, "Sunglasses", db, sharedPreferences, SAMPLE_MAX_PRODUCTS_KEY_, SAMPLE_START_FROM_KEY_);
+        mCardAdapterSecond.initFromDatabaseUsingSharedPref(url, postData, SAMPLE_FILE_NAME_, db, sharedPreferences, SAMPLE_MAX_PRODUCTS_KEY_, SAMPLE_START_FROM_KEY_);
         if (!mCardAdapterSecond.isEmpty()){
-            mCardStackViewSecond.setAdapter(mCardAdapterSecond);
+            mCardStackLayoutSecond.setAdapter(mCardAdapterSecond);
         }
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        /*
-        ((MainActivity) activity).onTinderFragmentAttached(
-                getArguments().getString(ARG_GROUP_LABEL)
-        );
-        */
     }
 }
