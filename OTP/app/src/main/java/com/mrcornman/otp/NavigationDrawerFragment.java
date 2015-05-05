@@ -22,15 +22,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
-import android.widget.Toast;
-
-import com.mrcornman.otp.R;
-import com.mrcornman.otp.adapters.MyntraCategoryExpandableListAdapter;
-import com.mrcornman.otp.models.MyntraCategory;
-
-import java.util.List;
-
-import static com.mrcornman.otp.models.MyntraCategory.generateMyntraMenProductGroups;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -63,18 +54,6 @@ public class NavigationDrawerFragment extends Fragment {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
     private View mFragmentContainerView;
-
-    private ExpandableListView mDrawerMenExpandableListView;
-    private List<MyntraCategory.ProductHeadGroup> mDrawerMenProductHeadGroups;
-    private ExpandableListAdapter mDrawerMenExpandableListAdapter;
-
-    private ExpandableListView mDrawerWomenExpandableListView;
-    private List<MyntraCategory.ProductHeadGroup> mDrawerWomenProductHeadGroups;
-    private ExpandableListAdapter mDrawerWomenExpandableListAdapter;
-
-    private ExpandableListView mDrawerKidsExpandableListView;
-    private List<MyntraCategory.ProductHeadGroup> mDrawerKidsProductHeadGroups;
-    private ExpandableListAdapter mDrawerKidsExpandableListAdapter;
 
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
@@ -112,7 +91,7 @@ public class NavigationDrawerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View fragmentView =  inflater.inflate(
-                R.layout.fragment_navigation_drawer_myntra_tinder_activity, container, false);
+                R.layout.fragment_navigation_drawer, container, false);
         mDrawerListView = (ListView) fragmentView.findViewById(R.id.listView);
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -122,40 +101,14 @@ public class NavigationDrawerFragment extends Fragment {
         });
         mDrawerListView.setAdapter(new ArrayAdapter<String>(
                 getActionBar().getThemedContext(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
+                R.layout.drawer_list_item,
+                R.id.list_item_title,
                 new String[]{
                         "Home",
                         "Settings"
                 }
         ));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
-
-        mDrawerMenProductHeadGroups = generateMyntraMenProductGroups(getActivity());
-        mDrawerMenExpandableListView = (ExpandableListView) fragmentView.findViewById(R.id.menExpandableListView);
-        mDrawerMenExpandableListAdapter = new MyntraCategoryExpandableListAdapter(getActivity(), mDrawerMenProductHeadGroups);
-        mDrawerMenExpandableListView.setAdapter(mDrawerMenExpandableListAdapter);
-        mDrawerMenExpandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-            @Override
-            public void onGroupExpand(int groupPosition) {
-                int len = mDrawerMenExpandableListAdapter.getGroupCount();
-                for (int i = 0; i < len; i++) {
-                    if (i != groupPosition){
-                        mDrawerMenExpandableListView.collapseGroup(i);
-                    }
-                }
-                collapseGroupsOfExpandableListView(mDrawerWomenExpandableListView, mDrawerWomenExpandableListAdapter);
-                collapseGroupsOfExpandableListView(mDrawerKidsExpandableListView, mDrawerKidsExpandableListAdapter);
-            }
-        });
-        mDrawerMenExpandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView expandableListView, View view, int groupPosition, int childPosition, long l) {
-                MyntraCategory.ProductGroup productGroup = (MyntraCategory.ProductGroup) mDrawerMenExpandableListAdapter.getChild(groupPosition, childPosition);
-                selectProductGroup(productGroup);
-                return true;
-            }
-        });
 
         return fragmentView;
     }
@@ -192,11 +145,11 @@ public class NavigationDrawerFragment extends Fragment {
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the navigation drawer and the action bar app icon.
         mDrawerToggle = new ActionBarDrawerToggle(
-                getActivity(),                    /* host Activity */
-                mDrawerLayout,                    /* DrawerLayout object */
-                R.drawable.ic_drawer,             /* nav drawer image to replace 'Up' caret */
-                R.string.navigation_drawer_open,  /* "open drawer" description for accessibility */
-                R.string.navigation_drawer_close  /* "close drawer" description for accessibility */
+                getActivity(),
+                mDrawerLayout,
+                R.drawable.ic_drawer,
+                R.string.drawer_open,
+                R.string.drawer_close
         ) {
             @Override
             public void onDrawerClosed(View drawerView) {
@@ -258,15 +211,6 @@ public class NavigationDrawerFragment extends Fragment {
         }
     }
 
-    private void selectProductGroup(MyntraCategory.ProductGroup productGroup){
-        if (mDrawerLayout != null) {
-            mDrawerLayout.closeDrawer(mFragmentContainerView);
-        }
-        if (mCallbacks != null) {
-            mCallbacks.onNavigationDrawerProductGroupSelected(productGroup);
-        }
-    }
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -310,13 +254,15 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // todo: code to handle menu clicks
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
+        if (mDrawerToggle.onOptionsItemSelected(item)) return true;
 
-        if (item.getItemId() == R.id.action_example) {
-            Toast.makeText(getActivity(), "Example action.", Toast.LENGTH_SHORT).show();
-            return true;
+        switch(item.getItemId()) {
+            case R.id.action_client_list:
+                mCallbacks.onMenuItemClientList();
+                return true;
+            case R.id.action_matchmaker_list:
+                mCallbacks.onMenuItemMatchmakerList();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -346,6 +292,8 @@ public class NavigationDrawerFragment extends Fragment {
          */
         void onNavigationDrawerItemSelected(int position);
 
-        void onNavigationDrawerProductGroupSelected(MyntraCategory.ProductGroup productGroup);
+        void onMenuItemClientList();
+
+        void onMenuItemMatchmakerList();
     }
 }

@@ -14,25 +14,25 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.mrcornman.otp.R;
 import com.mrcornman.otp.models.MatchItem;
+import com.mrcornman.otp.models.UserItem;
+import com.mrcornman.otp.utils.DatabaseHelper;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
-import com.mrcornman.otp.R;
-import com.mrcornman.otp.utils.DatabaseHelper;
-
 /**
  * Created by Anil on 8/29/2014.
  */
-public class MatchListCursorAdapter extends CursorAdapter {
+public class ClientListCursorAdapter extends CursorAdapter {
 
     ImageLoader imageLoader;
     DisplayImageOptions options;
 
-    public MatchListCursorAdapter(Context context, Cursor c, boolean autoRequery) {
+    public ClientListCursorAdapter(Context context, Cursor c, boolean autoRequery) {
         super(context, c, autoRequery);
 
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).build();
@@ -49,7 +49,7 @@ public class MatchListCursorAdapter extends CursorAdapter {
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
 
         LayoutInflater inflater =(LayoutInflater)parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        RelativeLayout row = (RelativeLayout)inflater.inflate(R.layout.row_match, null);
+        RelativeLayout row = (RelativeLayout)inflater.inflate(R.layout.row_match_client, null);
         return row;
 
     }
@@ -57,13 +57,12 @@ public class MatchListCursorAdapter extends CursorAdapter {
     @Override
     public void bindView(View row, final Context context, Cursor cursor) {
 
-        final ImageView productImage = (ImageView)row.findViewById(R.id.second_image);
-        TextView productName = (TextView)row.findViewById(R.id.second_name);
-        TextView productPrice = (TextView)row.findViewById(R.id.productPrice);
-        final ProgressBar progressBar = (ProgressBar)row.findViewById(R.id.listRowProgress);
+        final ImageView secondImage = (ImageView)row.findViewById(R.id.second_image);
+        TextView secondName = (TextView)row.findViewById(R.id.second_name);
+        final ProgressBar progressBar = (ProgressBar)row.findViewById(R.id.first_progress);
 
         progressBar.setVisibility(View.VISIBLE);
-        productImage.setVisibility(View.INVISIBLE);
+        secondImage.setVisibility(View.INVISIBLE);
 
         ImageLoadingListener listener = new ImageLoadingListener() {
             @Override
@@ -79,7 +78,7 @@ public class MatchListCursorAdapter extends CursorAdapter {
             @Override
             public void onLoadingComplete(String s, View view, Bitmap bitmap) {
                 progressBar.setVisibility(View.INVISIBLE);
-                productImage.setVisibility(View.VISIBLE);
+                secondImage.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -87,28 +86,29 @@ public class MatchListCursorAdapter extends CursorAdapter {
 
             }
         };
-        final MatchItem matchItem = new MatchItem(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.KEY_ID)));
-        matchItem.setDiscountedPrice(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_DISCOUNTED_PRICE)));
-        matchItem.setStyleName(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_STYLE_NAME)));
-        matchItem.setDiscount(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_DISCOUNT)));
-        matchItem.setPrice(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_PRICE)));
-        matchItem.setStyleId(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_STYLE_ID)));
-        matchItem.setImageUrl(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_IMAGE_URL)));
-        matchItem.setDreLandingPageUrl(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_LANDING_PAGE_URL)));
-        matchItem.setLiked(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.KEY_LIKED)));
 
-        imageLoader.displayImage(matchItem.getImageUrl(),productImage, options, listener);
-        productImage.setOnClickListener(new View.OnClickListener() {
+        final MatchItem matchItem = new MatchItem(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_ID)));
+        matchItem.setFirstId(cursor.getString(cursor.getColumnIndex(DatabaseHelper.MATCH_KEY_FIRST_ID)));
+        matchItem.setSecondId(cursor.getString(cursor.getColumnIndex(DatabaseHelper.MATCH_KEY_SECOND_ID)));
+        matchItem.setMatchmakerId(cursor.getString(cursor.getColumnIndex(DatabaseHelper.MATCH_KEY_MATCHMAKER_ID)));
+        matchItem.setNumLikes(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.MATCH_KEY_NUM_LIKES)));
+
+        DatabaseHelper db = new DatabaseHelper(context);
+
+        final UserItem userItem = db.getUserById(matchItem.getSecondId());
+        imageLoader.displayImage(userItem.getImageUrl(), secondImage, options, listener);
+        secondImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String url = "http://www.myntra.com/" + matchItem.getDreLandingPageUrl();
+                String url = "http://www.myntra.com/" + userItem.getDreLandingPageUrl();
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
                 context.startActivity(i);
             }
         });
-        productName.setText(matchItem.getStyleName());
-        productPrice.setText(matchItem.getDiscountedPrice());
 
+        if(userItem != null) {
+            secondName.setText(userItem.getName());
+        }
     }
 }

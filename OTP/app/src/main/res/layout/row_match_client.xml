@@ -9,7 +9,7 @@
     <ProgressBar
         android:layout_width="350dp"
         android:layout_height="350dp"
-        android:id="@+id/listRowProgress"
+        android:id="@+id/first_progress"
         />
 
     <ImageView
@@ -28,13 +28,5 @@
         android:textColor="#ffb44633"
         tools:text="Denise"
         />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/productPrice"
-        android:layout_below="@id/second_name"
-        android:textSize="40sp"
-        android:textStyle="bold"
-        tools:text="1000Rs"/>
 
 </RelativeLayout>

@@ -14,8 +14,7 @@
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp"
         android:background="#cccc"
-        android:fadeScrollbars="false"
-        tools:context="com.mrcornman.otp.NavigationDrawerFragment" />
+        android:fadeScrollbars="false"/>
 
     <ExpandableListView
         android:layout_width="match_parent"

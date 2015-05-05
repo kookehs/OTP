@@ -66,30 +66,21 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/styleName"
-        tools:text="Fila Men Grey Unique Casual Shoes"
+        android:id="@+id/name_text"
+        tools:text="Snoo Snoo"
         android:textSize="25sp"
         android:textStyle="bold"
         android:paddingLeft="10dp"
         android:layout_alignBottom="@+id/picture" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="2000"
-        android:layout_below="@id/styleName"
-        android:textSize="50sp"
-        android:id="@+id/discountedPrice"
+        android:layout_alignBottom="@+id/picture"
+        android:layout_toRightOf="@id/name_text"
+        android:textSize="25sp"
+        android:id="@+id/age_text"
         android:paddingLeft="10dp"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/actualPrice"
-        tools:text="2500"
-        android:layout_below="@id/styleName"
-        android:layout_toRightOf="@id/discountedPrice"
-        android:textSize="30sp"
-        android:textColor="#ff8d4c4f"
-        android:singleLine="false"
-        android:paddingTop="15dp" />
 
 </RelativeLayout>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <ProgressBar
+            android:layout_width="350dp"
+            android:layout_height="350dp"
+            android:id="@+id/first_progress"
+            />
+
+        <ImageView
+            android:layout_width="350dp"
+            android:layout_height="350dp"
+            android:id="@+id/first_image"
+            tools:src="@drawable/ic_launcher"
+            />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/first_name"
+            android:layout_below="@id/first_image"
+            android:textSize="30sp"
+            android:textColor="#ffb44633"
+            tools:text="Denise"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <ProgressBar
+            android:layout_width="350dp"
+            android:layout_height="350dp"
+            android:id="@+id/second_progress"
+            />
+
+        <ImageView
+            android:layout_width="350dp"
+            android:layout_height="350dp"
+            android:id="@+id/second_image"
+            tools:src="@drawable/ic_launcher"
+            />
+
+        <TextView
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/second_name"
+            android:layout_below="@id/second_image"
+            android:textSize="30sp"
+            android:textColor="#ffb44633"
+            tools:text="Denise"
+            />
+
+    </RelativeLayout>s
+
+</LinearLayout>

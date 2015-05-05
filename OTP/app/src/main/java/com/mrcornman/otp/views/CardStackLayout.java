@@ -34,6 +34,7 @@ public class CardStackLayout extends RelativeLayout{
     }
 
     public interface CardStackListener {
+        void onBeginProgress(View view);
         void onUpdateProgress(boolean positif, float percent, View view);
         void onCancelled(View beingDragged);
         void onChoiceMade(boolean choice, View beingDragged);
@@ -49,18 +50,17 @@ public class CardStackLayout extends RelativeLayout{
     private int mXDelta;
     private int mYDelta;
 
-    protected LinkedList<View> mProducts = new LinkedList<View>();
-    protected LinkedList<View> mRecycledProducts = new LinkedList<View>();
+    protected LinkedList<CardView> mCards = new LinkedList<CardView>();
+    protected LinkedList<CardView> mRecycledCards = new LinkedList<CardView>();
 
-    private CardStackListener mProductStackListener;
+    private CardStackListener mCardStackListener;
 
-    protected LinkedList<Object> mProductStack = new LinkedList<Object>();
+    protected LinkedList<Object> mCardStack = new LinkedList<Object>();
     private int mXStart;
     private int mYStart;
 
     private View mBeingDragged;
     private MyOnTouchListener mMyOnTouchListener;
-
 
     public CardStackLayout(Context context) {
         super(context);
@@ -77,6 +77,10 @@ public class CardStackLayout extends RelativeLayout{
         setup();
     }
 
+    public View getmBeingDragged() {
+        return mBeingDragged;
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         // super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -86,9 +90,9 @@ public class CardStackLayout extends RelativeLayout{
         }
 
         int index = 0;
-        Iterator<View> it = mProducts.descendingIterator();
+        Iterator<CardView> it = mCards.descendingIterator();
         while (it.hasNext()){
-            View card = it.next();
+            CardView card = it.next();
             if (card == null)
                 break;
 
@@ -114,12 +118,12 @@ public class CardStackLayout extends RelativeLayout{
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
-    public CardStackListener getmProductStackListener() {
-        return mProductStackListener;
+    public CardStackListener getmCardStackListener() {
+        return mCardStackListener;
     }
 
-    public void setmProductStackListener(CardStackListener mProductStackListener) {
-        this.mProductStackListener = mProductStackListener;
+    public void setmCardStackListener(CardStackListener mCardStackListener) {
+        this.mCardStackListener = mCardStackListener;
     }
 
     private void scaleAndTranslate(int cardIndex, View view) {
@@ -172,9 +176,12 @@ public class CardStackLayout extends RelativeLayout{
         return mCurrentPosition < mAdapter.getCount();
     }
 
-    private boolean isTopCard(View card) {
-        return card == mProducts.peek();
+    public CardView getTopCard() { return (CardView)mCards.peek(); }
+    private boolean isTopCard(CardView card) {
+        return card == mCards.peek();
     }
+
+    public List<CardView> getCards() { return mCards; }
 
     private void setup() {
         Resources r = getContext().getResources();
@@ -192,8 +199,8 @@ public class CardStackLayout extends RelativeLayout{
 
     public void setAdapter(BaseAdapter adapter){
         mAdapter = adapter;
-        mRecycledProducts.clear();
-        mProducts.clear();
+        mRecycledCards.clear();
+        mCards.clear();
         removeAllViews();
         mCurrentPosition = 0;
         initializeStack();
@@ -208,12 +215,12 @@ public class CardStackLayout extends RelativeLayout{
                 break;
 
             Object item = mAdapter.getItem(position);
-            mProductStack.offer(item);
+            mCardStack.offer(item);
 
-            View product = mAdapter.getView(position, null, null);
-            mProducts.offer(product);
+            CardView card = (CardView)mAdapter.getView(position, null, null);
+            mCards.offer(card);
 
-            addView(product, 0);
+            addView(card, 0);
 
             mMyOnTouchListener = new MyOnTouchListener();
         }
@@ -223,7 +230,8 @@ public class CardStackLayout extends RelativeLayout{
     private class MyOnTouchListener implements OnTouchListener{
         @Override
         public boolean onTouch(final View view, MotionEvent motionEvent) {
-            if (!isTopCard(view)){
+            CardView card = (CardView)view;
+            if (!isTopCard(card)){
                 return false;
             }
 
@@ -235,11 +243,12 @@ public class CardStackLayout extends RelativeLayout{
                 case MotionEvent.ACTION_DOWN:
                     mXStart = X;
                     mYStart = Y;
+                    mCardStackListener.onBeginProgress(view);
                     break;
                 case MotionEvent.ACTION_UP:
-                    if (mBeingDragged == null){
+                    if (mBeingDragged == null)
                         return false;
-                    }
+
                     if (!canAcceptChoice()){
                         requestLayout();
                         AnimatorSet set = new AnimatorSet();
@@ -259,8 +268,8 @@ public class CardStackLayout extends RelativeLayout{
                                 mXStart = 0;
                                 mYStart = 0;
                                 requestLayout();
-                                if (mProductStackListener != null){
-                                    mProductStackListener.onCancelled(finalView);
+                                if (mCardStackListener != null){
+                                    mCardStackListener.onCancelled(finalView);
                                 }
                             }
                         });
@@ -277,13 +286,13 @@ public class CardStackLayout extends RelativeLayout{
                         xTranslation.addUpdateListener(onUpdate);
                         set.start();
                     } else {
-                        final View last = mProducts.poll();
-                        View recycled = getRecycledOrNew();
+                        final CardView last = mCards.poll();
+                        CardView recycled = getRecycledOrNew();
                         if (recycled != null){
                             RelativeLayout.LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                             params.addRule(RelativeLayout.CENTER_IN_PARENT);
 
-                            mProducts.offer(recycled);
+                            mCards.offer(recycled);
                             addView(recycled, 0, params);
                         }
 
@@ -300,9 +309,9 @@ public class CardStackLayout extends RelativeLayout{
                         animation.addListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
-                                if (mProductStackListener != null){
+                                if (mCardStackListener != null){
                                     boolean choice = finalChoice;
-                                    mProductStackListener.onChoiceMade(choice, last);
+                                    mCardStackListener.onChoiceMade(choice, last);
                                 }
 
                                 recycleView(last);
@@ -336,8 +345,8 @@ public class CardStackLayout extends RelativeLayout{
                     mBeingDragged = view;
                     requestLayout();
 
-                    if (mProductStackListener != null){
-                        mProductStackListener.onUpdateProgress(choiceBoolean, progress, mBeingDragged);
+                    if (mCardStackListener != null){
+                        mCardStackListener.onUpdateProgress(choiceBoolean, progress, mBeingDragged);
                     }
 
                     break;
@@ -353,17 +362,17 @@ public class CardStackLayout extends RelativeLayout{
         return progress;
     }
 
-    private void recycleView(View last) {
+    private void recycleView(CardView last) {
         ((ViewGroup)last.getParent()).removeView(last);
-        mRecycledProducts.offer(last);
+        mRecycledCards.offer(last);
     }
 
-    private View getRecycledOrNew() {
+    private CardView getRecycledOrNew() {
         if (adapterHasMoreItems()){
-            View view = mRecycledProducts.poll();
-            view = mAdapter.getView(mCurrentPosition++, view, null);
+            CardView card = mRecycledCards.poll();
+            card = (CardView)mAdapter.getView(mCurrentPosition++, card, null);
 
-            return view;
+            return card;
         } else {
             return null;
         }
@@ -409,7 +418,7 @@ public class CardStackLayout extends RelativeLayout{
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ImageView view = new ImageView(mContext);
-            view.setImageResource(R.drawable.sample_product_image);
+            view.setImageResource(R.mipmap.ic_action_matchmaker);
             Resources r = mContext.getResources();
             int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300,
                     r.getDisplayMetrics());

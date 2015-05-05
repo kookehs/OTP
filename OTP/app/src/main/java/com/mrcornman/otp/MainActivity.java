@@ -9,7 +9,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends Activity implements NavigationDrawerFragmentSingleElv.NavigationDrawerCallbacks {
+public class MainActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     /**
      * Navigation Identifiers
@@ -20,7 +20,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragmentSi
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
-    private com.mrcornman.otp.NavigationDrawerFragmentSingleElv mNavigationDrawerFragment;
+    private NavigationDrawerFragment mNavigationDrawerFragment;
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -30,9 +30,9 @@ public class MainActivity extends Activity implements NavigationDrawerFragmentSi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_myntra_tinder);
+        setContentView(R.layout.activity_main);
 
-        mNavigationDrawerFragment = (com.mrcornman.otp.NavigationDrawerFragmentSingleElv)
+        mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
@@ -66,11 +66,21 @@ public class MainActivity extends Activity implements NavigationDrawerFragmentSi
     }
 
     @Override
-    public void onMenuItemMatches() {
+    public void onMenuItemClientList() {
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, MatchesFragment.newInstance(1))
+                .replace(R.id.container, ClientListFragment.newInstance(1))
                 //.addToBackStack(null)
+                .commit();
+        restoreActionBar();
+    }
+
+    @Override
+    public void onMenuItemMatchmakerList() {
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, MatchMakerListFragment.newInstance(1))
+                        //.addToBackStack(null)
                 .commit();
         restoreActionBar();
     }

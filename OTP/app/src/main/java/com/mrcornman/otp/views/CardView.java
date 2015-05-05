@@ -7,7 +7,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.models.MatchItem;
+import com.mrcornman.otp.models.UserItem;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
@@ -16,10 +16,16 @@ import org.androidannotations.annotations.ViewById;
  * Created by Anil on 7/18/2014.
  */
 @EViewGroup(R.layout.card)
-public class SingleProductView extends RelativeLayout implements CardStackLayout.CardStackListener {
+public class CardView extends RelativeLayout implements CardStackLayout.CardStackListener {
 
     @ViewById
     ImageView picture;
+
+    @ViewById
+    TextView nameText;
+
+    @ViewById
+    TextView ageText;
 
     @ViewById
     TextView yes;
@@ -28,28 +34,19 @@ public class SingleProductView extends RelativeLayout implements CardStackLayout
     TextView no;
 
     @ViewById
-    TextView styleName;
-
-    @ViewById
-    TextView discountedPrice;
-
-    @ViewById
-    TextView actualPrice;
-
-    @ViewById
     ImageView yesicon;
 
     @ViewById
     ImageView noicon;
 
-    public MatchItem matchItem;
+    public UserItem userItem;
 
-    public SingleProductView(Context context) {
+    public CardView(Context context) {
         super(context);
     }
 
-    public void bind(MatchItem mMatchItem){
-        matchItem = mMatchItem;
+    public void bind(UserItem userItem){
+        this.userItem = userItem;
         return;
     }
 
@@ -62,6 +59,16 @@ public class SingleProductView extends RelativeLayout implements CardStackLayout
     }
 
     @Override
+    public void onBeginProgress(View view) {
+        yes.setAlpha(0);
+        no.setAlpha(0);
+        yesicon.setAlpha(0f);
+        noicon.setAlpha(0f);
+        nameText.setAlpha(1);
+        ageText.setAlpha(1);
+    }
+
+    @Override
     public void onUpdateProgress(boolean positif, float percent, View view) {
         if (positif) {
             yes.setAlpha(percent);
@@ -70,31 +77,29 @@ public class SingleProductView extends RelativeLayout implements CardStackLayout
             no.setAlpha(percent);
             noicon.setAlpha(percent);
         }
-        // styleName.setAlpha(0);
+        // nameText.setAlpha(0);
         // actualPrice.setAlpha(0);
-        // discountedPrice.setAlpha(0);
+        // ageText.setAlpha(0);
     }
 
     @Override
     public void onCancelled(View beingDragged) {
         yes.setAlpha(0);
         no.setAlpha(0);
-        yesicon.setAlpha((float) 0);
-        noicon.setAlpha((float) 0);
-        styleName.setAlpha(1);
-        actualPrice.setAlpha(1);
-        discountedPrice.setAlpha(1);
+        yesicon.setAlpha(0f);
+        noicon.setAlpha(0f);
+        nameText.setAlpha(1);
+        ageText.setAlpha(1);
     }
 
     @Override
     public void onChoiceMade(boolean choice, View beingDragged) {
         yes.setAlpha(0);
         no.setAlpha(0);
-        yesicon.setAlpha((float) 0);
-        noicon.setAlpha((float) 0);
-        styleName.setAlpha(1);
-        actualPrice.setAlpha(1);
-        discountedPrice.setAlpha(1);
+        yesicon.setAlpha(0f);
+        noicon.setAlpha(0f);
+        nameText.setAlpha(1);
+        ageText.setAlpha(1);
         // fixme: here you have to do what happens after the choice is made,
         // todo: can we make Product public in the main class..?
     }

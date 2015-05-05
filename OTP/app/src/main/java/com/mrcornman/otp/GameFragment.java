@@ -13,38 +13,44 @@ import android.widget.Button;
 
 import com.mrcornman.otp.adapters.CardAdapter;
 import com.mrcornman.otp.adapters.CardAdapter_;
+import com.mrcornman.otp.models.MatchItem;
+import com.mrcornman.otp.models.UserItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.mrcornman.otp.views.CardStackLayout;
-import com.mrcornman.otp.views.SingleProductView;
+import com.mrcornman.otp.views.CardView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class GameFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
 
-    private static final String SAMPLE_UNIQUE_LABEL = "men-accessories-jewellery";
     private static final String SAMPLE_FILE_NAME = "men-accessories-jewellery-file";
     private static final String SAMPLE_START_FROM_KEY = "men-accessories-jewellery-start-key";
     private static final String SAMPLE_MAX_PRODUCTS_KEY = "men-accessories-jewellery-max-products-key";
     private static final String SAMPLE_POST_DATA_HEAD = "[{\"query\":\"(global_attr_age_group:(\\\"Adults-Men\\\" OR \\\"Adults-Unisex\\\") AND global_attr_article_type_facet:(\\\"Anklet\\\" OR \\\"Bangle\\\" OR \\\"Bracelet\\\" OR \\\"Earring & Pendant Set\\\" OR \\\"Earrings\\\" OR \\\"Jewellery\\\" OR \\\"Jewellery Set\\\" OR \\\"Key chain\\\" OR \\\"Necklace\\\" OR \\\"Pendant\\\" OR \\\"Ring\\\"))\",\"start\":";
     private static final String SAMPLE_POST_DATA_TAIL = ",\"rows\":96,\"facetField\":[],\"fq\":[\"count_options_availbale:[1 TO *]\"],\"sort\":[{\"sort_field\":\"count_options_availbale\",\"order_by\":\"desc\"},{\"sort_field\":\"style_store21_male_sort_field\",\"order_by\":\"desc\"},{\"sort_field\":\"potential_revenue_male_sort_field\",\"order_by\":\"desc\"},{\"sort_field\":\"global_attr_catalog_add_date\",\"order_by\":\"desc\"}],\"return_docs\":true,\"colour_grouping\":true,\"facet\":true}]";
 
-    private static final String SAMPLE_UNIQUE_LABEL_ = "men-accessories-sunglasses";
     private static final String SAMPLE_FILE_NAME_ = "men-accessories-sunglasses-file";
     private static final String SAMPLE_START_FROM_KEY_ = "men-accessories-sunglasses-start-key";
     private static final String SAMPLE_MAX_PRODUCTS_KEY_ = "men-accessories-sunglasses-max-products-key";
     private static final String SAMPLE_POST_DATA_HEAD_ = "[{\"query\":\"(global_attr_age_group:(\\\"Adults-Men\\\" OR \\\"Adults-Unisex\\\") AND global_attr_sub_category:(\\\"Eyewear\\\"))\",\"start\":";
     private static final String SAMPLE_POST_DATA_TAIL_ = ",\"rows\":96,\"facetField\":[],\"fq\":[\"count_options_availbale:[1 TO *]\"],\"sort\":[{\"sort_field\":\"count_options_availbale\",\"order_by\":\"desc\"},{\"sort_field\":\"style_store21_male_sort_field\",\"order_by\":\"desc\"},{\"sort_field\":\"potential_revenue_male_sort_field\",\"order_by\":\"desc\"},{\"sort_field\":\"global_attr_catalog_add_date\",\"order_by\":\"desc\"}],\"return_docs\":true,\"colour_grouping\":true,\"facet\":true}]";
 
-    CardStackLayout mCardStackLayoutFirst;
-    CardStackLayout mCardStackLayoutSecond;
-    CardAdapter mCardAdapterFirst;
-    CardAdapter mCardAdapterSecond;
-    DatabaseHelper db;
-    int startFromFirst;
-    int startFromSecond;
-    String maxProductsFirst;
-    String maxProductsSecond;
-    SharedPreferences sharedPreferences;
+    private CardStackLayout mCardStackLayoutFirst;
+    private CardStackLayout mCardStackLayoutSecond;
+    private CardAdapter mCardAdapterFirst;
+    private CardAdapter mCardAdapterSecond;
+    private DatabaseHelper db;
+    private int startFromFirst;
+    private int startFromSecond;
+    private String maxCardsFirst;
+    private String maxCardsSecond;
+
+    private SharedPreferences sharedPreferences;
+
+    private MatchItem potentialMatch;
 
     public String url = "http://www.myntra.com/searchws/search/styleids2";
 
@@ -70,14 +76,15 @@ public class GameFragment extends Fragment {
         mCardStackLayoutSecond = (CardStackLayout) view.findViewById(R.id.cardstack_second);
 
         db = new DatabaseHelper(getActivity().getApplicationContext());
-        // List<Product> products = db.getUnseenProductsFromGroup(getString(R.string.men_shoes_group_label), 5);
 
         sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
         // resetStoredValues();
         startFromFirst = sharedPreferences.getInt(SAMPLE_START_FROM_KEY, 0);
         startFromSecond = sharedPreferences.getInt(SAMPLE_START_FROM_KEY_, 0);
-        maxProductsFirst = sharedPreferences.getString(SAMPLE_MAX_PRODUCTS_KEY, "1000");
-        maxProductsSecond = sharedPreferences.getString(SAMPLE_MAX_PRODUCTS_KEY_, "1000");
+        maxCardsFirst = sharedPreferences.getString(SAMPLE_MAX_PRODUCTS_KEY, "1000");
+        maxCardsSecond = sharedPreferences.getString(SAMPLE_MAX_PRODUCTS_KEY_, "1000");
+
+        potentialMatch = new MatchItem();
 
         refreshFirst();
         refreshSecond();
@@ -98,65 +105,94 @@ public class GameFragment extends Fragment {
             }
         });
 
-        mCardStackLayoutFirst.setmProductStackListener(new CardStackLayout.CardStackListener() {
+        mCardStackLayoutFirst.setmCardStackListener(new CardStackLayout.CardStackListener() {
+            @Override
+            public void onBeginProgress(View view) {
+                buildPotentialMatch(getFirstFocused().getId(), getSecondFocused().getId());
+            }
+
             @Override
             public void onUpdateProgress(boolean positif, float percent, View view) {
-                SingleProductView item = (SingleProductView) view;
+                CardView item = (CardView) view;
                 item.onUpdateProgress(positif, percent, view);
             }
 
             @Override
             public void onCancelled(View beingDragged) {
-                SingleProductView item = (SingleProductView) beingDragged;
+                CardView item = (CardView) beingDragged;
                 item.onCancelled(beingDragged);
+                clearPotentialMatch();
             }
 
             @Override
             public void onChoiceMade(boolean choice, View beingDragged) {
-                SingleProductView item = (SingleProductView) beingDragged;
+                /*
+                SingleUserView item = (SingleUserView) beingDragged;
                 item.onChoiceMade(choice, beingDragged);
                 //todo: handle what to do after the choice is made.
                 if (choice) {
-                    db.updateLikeStatus(item.matchItem, db.VALUE_LIKED);
+                    db.updateNumLikes(item.userItem, db.VALUE_LIKED);
                 } else {
-                    db.updateLikeStatus(item.matchItem, db.VALUE_DISLIKED);
+                    db.updateNumLikes(item.userItem, db.VALUE_DISLIKED);
                 }
-                Log.d("tinder fragment", "updated the choice made " + String.valueOf(choice) + " " + item.matchItem.getStyleName());
+                Log.d("game fragment", "updated the choice made " + String.valueOf(choice) + " " + item.userItem.getName());
+                */
+                onCreateMatch();
             }
         });
 
-        mCardStackLayoutSecond.setmProductStackListener(new CardStackLayout.CardStackListener() {
+        mCardStackLayoutSecond.setmCardStackListener(new CardStackLayout.CardStackListener() {
+            @Override
+            public void onBeginProgress(View view) {
+                buildPotentialMatch(getFirstFocused().getId(), getSecondFocused().getId());
+            }
+
             @Override
             public void onUpdateProgress(boolean positif, float percent, View view) {
-                SingleProductView item = (SingleProductView) view;
+                CardView item = (CardView) view;
                 item.onUpdateProgress(positif, percent, view);
             }
 
             @Override
             public void onCancelled(View beingDragged) {
-                SingleProductView item = (SingleProductView) beingDragged;
+                CardView item = (CardView) beingDragged;
                 item.onCancelled(beingDragged);
+                clearPotentialMatch();
             }
 
             @Override
             public void onChoiceMade(boolean choice, View beingDragged) {
-                SingleProductView item = (SingleProductView) beingDragged;
-                item.onChoiceMade(choice, beingDragged);
-                //todo: handle what to do after the choice is made.
-                if (choice) {
-                    db.updateLikeStatus(item.matchItem, db.VALUE_LIKED);
-                } else {
-                    db.updateLikeStatus(item.matchItem, db.VALUE_DISLIKED);
-                }
-                Log.d("tinder fragment", "updated the choice made " + String.valueOf(choice) + " " + item.matchItem.getStyleName());
+                onCreateMatch();
             }
         });
 
         return view;
     }
 
+    private void buildPotentialMatch(String firstId, String secondId) {
+        potentialMatch = new MatchItem();
+        potentialMatch.setFirstId(firstId);
+        potentialMatch.setSecondId(secondId);
+    }
+
+    private void clearPotentialMatch() {
+        potentialMatch = null;
+    }
+
+    public void onCreateMatch() {
+        if(potentialMatch == null) return;
+
+        if(db.getMatchByPairIds(potentialMatch.getFirstId(), potentialMatch.getSecondId()) == null) {
+            db.insertNewMatch(potentialMatch);
+        } else {
+            db.updateNumMatchLikes(potentialMatch, potentialMatch.getNumLikes() + 1);
+        }
+
+        clearPotentialMatch();
+    }
+
     private void resetStoredValues() {
-        db.deleteTable(db.TABLE_NAME);
+        db.onResetTables();
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt(SAMPLE_START_FROM_KEY, 0);
         editor.putString(SAMPLE_MAX_PRODUCTS_KEY, "1000");
@@ -167,17 +203,17 @@ public class GameFragment extends Fragment {
 
     private void refreshFirst() {
         Log.i("First: start from", String.valueOf(startFromFirst));
-        Log.i("First: max products", maxProductsFirst);
+        Log.i("First: max products", maxCardsFirst);
 
         mCardAdapterFirst = CardAdapter_.getInstance_(getActivity());
-        if (startFromFirst > Integer.parseInt(maxProductsFirst)){
+        if (startFromFirst > Integer.parseInt(maxCardsFirst)){
             startFromFirst = 0;
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putInt(getString(R.string.men_shoes_start_from_key), 0);
+            //editor.putInt(getString(R.string.men_shoes_start_from_key), 0);
             editor.commit();
         }
         String postData = SAMPLE_POST_DATA_HEAD + String.valueOf(startFromFirst) + SAMPLE_POST_DATA_TAIL;
-        mCardAdapterFirst.initFromDatabaseUsingSharedPref(url, postData, SAMPLE_FILE_NAME, db, sharedPreferences, SAMPLE_MAX_PRODUCTS_KEY, SAMPLE_START_FROM_KEY);
+        mCardAdapterFirst.initFromDatabaseFromOtherUserUsingSharedPref(getSecondList(), url, postData, SAMPLE_FILE_NAME, db, sharedPreferences, SAMPLE_MAX_PRODUCTS_KEY, SAMPLE_START_FROM_KEY);
         if (!mCardAdapterFirst.isEmpty()) {
             mCardStackLayoutFirst.setAdapter(mCardAdapterFirst);
         }
@@ -185,20 +221,54 @@ public class GameFragment extends Fragment {
 
     private void refreshSecond() {
         Log.i("Second: start from", String.valueOf(startFromSecond));
-        Log.i("Second: max products", maxProductsSecond);
+        Log.i("Second: max products", maxCardsSecond);
 
         mCardAdapterSecond = CardAdapter_.getInstance_(getActivity());
-        if (startFromSecond > Integer.parseInt(maxProductsSecond)){
+        if (startFromSecond > Integer.parseInt(maxCardsSecond)){
             startFromSecond = 0;
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putInt(getString(R.string.men_shoes_start_from_key), 0);
+            //editor.putInt(getString(R.string.men_shoes_start_from_key), 0);
             editor.commit();
         }
         String postData = SAMPLE_POST_DATA_HEAD_ + String.valueOf(startFromSecond) + SAMPLE_POST_DATA_TAIL_;
-        mCardAdapterSecond.initFromDatabaseUsingSharedPref(url, postData, SAMPLE_FILE_NAME_, db, sharedPreferences, SAMPLE_MAX_PRODUCTS_KEY_, SAMPLE_START_FROM_KEY_);
+        mCardAdapterSecond.initFromDatabaseFromOtherUserUsingSharedPref(getFirstList(), url, postData, SAMPLE_FILE_NAME_, db, sharedPreferences, SAMPLE_MAX_PRODUCTS_KEY_, SAMPLE_START_FROM_KEY_);
         if (!mCardAdapterSecond.isEmpty()){
             mCardStackLayoutSecond.setAdapter(mCardAdapterSecond);
         }
+    }
+
+    public UserItem getFirstFocused() {
+        CardView view = mCardStackLayoutFirst.getmBeingDragged() != null ? (CardView)mCardStackLayoutFirst.getmBeingDragged() : (CardView)mCardStackLayoutFirst.getTopCard();
+        return view != null ? view.userItem : null;
+    }
+
+    public UserItem getSecondFocused() {
+        CardView view = mCardStackLayoutSecond.getmBeingDragged() != null ? (CardView)mCardStackLayoutSecond.getmBeingDragged() : (CardView)mCardStackLayoutSecond.getTopCard();
+        return view != null ? view.userItem : null;
+    }
+
+    public List<UserItem> getFirstList() {
+        List<UserItem> firstList = new ArrayList<UserItem>();
+        if(mCardStackLayoutFirst.getmBeingDragged() != null)
+            firstList.add(((CardView)mCardStackLayoutFirst.getmBeingDragged()).userItem);
+
+        for(CardView view : mCardStackLayoutFirst.getCards()) {
+            firstList.add(view.userItem);
+        }
+
+        return firstList;
+    }
+
+    public List<UserItem> getSecondList() {
+        List<UserItem> secondList = new ArrayList<UserItem>();
+        if(mCardStackLayoutSecond.getmBeingDragged() != null)
+            secondList.add(((CardView)mCardStackLayoutSecond.getmBeingDragged()).userItem);
+
+        for(CardView view : mCardStackLayoutSecond.getCards()) {
+            secondList.add(view.userItem);
+        }
+
+        return secondList;
     }
 
     @Override

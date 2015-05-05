@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.mrcornman.otp.models.MatchItem;
+import com.mrcornman.otp.models.UserItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,46 +22,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // version
     private static final int DATABASE_VERSION = 1;
     // database name
-    public static final String DATABASE_NAME = "anil.MyntraProducts.db";
+    public static final String DATABASE_NAME = "com.mrcornman.otp.db";
     // table name
-    public static final String TABLE_NAME = "myntra_products";
-
-    public static final String MEN_SHOES_GROUP_LABEL = "men_shoes";
-    public static final String WOMEN_SHOES_gROUP_LABEL = "women_shoes";
+    public static final String MATCH_TABLE_NAME = "otp_match";
+    public static final String USER_TABLE_NAME = "otp_user";
 
     // column names
     public static final String KEY_ID = "id";
-    public static final String KEY_STYLE_NAME = "style_name";
-    public static final String KEY_DISCOUNTED_PRICE = "discounted_price";
-    public static final String KEY_DISCOUNT = "discount";
-    public static final String KEY_PRICE = "price";
-    public static final String KEY_STYLE_ID = "style_id";
-    public static final String KEY_IMAGE_URL = "image_url";
-    public static final String KEY_LANDING_PAGE_URL = "landing_page_url";
-    public static final String KEY_LIKED = "is_liked";
+
+    // match specific
+    public static final String MATCH_KEY_FIRST_ID = "first_id";
+    public static final String MATCH_KEY_SECOND_ID = "second_id";
+    public static final String MATCH_KEY_MATCHMAKER_ID = "matchmaker_id";
+    public static final String MATCH_KEY_NUM_LIKES = "num_likes";
+
+    // user specific
+    public static final String USER_KEY_NAME = "name";
+    public static final String USER_KEY_GENDER = "gender";
+    public static final String USER_KEY_AGE = "age";
+    public static final String USER_KEY_IMAGE_URL = "image_url";
+    public static final String USER_KEY_LANDING_PAGE_URL = "landing_page_url";
 
     // fixme: make sure database connections are closed
 
-    public static final int VALUE_LIKED = 1;
-    public static final int VALUE_DISLIKED = 2;
-    public static final int VALUE_NONE = 0;
-
     // table create statements
-    private static final String CREATE_TABLE = "CREATE TABLE "
-            + TABLE_NAME + "(" + KEY_ID + " INTEGER PRIMARY KEY,"
-            + KEY_STYLE_NAME + " TEXT,"
-            + KEY_DISCOUNTED_PRICE + " TEXT,"
-            + KEY_DISCOUNT + " TEXT,"
-            + KEY_PRICE + " TEXT,"
-            + KEY_STYLE_ID + " TEXT UNIQUE,"
-            + KEY_IMAGE_URL + " TEXT,"
-            + KEY_LANDING_PAGE_URL + " TEXT,"
-            + KEY_LIKED + " INTEGER" // fixed: liked is integer in table
+    private static final String CREATE_MATCH_TABLE = "CREATE TABLE "
+            + MATCH_TABLE_NAME + "(" + KEY_ID + " INTEGER PRIMARY KEY,"
+            + MATCH_KEY_FIRST_ID + " TEXT,"
+            + MATCH_KEY_SECOND_ID + " TEXT,"
+            + MATCH_KEY_MATCHMAKER_ID + " TEXT,"
+            + MATCH_KEY_NUM_LIKES + " INTEGER" // fixed: liked is integer in table
             + ")";
 
-//    public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-//        super(context, name, factory, version);
-//    }
+    private static final String CREATE_USER_TABLE = "CREATE TABLE "
+            + USER_TABLE_NAME + "(" + KEY_ID + " INTEGER PRIMARY KEY,"
+            + USER_KEY_NAME + " TEXT,"
+            + USER_KEY_GENDER + " INTEGER,"
+            + USER_KEY_AGE + " INTEGER,"
+            + USER_KEY_IMAGE_URL + " TEXT,"
+            + USER_KEY_LANDING_PAGE_URL + " TEXT"
+            + ")";
+
 
     public DatabaseHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -70,179 +72,235 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         // things to do generally when a database is created..
         // todo: crate indexes
-        sqLiteDatabase.execSQL(CREATE_TABLE);
+        sqLiteDatabase.execSQL(CREATE_MATCH_TABLE);
+        sqLiteDatabase.execSQL(CREATE_USER_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i2) {
         // todo: handle what to do when you upgrade the database
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MATCH_TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + USER_TABLE_NAME);
 
         onCreate(sqLiteDatabase);
     }
 
-    public void deleteTable(String table){
+    public void onResetTables() {
         SQLiteDatabase db = this.getWritableDatabase();
-        Log.d("databse helper", "deleted table" + table);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + MATCH_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + USER_TABLE_NAME);
         onCreate(db);
     }
 
-    public long insertNewProduct(MatchItem matchItem, String table) {
+    public String insertNewMatch(MatchItem matchItem) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_STYLE_NAME, matchItem.getStyleName());
-        values.put(KEY_DISCOUNTED_PRICE, matchItem.getDiscountedPrice());
-        values.put(KEY_DISCOUNT, matchItem.getDiscount());
-        values.put(KEY_PRICE, matchItem.getPrice());
-        values.put(KEY_STYLE_ID, matchItem.getStyleId());
-        values.put(KEY_IMAGE_URL, matchItem.getImageUrl());
-        values.put(KEY_LANDING_PAGE_URL, matchItem.getDreLandingPageUrl());
-        matchItem.setLiked(VALUE_NONE);
-        values.put(KEY_LIKED, VALUE_NONE);
+        values.put(MATCH_KEY_FIRST_ID, matchItem.getFirstId());
+        values.put(MATCH_KEY_SECOND_ID, matchItem.getSecondId());
+        values.put(MATCH_KEY_MATCHMAKER_ID, matchItem.getSecondId());
+        values.put(MATCH_KEY_NUM_LIKES, matchItem.getNumLikes());
 
-        long product_id = db.insert(table, null, values);
+        long product_id = db.insert(MATCH_TABLE_NAME, null, values);
         db.close();
-        return product_id;
+
+        return product_id + "";
     }
 
+    public String insertNewUser(UserItem userItem) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(USER_KEY_NAME, userItem.getName());
+        values.put(USER_KEY_GENDER, userItem.getGender());
+        values.put(USER_KEY_AGE, userItem.getAge());
+        values.put(USER_KEY_IMAGE_URL, userItem.getImageUrl());
+        values.put(USER_KEY_LANDING_PAGE_URL, userItem.getDreLandingPageUrl());
+
+        long product_id = db.insert(USER_TABLE_NAME, null, values);
+        db.close();
+        return product_id + "";
+    }
+
+    public UserItem getUserById(String value){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM " + USER_TABLE_NAME + " WHERE "
+                + KEY_ID + " = " + value;
+        Cursor c = db.rawQuery(selectQuery, null);
+        if (c != null)
+            c.moveToFirst();
+        else
+            return null;
+
+        UserItem user = new UserItem(c.getString(c.getColumnIndex(KEY_ID)));
+        user.setName(c.getString(c.getColumnIndex(USER_KEY_NAME)));
+        user.setGender(c.getInt(c.getColumnIndex(USER_KEY_GENDER)));
+        user.setAge(c.getInt(c.getColumnIndex(USER_KEY_AGE)));
+        user.setImageUrl(c.getString(c.getColumnIndex(USER_KEY_IMAGE_URL)));
+        user.setDreLandingPageUrl(c.getString(c.getColumnIndex(USER_KEY_LANDING_PAGE_URL)));
+        c.close();
+        db.close();
+        return user;
+    }
+
+    // needs to get top 20 based on number of likes
+    public List<UserItem> getPotentialUsers(List<UserItem> others, int limit) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String listQuery = "()";
+        if(others != null && others.size() > 0) {
+            listQuery = "(" + others.get(0).getId();
+            for (int i = 1, il = others.size(); i < il; ++i) {
+                listQuery += (", " + others.get(i).getId());
+            }
+            listQuery += ")";
+        }
+
+        Log.i("dafjasdf", listQuery);
+
+        String selectQuery = "SELECT * FROM " + USER_TABLE_NAME
+                + " WHERE " + KEY_ID + " NOT IN " + listQuery
+                + " LIMIT " + limit;
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        List<UserItem> userItems = new ArrayList<UserItem>();
+
+        if (c.moveToFirst()) {
+            do {
+                UserItem userItem = new UserItem(c.getString(c.getColumnIndex(KEY_ID)));
+                userItem.setName(c.getString(c.getColumnIndex(USER_KEY_NAME)));
+                userItem.setAge(c.getInt(c.getColumnIndex(USER_KEY_AGE)));
+                userItem.setGender(c.getInt(c.getColumnIndex(USER_KEY_GENDER)));
+                userItem.setImageUrl(c.getString(c.getColumnIndex(USER_KEY_IMAGE_URL)));
+                userItems.add(userItem);
+            } while (c.moveToNext());
+        }
+        c.close();
+        db.close();
+        return userItems;
+    }
+
+    public MatchItem getMatchByPairIds(String firstId, String secondId){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM " + MATCH_TABLE_NAME + " WHERE "
+                + MATCH_KEY_FIRST_ID + " = " + firstId + " AND "
+                + MATCH_KEY_SECOND_ID + " = " + secondId;
+        Cursor c = db.rawQuery(selectQuery, null);
+        if (c != null && c.getCount() > 0)
+            c.moveToFirst();
+        else
+            return null;
+
+        MatchItem match = new MatchItem(c.getString(c.getColumnIndex(KEY_ID)));
+        match.setFirstId(c.getString(c.getColumnIndex(MATCH_KEY_FIRST_ID)));
+        match.setSecondId(c.getString(c.getColumnIndex(MATCH_KEY_SECOND_ID)));
+        match.setMatchmakerId(c.getString(c.getColumnIndex(MATCH_KEY_MATCHMAKER_ID)));
+        match.setNumLikes(c.getInt(c.getColumnIndex(MATCH_KEY_NUM_LIKES)));
+        c.close();
+        db.close();
+        return match;
+    }
 
     // todo: have some clarity on when a database is closed, is it really necessary? but close all cursors.. for now closing all database instances..
-    public void insertOrIgnoreProducts(List<MatchItem> matchItems, String table){
-
+    public void insertOrIgnoreMatches(List<MatchItem> matchItems){
         int length = matchItems.size();
         String valuesString = "";
         for (int i = 0; i < length; i++) {
             MatchItem matchItem = matchItems.get(i);
             valuesString += "("
-                     + sqlEscapeString(matchItem.getStyleName()) + ","
-                     + sqlEscapeString(matchItem.getDiscountedPrice()) + ","
-                     + sqlEscapeString(matchItem.getDiscount()) + ","
-                     + sqlEscapeString(matchItem.getPrice()) + ","
-                     + sqlEscapeString(matchItem.getStyleId()) + ","
-                     + sqlEscapeString(matchItem.getImageUrl()) + ","
-                     + sqlEscapeString(matchItem.getDreLandingPageUrl()) + ","
-                     + String.valueOf(matchItem.getLiked()) + "),";
+                     + sqlEscapeString(matchItem.getFirstId()) + ","
+                     + sqlEscapeString(matchItem.getSecondId()) + ","
+                     + sqlEscapeString(matchItem.getMatchmakerId()) + ","
+                     + String.valueOf(matchItem.getNumLikes()) + "),";
         }
         Log.e("values being inserted", valuesString);
         if (valuesString.length() > 0) {
             valuesString = valuesString.substring(0, valuesString.length() - 1);
-            String SQL_INSERT_OR_IGNORE = "INSERT OR IGNORE INTO " + table + " ("
-                    + KEY_STYLE_NAME + ","
-                    + KEY_DISCOUNTED_PRICE + ","
-                    + KEY_DISCOUNT + ","
-                    + KEY_PRICE + ","
-                    + KEY_STYLE_ID + ","
-                    + KEY_IMAGE_URL + ","
-                    + KEY_LANDING_PAGE_URL + ","
-                    + KEY_LIKED
+            String SQL_INSERT_OR_IGNORE = "INSERT OR IGNORE INTO " + MATCH_TABLE_NAME + " ("
+                    + MATCH_KEY_FIRST_ID + ","
+                    + MATCH_KEY_SECOND_ID + ","
+                    + MATCH_KEY_MATCHMAKER_ID + ","
+                    + MATCH_KEY_NUM_LIKES
                     + ")" + " VALUES " + valuesString;
             SQLiteDatabase db = this.getWritableDatabase();
             db.execSQL(SQL_INSERT_OR_IGNORE);
             db.close();
         }
-
     }
 
-    public MatchItem getProduct(String tableName, String columnName, String value){
-        SQLiteDatabase db = this.getReadableDatabase();
-        String selectQuery = "SELECT * FROM " + tableName + " WHERE "
-                + columnName + " = " + value;
-        Cursor c = db.rawQuery(selectQuery, null);
-        if (c != null)
-            c.moveToFirst();
-        MatchItem matchItem = new MatchItem(c.getInt(c.getColumnIndex(KEY_ID))); // fixme: this is wrong, confusion betweet KEY_ID, mId, unique style id from the website
-        matchItem.setDiscountedPrice(c.getString(c.getColumnIndex(KEY_DISCOUNTED_PRICE)));
-        matchItem.setStyleName(c.getString(c.getColumnIndex(KEY_STYLE_NAME)));
-        matchItem.setDiscount(c.getString(c.getColumnIndex(KEY_DISCOUNT)));
-        matchItem.setPrice(c.getString(c.getColumnIndex(KEY_PRICE)));
-        matchItem.setStyleId(c.getString(c.getColumnIndex(KEY_STYLE_ID)));
-        matchItem.setImageUrl(c.getString(c.getColumnIndex(KEY_IMAGE_URL)));
-        matchItem.setDreLandingPageUrl(c.getString(c.getColumnIndex(KEY_LANDING_PAGE_URL)));
-        matchItem.setLiked(c.getInt(c.getColumnIndex(KEY_LIKED)));
-        c.close();
-        db.close();
-        return matchItem;
-    }
-
-    //todo: add an extra parameter to limit number of products
-    //fixed: the columns are a mess, done in a hurry, fix this shit..
-    public List<MatchItem> getProducts(String tableName, String columnName, String value, String limit) {
-        List<MatchItem> matchItems = new ArrayList<MatchItem>();
-        String selectQuery = "SELECT * FROM " + tableName + " WHERE "
-                + columnName + " = '" + value + "' LIMIT " + limit;
-        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
-        Cursor c = sqLiteDatabase.rawQuery(selectQuery, null);
-
-        if (c.moveToFirst()) {
-            do {
-                MatchItem matchItem = new MatchItem(c.getInt(c.getColumnIndex(KEY_ID)));
-                matchItem.setDiscountedPrice(c.getString(c.getColumnIndex(KEY_DISCOUNTED_PRICE)));
-                matchItem.setStyleName(c.getString(c.getColumnIndex(KEY_STYLE_NAME)));
-                matchItem.setDiscount(c.getString(c.getColumnIndex(KEY_DISCOUNT)));
-                matchItem.setPrice(c.getString(c.getColumnIndex(KEY_PRICE)));
-                matchItem.setStyleId(c.getString(c.getColumnIndex(KEY_STYLE_ID)));
-                matchItem.setImageUrl(c.getString(c.getColumnIndex(KEY_IMAGE_URL)));
-                matchItem.setDreLandingPageUrl(c.getString(c.getColumnIndex(KEY_LANDING_PAGE_URL)));
-                matchItem.setLiked(c.getInt(c.getColumnIndex(KEY_LIKED)));
-                matchItems.add(matchItem);
-            } while (c.moveToNext());
+    public void insertOrIgnoreUsers(List<UserItem> userItems){
+        int length = userItems.size();
+        String valuesString = "";
+        for (int i = 0; i < length; i++) {
+            UserItem userItem = userItems.get(i);
+            valuesString += "("
+                    + sqlEscapeString(userItem.getName()) + ","
+                    + sqlEscapeString(userItem.getGender() + "") + ","
+                    + sqlEscapeString(userItem.getAge() + "") + ","
+                    + sqlEscapeString(userItem.getImageUrl()) + ","
+                    + sqlEscapeString(userItem.getDreLandingPageUrl()) + "),";
         }
-        c.close();
-        sqLiteDatabase.close();
-        return matchItems;
-    }
-
-    public List<MatchItem> getUnseenProductsFromGroup(int limit) {
-        String limitString = String.valueOf(limit);
-        List<MatchItem> matchItems = new ArrayList<MatchItem>();
-        String selectQuery = "SELECT * FROM " + TABLE_NAME + " WHERE "
-                + KEY_LIKED + " = 0"
-                + " LIMIT " + limit;
-        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
-        Cursor c = sqLiteDatabase.rawQuery(selectQuery, null);
-
-        if (c.moveToFirst()) {
-            do {
-                MatchItem matchItem = new MatchItem(c.getInt(c.getColumnIndex(KEY_ID)));
-                matchItem.setDiscountedPrice(c.getString(c.getColumnIndex(KEY_DISCOUNTED_PRICE)));
-                matchItem.setStyleName(c.getString(c.getColumnIndex(KEY_STYLE_NAME)));
-                matchItem.setDiscount(c.getString(c.getColumnIndex(KEY_DISCOUNT)));
-                matchItem.setPrice(c.getString(c.getColumnIndex(KEY_PRICE)));
-                matchItem.setStyleId(c.getString(c.getColumnIndex(KEY_STYLE_ID)));
-                matchItem.setImageUrl(c.getString(c.getColumnIndex(KEY_IMAGE_URL)));
-                matchItem.setDreLandingPageUrl(c.getString(c.getColumnIndex(KEY_LANDING_PAGE_URL)));
-                matchItem.setLiked(c.getInt(c.getColumnIndex(KEY_LIKED)));
-                matchItems.add(matchItem);
-            } while (c.moveToNext());
+        Log.e("values being inserted", valuesString);
+        if (valuesString.length() > 0) {
+            valuesString = valuesString.substring(0, valuesString.length() - 1);
+            String SQL_INSERT_OR_IGNORE = "INSERT OR IGNORE INTO " + USER_TABLE_NAME + " ("
+                    + USER_KEY_NAME + ","
+                    + USER_KEY_GENDER + ","
+                    + USER_KEY_AGE + ","
+                    + USER_KEY_IMAGE_URL + ","
+                    + USER_KEY_LANDING_PAGE_URL
+                    + ")" + " VALUES " + valuesString;
+            SQLiteDatabase db = this.getWritableDatabase();
+            db.execSQL(SQL_INSERT_OR_IGNORE);
+            db.close();
         }
-        c.close();
-        sqLiteDatabase.close();
-        Log.e("gettign unseen products", matchItems.toString());
-        return matchItems;
     }
 
-    public Cursor getLikedProductsFromGroup(){
+    public Cursor getTopMatches(int limit){
         // a cursor object that is fed into a cursor adapter must have a column name "_id"
         // for that instead of changing our model, we can do
         // SELECT id _id, * FROM // instead of
         // SELECT * FROM //
         // in the above query "id" is our actual column name
         // http://stackoverflow.com/a/7494398/544102
-        String selectQuery = "SELECT id _id, * FROM " + TABLE_NAME + " WHERE "
-                + KEY_LIKED + " = 1";
+        String selectQuery = "SELECT id _id, * FROM " + MATCH_TABLE_NAME
+                + " ORDER BY " + MATCH_KEY_NUM_LIKES + " DESC"
+                + " LIMIT " + limit;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(selectQuery, null);
         return c;
     }
 
-    public void updateLikeStatus(MatchItem matchItem, int likeStatus){
+    public List<MatchItem> getPotentialMatches(int limit) {
+        List<MatchItem> matchItems = new ArrayList<MatchItem>();
+        String selectQuery = "SELECT * FROM " + MATCH_TABLE_NAME
+                + " ORDER BY " + MATCH_KEY_NUM_LIKES + " DESC"
+                + " LIMIT " + limit;
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        Cursor c = sqLiteDatabase.rawQuery(selectQuery, null);
+
+        if (c.moveToFirst()) {
+            do {
+                MatchItem matchItem = new MatchItem(c.getString(c.getColumnIndex(KEY_ID)));
+                matchItem.setFirstId(c.getString(c.getColumnIndex(MATCH_KEY_FIRST_ID)));
+                matchItem.setSecondId(c.getString(c.getColumnIndex(MATCH_KEY_SECOND_ID)));
+                matchItem.setMatchmakerId(c.getString(c.getColumnIndex(MATCH_KEY_MATCHMAKER_ID)));
+                matchItem.setNumLikes(c.getInt(c.getColumnIndex(MATCH_KEY_NUM_LIKES)));
+                matchItems.add(matchItem);
+            } while (c.moveToNext());
+        }
+        c.close();
+        sqLiteDatabase.close();
+        Log.e("getting unseen matches", matchItems.toString());
+        return matchItems;
+    }
+
+    public void updateNumMatchLikes(MatchItem matchItem, int numLikes){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
-        String likeStatusStr = String.valueOf(likeStatus);
-        String UPDATE_QUERY = "UPDATE " + TABLE_NAME
-                + " SET " + KEY_LIKED + " = " + likeStatusStr
-                + " WHERE " + KEY_STYLE_ID + " = " + matchItem.getStyleId();
+        String numLikesStr = String.valueOf(numLikes);
+        String UPDATE_QUERY = "UPDATE " + MATCH_TABLE_NAME
+                + " SET " + MATCH_KEY_NUM_LIKES + " = " + numLikesStr
+                + " WHERE " + KEY_ID + " = " + matchItem.getid();
         sqLiteDatabase.execSQL(UPDATE_QUERY);
         sqLiteDatabase.close();
     }
