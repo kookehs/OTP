@@ -1,16 +1,21 @@
-package com.mrcornman.otp;
+package com.mrcornman.otp.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.mrcornman.otp.MainActivity;
+import com.mrcornman.otp.R;
 import com.mrcornman.otp.adapters.ClientListCursorAdapter;
+import com.mrcornman.otp.models.UserItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
 
 public class ClientListFragment extends Fragment {
@@ -36,12 +41,41 @@ public class ClientListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        final DatabaseHelper db = new DatabaseHelper(getActivity().getApplicationContext());
+
+        // init views
         View rootView = inflater.inflate(R.layout.fragment_client_list, container, false);
+
         ListView listView = (ListView) rootView.findViewById(R.id.client_list);
-        DatabaseHelper db = new DatabaseHelper(getActivity().getApplicationContext());
+
+        // set up list view input
+        // set up on click
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String otherId = view.getTag().toString();
+                UserItem userItem = db.getUserById(otherId);
+                if(userItem == null) {
+                    Log.e("ClientListFragment", "Got a null user from a client match click!");
+                    return;
+                }
+
+                String url = "http://www.myntra.com/" + userItem.getDreLandingPageUrl();
+                Log.i("ClientListFragment", "Heading to " + url);
+                /*
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(url));
+                getActivity().startActivity(intent);
+                */
+            }
+        });
+
+        // fill list up
         Cursor cursor = db.getTopMatches(20);
         ListAdapter adapter = new ClientListCursorAdapter(getActivity(), cursor, false);
         listView.setAdapter(adapter);
+
         return rootView;
     }
 

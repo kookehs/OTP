@@ -7,8 +7,7 @@
     android:layout_height="match_parent"
     tools:context="com.mrcornman.otp.MainActivity">
 
-    <!-- As the main content view, the view below consumes the entire
-         space available using match_parent in both dimensions. -->
+    <!--Main Content Container-->
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
@@ -25,6 +24,6 @@
         android:layout_width="@dimen/navigation_drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:name="com.mrcornman.otp.NavigationDrawerFragment" />
+        android:name="com.mrcornman.otp.fragments.NavigationDrawerFragment" />
 
 </android.support.v4.widget.DrawerLayout>

@@ -15,7 +15,7 @@ import org.androidannotations.annotations.ViewById;
 /**
  * Created by Anil on 7/18/2014.
  */
-@EViewGroup(R.layout.card)
+@EViewGroup(R.layout.card_item)
 public class CardView extends RelativeLayout implements CardStackLayout.CardStackListener {
 
     @ViewById

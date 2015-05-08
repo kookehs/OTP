@@ -1,4 +1,4 @@
-package com.mrcornman.otp;
+package com.mrcornman.otp.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.mrcornman.otp.R;
 import com.mrcornman.otp.adapters.CardAdapter;
 import com.mrcornman.otp.adapters.CardAdapter_;
 import com.mrcornman.otp.models.MatchItem;
@@ -58,9 +59,8 @@ public class GameFragment extends Fragment {
         GameFragment fragment = new GameFragment();
         return fragment;
     }
-    public GameFragment() {
-        // Required empty public constructor
-    }
+
+    public GameFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -173,6 +173,8 @@ public class GameFragment extends Fragment {
         potentialMatch = new MatchItem();
         potentialMatch.setFirstId(firstId);
         potentialMatch.setSecondId(secondId);
+        potentialMatch.setMatchmakerId("");
+        potentialMatch.setNumLikes(1);
     }
 
     private void clearPotentialMatch() {
@@ -182,10 +184,12 @@ public class GameFragment extends Fragment {
     public void onCreateMatch() {
         if(potentialMatch == null) return;
 
-        if(db.getMatchByPairIds(potentialMatch.getFirstId(), potentialMatch.getSecondId()) == null) {
+        // TODO: Possibly make it update on insert match instead of doing a costly check beforehand
+        MatchItem filterMatch = db.getMatchByPairIds(potentialMatch.getFirstId(), potentialMatch.getSecondId());
+        if(filterMatch == null) {
             db.insertNewMatch(potentialMatch);
         } else {
-            db.updateNumMatchLikes(potentialMatch, potentialMatch.getNumLikes() + 1);
+            db.updateNumMatchLikes(filterMatch, filterMatch.getNumLikes() + 1);
         }
 
         clearPotentialMatch();

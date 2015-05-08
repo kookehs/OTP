@@ -1,10 +1,8 @@
 package com.mrcornman.otp.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,111 +52,107 @@ public class MatchMakerListCursorAdapter extends CursorAdapter {
     @Override
     public void bindView(View row, final Context context, Cursor cursor) {
 
-        // get the current match item
+        DatabaseHelper db = new DatabaseHelper(context);
+
+        // init views first
+        TextView countText = (TextView)row.findViewById(R.id.count_text);
+
+        final ImageView thumbImageFirst = (ImageView)row.findViewById(R.id.thumb_image_first);
+        TextView nameTextFirst = (TextView)row.findViewById(R.id.name_text_first);
+        final ProgressBar progressBarFirst = (ProgressBar)row.findViewById(R.id.thumb_progress_first);
+
+        progressBarFirst.setVisibility(View.VISIBLE);
+        thumbImageFirst.setVisibility(View.INVISIBLE);
+
+        ImageLoadingListener listenerFirst = new ImageLoadingListener() {
+            @Override
+            public void onLoadingStarted(String s, View view) {
+
+            }
+
+            @Override
+            public void onLoadingFailed(String s, View view, FailReason failReason) {
+
+            }
+
+            @Override
+            public void onLoadingComplete(String s, View view, Bitmap bitmap) {
+                progressBarFirst.setVisibility(View.INVISIBLE);
+                thumbImageFirst.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onLoadingCancelled(String s, View view) {
+
+            }
+        };
+
+        // init views second
+        final ImageView thumbImageSecond = (ImageView)row.findViewById(R.id.thumb_image_second);
+        TextView nameTextSecond = (TextView)row.findViewById(R.id.name_text_second);
+        final ProgressBar progressBarSecond = (ProgressBar)row.findViewById(R.id.thumb_progress_second);
+
+        progressBarSecond.setVisibility(View.VISIBLE);
+        thumbImageSecond.setVisibility(View.INVISIBLE);
+
+        ImageLoadingListener listenerSecond = new ImageLoadingListener() {
+            @Override
+            public void onLoadingStarted(String s, View view) {
+
+            }
+
+            @Override
+            public void onLoadingFailed(String s, View view, FailReason failReason) {
+
+            }
+
+            @Override
+            public void onLoadingComplete(String s, View view, Bitmap bitmap) {
+                progressBarSecond.setVisibility(View.INVISIBLE);
+                thumbImageSecond.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onLoadingCancelled(String s, View view) {
+
+            }
+        };
+
+        // use match item to fill views
         final MatchItem matchItem = new MatchItem(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_ID)));
         matchItem.setFirstId(cursor.getString(cursor.getColumnIndex(DatabaseHelper.MATCH_KEY_FIRST_ID)));
         matchItem.setSecondId(cursor.getString(cursor.getColumnIndex(DatabaseHelper.MATCH_KEY_SECOND_ID)));
         matchItem.setMatchmakerId(cursor.getString(cursor.getColumnIndex(DatabaseHelper.MATCH_KEY_MATCHMAKER_ID)));
         matchItem.setNumLikes(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.MATCH_KEY_NUM_LIKES)));
 
-        DatabaseHelper db = new DatabaseHelper(context);
+        // tag the view
+        // TODO: Should I give the match itself instead of just the user?
+        row.setTag(matchItem.getId());
 
-        // make the first user view
-        final UserItem userItem = db.getUserById(matchItem.getFirstId());
+        // the number of likes of the match
+        countText.setText(matchItem.getNumLikes() + "");
 
-        final ProgressBar progressBar = (ProgressBar)row.findViewById(R.id.first_progress);
-        final ImageView image = (ImageView)row.findViewById(R.id.first_image);
+        // fill first user
+        final UserItem userItemFirst = db.getUserById(matchItem.getFirstId());
 
-        progressBar.setVisibility(View.VISIBLE);
-        image.setVisibility(View.INVISIBLE);
+        if(userItemFirst != null) {
+            // the other user image
+            imageLoader.displayImage(userItemFirst.getImageUrl(), thumbImageFirst, options, listenerFirst);
 
-        ImageLoadingListener listener = new ImageLoadingListener() {
-            @Override
-            public void onLoadingStarted(String s, View view) {
-
-            }
-
-            @Override
-            public void onLoadingFailed(String s, View view, FailReason failReason) {
-
-            }
-
-            @Override
-            public void onLoadingComplete(String s, View view, Bitmap bitmap) {
-                progressBar.setVisibility(View.INVISIBLE);
-                image.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onLoadingCancelled(String s, View view) {
-
-            }
-        };
-
-        imageLoader.displayImage(userItem.getImageUrl(), image, options, listener);
-        image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String url = "http://www.myntra.com/" + userItem.getDreLandingPageUrl();
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
-                context.startActivity(i);
-            }
-        });
-
-        TextView nameText = (TextView)row.findViewById(R.id.first_name);
-
-        if(userItem != null) {
-            nameText.setText(userItem.getName());
+            // the other user name
+            nameTextFirst.setText(userItemFirst.getName());
         }
 
-        // make the second user view
-        final UserItem userItem_ = db.getUserById(matchItem.getSecondId());
+        // fill second user
+        final UserItem userItemSecond = db.getUserById(matchItem.getSecondId());
 
-        final ProgressBar progressBar_ = (ProgressBar)row.findViewById(R.id.second_progress);
-        final ImageView image_ = (ImageView)row.findViewById(R.id.second_image);
+        if(userItemSecond != null) {
 
-        progressBar_.setVisibility(View.VISIBLE);
-        image_.setVisibility(View.INVISIBLE);
+            // the other user image
+            imageLoader.displayImage(userItemSecond.getImageUrl(), thumbImageSecond, options, listenerSecond);
 
-        ImageLoadingListener listener_ = new ImageLoadingListener() {
-            @Override
-            public void onLoadingStarted(String s, View view) {
-
-            }
-
-            @Override
-            public void onLoadingFailed(String s, View view, FailReason failReason) {
-
-            }
-
-            @Override
-            public void onLoadingComplete(String s, View view, Bitmap bitmap) {
-                progressBar_.setVisibility(View.INVISIBLE);
-                image_.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onLoadingCancelled(String s, View view) {
-
-            }
-        };
-
-        imageLoader.displayImage(userItem_.getImageUrl(), image_, options, listener_);
-        image_.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String url = "http://www.myntra.com/" + userItem_.getDreLandingPageUrl();
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
-                context.startActivity(i);
-            }
-        });
-
-        TextView nameText_ = (TextView)row.findViewById(R.id.second_name);
-
-        if(userItem_ != null) {
-            nameText_.setText(userItem_.getName());
+            // the other user name
+            nameTextSecond.setText(userItemSecond.getName());
         }
     }
 }

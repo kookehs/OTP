@@ -9,6 +9,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.mrcornman.otp.fragments.ClientListFragment;
+import com.mrcornman.otp.fragments.GameFragment;
+import com.mrcornman.otp.fragments.MatchMakerListFragment;
+import com.mrcornman.otp.fragments.NavigationDrawerFragment;
+
 public class MainActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     /**
@@ -110,7 +115,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.menu_game, menu);
+            getMenuInflater().inflate(R.menu.menu_main, menu);
             restoreActionBar();
             return true;
         }

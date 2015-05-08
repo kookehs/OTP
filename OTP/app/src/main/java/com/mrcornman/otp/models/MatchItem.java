@@ -2,11 +2,11 @@ package com.mrcornman.otp.models;
 
 public class MatchItem {
     private String id;
+    private String createdTimestamp;
     private String firstId;
     private String secondId;
     private String matchmakerId;
     private int numLikes;
-    private int numDislikes;
 
     public MatchItem(String id){
         this.id = id;
@@ -14,12 +14,16 @@ public class MatchItem {
 
     public MatchItem(){}
 
-    public String getid() {
+    public String getId() {
         return id;
     }
 
-    public void setid(String id) {
-        this.id = id;
+    public String getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    public void setCreatedTimestamp(String createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
     }
 
     public String getFirstId() {
@@ -52,14 +56,6 @@ public class MatchItem {
 
     public void setNumLikes(int numLikes) {
         this.numLikes = numLikes;
-    }
-
-    public int getNumDislikes() {
-        return numDislikes;
-    }
-
-    public void setNumDislikes(int numDislikes) {
-        this.numDislikes = numDislikes;
     }
 
     @Override

@@ -8,6 +8,7 @@ public class UserItem {
 
     // Data
     private String id;
+    private String createdTimestamp;
     private String name;
     private int gender;
     private int age;
@@ -22,6 +23,14 @@ public class UserItem {
 
     public String getId() {
         return id;
+    }
+
+    public String getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    public void setCreatedTimestamp(String createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
     }
 
     public String getName() {

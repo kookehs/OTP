@@ -4,29 +4,114 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp">
-
-    <ProgressBar
-        android:layout_width="350dp"
-        android:layout_height="350dp"
-        android:id="@+id/first_progress"
-        />
+    android:descendantFocusability="blocksDescendants"
+    android:minHeight="84dp">
 
     <ImageView
-        android:layout_width="350dp"
-        android:layout_height="350dp"
-        android:id="@+id/second_image"
-        tools:src="@drawable/ic_launcher"
-        />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/listener_image"
+        android:focusable="false"
+        android:contentDescription="@string/content_missing_description"/>
 
-    <TextView
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/second_name"
-        android:layout_below="@id/second_image"
-        android:textSize="30sp"
-        android:textColor="#ffb44633"
-        tools:text="Denise"
-        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_centerVertical="true">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.85">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.25"
+                android:layout_centerVertical="true"
+                android:id="@+id/thumb_frame"
+                android:padding="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp">
+
+                <ProgressBar
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:id="@+id/thumb_progress"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:layout_gravity="center" />
+
+                <com.mrcornman.otp.views.CircularImageView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:id="@+id/thumb_image"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    tools:src="@mipmap/ic_launcher"
+                    android:layout_gravity="center" />
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/name_text"
+                android:textSize="16sp"
+                android:textColor="#333"
+                tools:text="Denise"
+                android:textStyle="bold"
+                android:singleLine="true"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/thumb_frame" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/chat_excerpt"
+                android:textSize="14sp"
+                android:textColor="#666"
+                tools:text="Hey there!"
+                android:textStyle="normal"
+                android:layout_below="@+id/name_text"
+                android:singleLine="true"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/thumb_frame" />
+
+        </RelativeLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.15">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/container_count"
+                android:src="@drawable/love"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:layout_gravity="center"/>
+
+            <TextView
+                tools:text="99"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/count_text"
+                android:textSize="14sp"
+                android:textColor="#ddd"
+                android:textStyle="normal"
+                android:layout_gravity="center"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:singleLine="true" />
+        </FrameLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>

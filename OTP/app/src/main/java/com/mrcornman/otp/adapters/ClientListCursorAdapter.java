@@ -1,10 +1,8 @@
 package com.mrcornman.otp.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,12 +55,17 @@ public class ClientListCursorAdapter extends CursorAdapter {
     @Override
     public void bindView(View row, final Context context, Cursor cursor) {
 
-        final ImageView secondImage = (ImageView)row.findViewById(R.id.second_image);
-        TextView secondName = (TextView)row.findViewById(R.id.second_name);
-        final ProgressBar progressBar = (ProgressBar)row.findViewById(R.id.first_progress);
+        DatabaseHelper db = new DatabaseHelper(context);
+
+        // init views
+        final ImageView thumbImage = (ImageView)row.findViewById(R.id.thumb_image);
+        TextView nameText = (TextView)row.findViewById(R.id.name_text);
+        TextView excerptText = (TextView)row.findViewById(R.id.chat_excerpt);
+        TextView countText = (TextView)row.findViewById(R.id.count_text);
+        final ProgressBar progressBar = (ProgressBar)row.findViewById(R.id.thumb_progress);
 
         progressBar.setVisibility(View.VISIBLE);
-        secondImage.setVisibility(View.INVISIBLE);
+        thumbImage.setVisibility(View.INVISIBLE);
 
         ImageLoadingListener listener = new ImageLoadingListener() {
             @Override
@@ -78,7 +81,7 @@ public class ClientListCursorAdapter extends CursorAdapter {
             @Override
             public void onLoadingComplete(String s, View view, Bitmap bitmap) {
                 progressBar.setVisibility(View.INVISIBLE);
-                secondImage.setVisibility(View.VISIBLE);
+                thumbImage.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -87,28 +90,28 @@ public class ClientListCursorAdapter extends CursorAdapter {
             }
         };
 
+        // use match item to fill views
         final MatchItem matchItem = new MatchItem(cursor.getString(cursor.getColumnIndex(DatabaseHelper.KEY_ID)));
         matchItem.setFirstId(cursor.getString(cursor.getColumnIndex(DatabaseHelper.MATCH_KEY_FIRST_ID)));
         matchItem.setSecondId(cursor.getString(cursor.getColumnIndex(DatabaseHelper.MATCH_KEY_SECOND_ID)));
         matchItem.setMatchmakerId(cursor.getString(cursor.getColumnIndex(DatabaseHelper.MATCH_KEY_MATCHMAKER_ID)));
         matchItem.setNumLikes(cursor.getInt(cursor.getColumnIndex(DatabaseHelper.MATCH_KEY_NUM_LIKES)));
 
-        DatabaseHelper db = new DatabaseHelper(context);
-
         final UserItem userItem = db.getUserById(matchItem.getSecondId());
-        imageLoader.displayImage(userItem.getImageUrl(), secondImage, options, listener);
-        secondImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String url = "http://www.myntra.com/" + userItem.getDreLandingPageUrl();
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
-                context.startActivity(i);
-            }
-        });
 
         if(userItem != null) {
-            secondName.setText(userItem.getName());
+            // tag the view
+            // TODO: Should I give the match itself instead of just the user?
+            row.setTag(userItem.getId());
+
+            // the other user image
+            imageLoader.displayImage(userItem.getImageUrl(), thumbImage, options, listener);
+
+            // the other user name
+            nameText.setText(userItem.getName());
         }
+
+        // the number of likes of the match
+        countText.setText(matchItem.getNumLikes() + "");
     }
 }

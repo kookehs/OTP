@@ -122,6 +122,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return product_id + "";
     }
 
+    public MatchItem getMatchById(String value){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM " + MATCH_TABLE_NAME + " WHERE "
+                + KEY_ID + " = " + value;
+        Cursor c = db.rawQuery(selectQuery, null);
+        if (c != null)
+            c.moveToFirst();
+        else
+            return null;
+
+        MatchItem match = new MatchItem(c.getString(c.getColumnIndex(KEY_ID)));
+        match.setFirstId(c.getString(c.getColumnIndex(MATCH_KEY_FIRST_ID)));
+        match.setSecondId(c.getString(c.getColumnIndex(MATCH_KEY_SECOND_ID)));
+        match.setMatchmakerId(c.getString(c.getColumnIndex(MATCH_KEY_MATCHMAKER_ID)));
+        match.setNumLikes(c.getInt(c.getColumnIndex(MATCH_KEY_NUM_LIKES)));
+        c.close();
+        db.close();
+        return match;
+    }
+
     public UserItem getUserById(String value){
         SQLiteDatabase db = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM " + USER_TABLE_NAME + " WHERE "
@@ -155,8 +175,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
             listQuery += ")";
         }
-
-        Log.i("dafjasdf", listQuery);
 
         String selectQuery = "SELECT * FROM " + USER_TABLE_NAME
                 + " WHERE " + KEY_ID + " NOT IN " + listQuery
@@ -298,9 +316,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void updateNumMatchLikes(MatchItem matchItem, int numLikes){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         String numLikesStr = String.valueOf(numLikes);
+        Log.i("Bam", matchItem.getId());
         String UPDATE_QUERY = "UPDATE " + MATCH_TABLE_NAME
                 + " SET " + MATCH_KEY_NUM_LIKES + " = " + numLikesStr
-                + " WHERE " + KEY_ID + " = " + matchItem.getid();
+                + " WHERE " + KEY_ID + " = " + matchItem.getId();
         sqLiteDatabase.execSQL(UPDATE_QUERY);
         sqLiteDatabase.close();
     }

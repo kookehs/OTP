@@ -11,7 +11,7 @@
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
     <string name="shared_preference_file_name_card_activity">com.mrcornman.otp.CardView.sharedPrefFile</string>
-    <string name="desc_icon">Icon</string>
+    <string name="content_missing_description">Missing</string>
 
     <string-array name="nav_drawer_items">
         <item>Home</item>
