@@ -11,28 +11,17 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/app_id"/>
         <activity
             android:name=".MainActivity"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeWithActionBar" >
-        </activity>
-        <activity
-            android:name="com.craig.fblogin.fbloginactivity"
-            android:label="@string/title_activity_fbloginactivity" >
+            android:theme="@style/AppThemeWithActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.facebook.FacebookActivity"
-            android:configChanges=
-                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:label="@string/app_name" />
     </application>
 
 </manifest>
