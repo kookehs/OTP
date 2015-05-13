@@ -1,61 +1,43 @@
 package com.mrcornman.otp.models;
 
-public class MatchItem {
-    private String id;
-    private String createdTimestamp;
-    private String firstId;
-    private String secondId;
-    private String matchmakerId;
-    private int numLikes;
+import com.parse.ParseClassName;
+import com.parse.ParseObject;
 
-    public MatchItem(String id){
-        this.id = id;
-    }
+@ParseClassName("Match")
+public class MatchItem extends ParseObject {
 
-    public MatchItem(){}
-
-    public String getId() {
-        return id;
-    }
-
-    public String getCreatedTimestamp() {
-        return createdTimestamp;
-    }
-
-    public void setCreatedTimestamp(String createdTimestamp) {
-        this.createdTimestamp = createdTimestamp;
-    }
+    // key identifiers
+    public static final String MATCH_KEY_FIRST_ID = "first_id";
+    public static final String MATCH_KEY_SECOND_ID = "second_id";
+    public static final String MATCH_KEY_MATCHMAKER_ID = "matchmaker_id";
+    public static final String MATCH_KEY_NUM_LIKES = "num_likes";
 
     public String getFirstId() {
-        return firstId;
+        return getString(MATCH_KEY_FIRST_ID);
     }
-
     public void setFirstId(String firstId) {
-        this.firstId = firstId;
+        put(MATCH_KEY_FIRST_ID, firstId);
     }
 
     public String getSecondId() {
-        return secondId;
+        return getString(MATCH_KEY_SECOND_ID);
     }
-
     public void setSecondId(String secondId) {
-        this.secondId = secondId;
+        put(MATCH_KEY_SECOND_ID, secondId);
     }
 
     public String getMatchmakerId() {
-        return matchmakerId;
+        return getString(MATCH_KEY_MATCHMAKER_ID);
     }
-
     public void setMatchmakerId(String matchmakerId) {
-        this.matchmakerId = matchmakerId;
+        put(MATCH_KEY_MATCHMAKER_ID, matchmakerId);
     }
 
     public int getNumLikes() {
-        return numLikes;
+        return getInt(MATCH_KEY_NUM_LIKES);
     }
-
     public void setNumLikes(int numLikes) {
-        this.numLikes = numLikes;
+        put(MATCH_KEY_NUM_LIKES, numLikes);
     }
 
     @Override

@@ -13,13 +13,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.mrcornman.otp.R;
+import com.mrcornman.otp.adapters.CardAdapter;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,11 +24,7 @@ import java.util.List;
 /**
  * Created by Anil on 7/18/2014.
  */
-public class CardStackLayout extends RelativeLayout{
-
-    public BaseAdapter getAdapter() {
-        return mAdapter;
-    }
+public class CardStackLayout extends RelativeLayout {
 
     public interface CardStackListener {
         void onBeginProgress(View view);
@@ -42,7 +35,7 @@ public class CardStackLayout extends RelativeLayout{
 
     private static int STACK_SIZE = 4;
     private static int MAX_ANGLE_DEGREE = 20;
-    private BaseAdapter mAdapter;
+    private CardAdapter mAdapter;
     private int mCurrentPosition;
     private int mMinDragDistance;
     private int mMinAcceptDistance;
@@ -60,7 +53,7 @@ public class CardStackLayout extends RelativeLayout{
     private int mYStart;
 
     private View mBeingDragged;
-    private MyOnTouchListener mMyOnTouchListener;
+    private OnCardTouchListener mOnCardTouchListener;
 
     public CardStackLayout(Context context) {
         super(context);
@@ -97,7 +90,7 @@ public class CardStackLayout extends RelativeLayout{
                 break;
 
             if (isTopCard(card)){
-                card.setOnTouchListener(mMyOnTouchListener);
+                card.setOnTouchListener(mOnCardTouchListener);
             } else {
                 card.setOnTouchListener(null);
             }
@@ -118,11 +111,7 @@ public class CardStackLayout extends RelativeLayout{
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
-    public CardStackListener getmCardStackListener() {
-        return mCardStackListener;
-    }
-
-    public void setmCardStackListener(CardStackListener mCardStackListener) {
+    public void setCardStackListener(CardStackListener mCardStackListener) {
         this.mCardStackListener = mCardStackListener;
     }
 
@@ -170,13 +159,11 @@ public class CardStackLayout extends RelativeLayout{
 
     }
 
-
-
     private boolean adapterHasMoreItems() {
         return mCurrentPosition < mAdapter.getCount();
     }
 
-    public CardView getTopCard() { return (CardView)mCards.peek(); }
+    public CardView getTopCard() { return mCards.peek(); }
     private boolean isTopCard(CardView card) {
         return card == mCards.peek();
     }
@@ -190,23 +177,19 @@ public class CardStackLayout extends RelativeLayout{
         mMinAcceptDistance = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 40, r.getDisplayMetrics());
 
-        if (isInEditMode()){
-            mAdapter = new MockListAdapter(getContext());
-        }
-
         mCurrentPosition = 0;
     }
 
-    public void setAdapter(BaseAdapter adapter){
+    public void setAdapter(CardAdapter adapter){
         mAdapter = adapter;
         mRecycledCards.clear();
         mCards.clear();
         removeAllViews();
         mCurrentPosition = 0;
-        initializeStack();
+        refreshStack();
     }
 
-    private void initializeStack() {
+    public void refreshStack() {
         int position = 0;
         // fixed: possible fix for the unusual error of the 4th product repeating, mCurrentPosition + STACK_SIZE -1 or
         // fixed: mCurrentPosition += position instead of position - 1, in the end of this function
@@ -222,12 +205,13 @@ public class CardStackLayout extends RelativeLayout{
 
             addView(card, 0);
 
-            mMyOnTouchListener = new MyOnTouchListener();
+            mOnCardTouchListener = new OnCardTouchListener();
         }
+
         mCurrentPosition += position;
     }
 
-    private class MyOnTouchListener implements OnTouchListener{
+    private class OnCardTouchListener implements OnTouchListener {
         @Override
         public boolean onTouch(final View view, MotionEvent motionEvent) {
             CardView card = (CardView)view;
@@ -386,45 +370,5 @@ public class CardStackLayout extends RelativeLayout{
         boolean result = Math.abs(mXDelta) < mMinAcceptDistance && mYDelta > 0;
         //Log.i("Stack Choice", Boolean.toString(result));
         return result;
-    }
-
-    private class MockListAdapter extends BaseAdapter {
-        List<String> mItems;
-        Context mContext;
-
-        public MockListAdapter(Context context) {
-            mContext = context;
-            mItems = new ArrayList<String>();
-            for (int i = 1; i< 15; i++){
-                mItems.add(i + "");
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return mItems.size();
-        }
-
-        @Override
-        public Object getItem(int i) {
-            return mItems.get(i);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ImageView view = new ImageView(mContext);
-            view.setImageResource(R.mipmap.ic_action_matchmaker);
-            Resources r = mContext.getResources();
-            int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300,
-                    r.getDisplayMetrics());
-            LayoutParams params = new LayoutParams(px, px);
-            view.setLayoutParams(params);
-            return view;
-        }
     }
 }

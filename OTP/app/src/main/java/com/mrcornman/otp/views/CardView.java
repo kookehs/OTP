@@ -7,7 +7,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.models.UserItem;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
@@ -39,14 +38,14 @@ public class CardView extends RelativeLayout implements CardStackLayout.CardStac
     @ViewById
     ImageView noicon;
 
-    public UserItem userItem;
+    public String mUserId;
 
     public CardView(Context context) {
         super(context);
     }
 
-    public void bind(UserItem userItem){
-        this.userItem = userItem;
+    public void bind(String userId){
+        mUserId = userId;
         return;
     }
 

@@ -10,15 +10,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.adapters.CardAdapter;
-import com.mrcornman.otp.adapters.CardAdapter_;
 import com.mrcornman.otp.models.MatchItem;
-import com.mrcornman.otp.models.UserItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.mrcornman.otp.views.CardStackLayout;
 import com.mrcornman.otp.views.CardView;
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,33 +31,17 @@ import java.util.List;
 public class GameFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
 
-    private static final String SAMPLE_FILE_NAME = "men-accessories-jewellery-file";
-    private static final String SAMPLE_START_FROM_KEY = "men-accessories-jewellery-start-key";
-    private static final String SAMPLE_MAX_PRODUCTS_KEY = "men-accessories-jewellery-max-products-key";
-    private static final String SAMPLE_POST_DATA_HEAD = "[{\"query\":\"(global_attr_age_group:(\\\"Adults-Men\\\" OR \\\"Adults-Unisex\\\") AND global_attr_article_type_facet:(\\\"Anklet\\\" OR \\\"Bangle\\\" OR \\\"Bracelet\\\" OR \\\"Earring & Pendant Set\\\" OR \\\"Earrings\\\" OR \\\"Jewellery\\\" OR \\\"Jewellery Set\\\" OR \\\"Key chain\\\" OR \\\"Necklace\\\" OR \\\"Pendant\\\" OR \\\"Ring\\\"))\",\"start\":";
-    private static final String SAMPLE_POST_DATA_TAIL = ",\"rows\":96,\"facetField\":[],\"fq\":[\"count_options_availbale:[1 TO *]\"],\"sort\":[{\"sort_field\":\"count_options_availbale\",\"order_by\":\"desc\"},{\"sort_field\":\"style_store21_male_sort_field\",\"order_by\":\"desc\"},{\"sort_field\":\"potential_revenue_male_sort_field\",\"order_by\":\"desc\"},{\"sort_field\":\"global_attr_catalog_add_date\",\"order_by\":\"desc\"}],\"return_docs\":true,\"colour_grouping\":true,\"facet\":true}]";
-
-    private static final String SAMPLE_FILE_NAME_ = "men-accessories-sunglasses-file";
-    private static final String SAMPLE_START_FROM_KEY_ = "men-accessories-sunglasses-start-key";
-    private static final String SAMPLE_MAX_PRODUCTS_KEY_ = "men-accessories-sunglasses-max-products-key";
-    private static final String SAMPLE_POST_DATA_HEAD_ = "[{\"query\":\"(global_attr_age_group:(\\\"Adults-Men\\\" OR \\\"Adults-Unisex\\\") AND global_attr_sub_category:(\\\"Eyewear\\\"))\",\"start\":";
-    private static final String SAMPLE_POST_DATA_TAIL_ = ",\"rows\":96,\"facetField\":[],\"fq\":[\"count_options_availbale:[1 TO *]\"],\"sort\":[{\"sort_field\":\"count_options_availbale\",\"order_by\":\"desc\"},{\"sort_field\":\"style_store21_male_sort_field\",\"order_by\":\"desc\"},{\"sort_field\":\"potential_revenue_male_sort_field\",\"order_by\":\"desc\"},{\"sort_field\":\"global_attr_catalog_add_date\",\"order_by\":\"desc\"}],\"return_docs\":true,\"colour_grouping\":true,\"facet\":true}]";
-
     private CardStackLayout mCardStackLayoutFirst;
     private CardStackLayout mCardStackLayoutSecond;
     private CardAdapter mCardAdapterFirst;
     private CardAdapter mCardAdapterSecond;
-    private DatabaseHelper db;
-    private int startFromFirst;
-    private int startFromSecond;
-    private String maxCardsFirst;
-    private String maxCardsSecond;
 
     private SharedPreferences sharedPreferences;
 
-    private MatchItem potentialMatch;
-
-    public String url = "http://www.myntra.com/searchws/search/styleids2";
+    private List<ParseUser> mCardUsersFirst;
+    private List<ParseUser> mCardUsersSecond;
+    private String potentialFirstId = "";
+    private String potentialSecondId = "";
 
     public static GameFragment newInstance() {
         GameFragment fragment = new GameFragment();
@@ -72,22 +60,10 @@ public class GameFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_game, container, false);
+
+        // init views
         mCardStackLayoutFirst = (CardStackLayout) view.findViewById(R.id.cardstack_first);
         mCardStackLayoutSecond = (CardStackLayout) view.findViewById(R.id.cardstack_second);
-
-        db = new DatabaseHelper(getActivity().getApplicationContext());
-
-        sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-        // resetStoredValues();
-        startFromFirst = sharedPreferences.getInt(SAMPLE_START_FROM_KEY, 0);
-        startFromSecond = sharedPreferences.getInt(SAMPLE_START_FROM_KEY_, 0);
-        maxCardsFirst = sharedPreferences.getString(SAMPLE_MAX_PRODUCTS_KEY, "1000");
-        maxCardsSecond = sharedPreferences.getString(SAMPLE_MAX_PRODUCTS_KEY_, "1000");
-
-        potentialMatch = new MatchItem();
-
-        refreshFirst();
-        refreshSecond();
 
         Button refreshButtonFirst = (Button) view.findViewById(R.id.btn_refresh_first);
         refreshButtonFirst.setOnClickListener(new View.OnClickListener() {
@@ -105,10 +81,10 @@ public class GameFragment extends Fragment {
             }
         });
 
-        mCardStackLayoutFirst.setmCardStackListener(new CardStackLayout.CardStackListener() {
+        mCardStackLayoutFirst.setCardStackListener(new CardStackLayout.CardStackListener() {
             @Override
             public void onBeginProgress(View view) {
-                buildPotentialMatch(getFirstFocused().getId(), getSecondFocused().getId());
+                buildPotentialMatch(getCurrentFirstId(), getCurrentSecondId());
             }
 
             @Override
@@ -141,10 +117,10 @@ public class GameFragment extends Fragment {
             }
         });
 
-        mCardStackLayoutSecond.setmCardStackListener(new CardStackLayout.CardStackListener() {
+        mCardStackLayoutSecond.setCardStackListener(new CardStackLayout.CardStackListener() {
             @Override
             public void onBeginProgress(View view) {
-                buildPotentialMatch(getFirstFocused().getId(), getSecondFocused().getId());
+                buildPotentialMatch(getCurrentFirstId(), getCurrentSecondId());
             }
 
             @Override
@@ -166,113 +142,132 @@ public class GameFragment extends Fragment {
             }
         });
 
+        // init data
+        sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        // resetStoredValues();
+
+        mCardUsersFirst = new ArrayList<>();
+        mCardAdapterFirst = new CardAdapter(getActivity().getApplicationContext(),
+                R.layout.card_item, mCardUsersFirst);
+        mCardStackLayoutFirst.setAdapter(mCardAdapterFirst);
+
+        mCardUsersSecond = new ArrayList<>();
+        mCardAdapterSecond = new CardAdapter(getActivity().getApplicationContext(),
+                R.layout.card_item, mCardUsersSecond);
+        mCardStackLayoutSecond.setAdapter(mCardAdapterSecond);
+
+        refreshFirst();
+        refreshSecond();
+
         return view;
     }
 
     private void buildPotentialMatch(String firstId, String secondId) {
-        potentialMatch = new MatchItem();
-        potentialMatch.setFirstId(firstId);
-        potentialMatch.setSecondId(secondId);
-        potentialMatch.setMatchmakerId("");
-        potentialMatch.setNumLikes(1);
+        potentialFirstId = firstId;
+        potentialSecondId = secondId;
     }
 
     private void clearPotentialMatch() {
-        potentialMatch = null;
+        potentialFirstId = "";
+        potentialSecondId = "";
     }
 
     public void onCreateMatch() {
-        if(potentialMatch == null) return;
+        if(potentialFirstId.equals("") || potentialSecondId.equals("")) return;
+
+        final String cachedFirstId = potentialFirstId;
+        final String cachedSecondId = potentialSecondId;
+
+        Log.e("Current cached first id", cachedFirstId);
 
         // TODO: Possibly make it update on insert match instead of doing a costly check beforehand
-        MatchItem filterMatch = db.getMatchByPairIds(potentialMatch.getFirstId(), potentialMatch.getSecondId());
-        if(filterMatch == null) {
-            db.insertNewMatch(potentialMatch);
-        } else {
-            db.updateNumMatchLikes(filterMatch, filterMatch.getNumLikes() + 1);
-        }
+        DatabaseHelper.getMatchByPair(potentialFirstId, potentialSecondId, new GetCallback<MatchItem>() {
+            @Override
+            public void done(MatchItem matchItem, ParseException e) {
+                if(e != null) {
+                    Log.e("GameFragment", "There was a problem accessing the match tables.");
+                    return;
+                }
+
+                if(matchItem == null) {
+                    DatabaseHelper.insertNewMatchByPair(cachedFirstId, cachedSecondId);
+                } else {
+                    DatabaseHelper.updateMatchNumLikes(matchItem.getObjectId(), matchItem.getNumLikes() + 1);
+                }
+            }
+        });
 
         clearPotentialMatch();
     }
 
-    private void resetStoredValues() {
-        db.onResetTables();
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(SAMPLE_START_FROM_KEY, 0);
-        editor.putString(SAMPLE_MAX_PRODUCTS_KEY, "1000");
-        editor.commit();
-    }
     //fixme: figure out how to eliminate the ui lag when the database gets new products from the internet..
     // already tried initializing the product stack inside the overridden method onViewCreated, and it didn't improve anything..
 
     private void refreshFirst() {
-        Log.i("First: start from", String.valueOf(startFromFirst));
-        Log.i("First: max products", maxCardsFirst);
-
-        mCardAdapterFirst = CardAdapter_.getInstance_(getActivity());
+        /*
         if (startFromFirst > Integer.parseInt(maxCardsFirst)){
             startFromFirst = 0;
             SharedPreferences.Editor editor = sharedPreferences.edit();
             //editor.putInt(getString(R.string.men_shoes_start_from_key), 0);
             editor.commit();
         }
-        String postData = SAMPLE_POST_DATA_HEAD + String.valueOf(startFromFirst) + SAMPLE_POST_DATA_TAIL;
-        mCardAdapterFirst.initFromDatabaseFromOtherUserUsingSharedPref(getSecondList(), url, postData, SAMPLE_FILE_NAME, db, sharedPreferences, SAMPLE_MAX_PRODUCTS_KEY, SAMPLE_START_FROM_KEY);
-        if (!mCardAdapterFirst.isEmpty()) {
-            mCardStackLayoutFirst.setAdapter(mCardAdapterFirst);
-        }
+        */
+
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+
+        // exclude self
+        //query.whereNotEqualTo("objectId", ParseUser.getCurrentUser().getObjectId());
+        query.setLimit(20);
+        query.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> list, ParseException e) {
+                if (e == null) {
+                    for (int i = 0; i < list.size(); i++) {
+                        mCardUsersFirst.add(list.get(i));
+                    }
+                    mCardAdapterFirst.notifyDataSetChanged();
+                    mCardStackLayoutFirst.refreshStack();
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(),
+                            "Sorry, there was a problem loading users",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     private void refreshSecond() {
-        Log.i("Second: start from", String.valueOf(startFromSecond));
-        Log.i("Second: max products", maxCardsSecond);
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
 
-        mCardAdapterSecond = CardAdapter_.getInstance_(getActivity());
-        if (startFromSecond > Integer.parseInt(maxCardsSecond)){
-            startFromSecond = 0;
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            //editor.putInt(getString(R.string.men_shoes_start_from_key), 0);
-            editor.commit();
-        }
-        String postData = SAMPLE_POST_DATA_HEAD_ + String.valueOf(startFromSecond) + SAMPLE_POST_DATA_TAIL_;
-        mCardAdapterSecond.initFromDatabaseFromOtherUserUsingSharedPref(getFirstList(), url, postData, SAMPLE_FILE_NAME_, db, sharedPreferences, SAMPLE_MAX_PRODUCTS_KEY_, SAMPLE_START_FROM_KEY_);
-        if (!mCardAdapterSecond.isEmpty()){
-            mCardStackLayoutSecond.setAdapter(mCardAdapterSecond);
-        }
+        // exclude self
+        query.whereNotEqualTo("objectId", ParseUser.getCurrentUser().getObjectId());
+        query.setLimit(20);
+        query.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> list, ParseException e) {
+                if (e == null) {
+                    for (int i = 0; i < list.size(); i++) {
+                        mCardUsersSecond.add(list.get(i));
+                    }
+                    mCardAdapterSecond.notifyDataSetChanged();
+                    mCardStackLayoutSecond.refreshStack();
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(),
+                            "Sorry, there was a problem loading users",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
-    public UserItem getFirstFocused() {
+    public String getCurrentFirstId() {
         CardView view = mCardStackLayoutFirst.getmBeingDragged() != null ? (CardView)mCardStackLayoutFirst.getmBeingDragged() : (CardView)mCardStackLayoutFirst.getTopCard();
-        return view != null ? view.userItem : null;
+        return view != null ? view.mUserId : null;
     }
 
-    public UserItem getSecondFocused() {
+    public String getCurrentSecondId() {
         CardView view = mCardStackLayoutSecond.getmBeingDragged() != null ? (CardView)mCardStackLayoutSecond.getmBeingDragged() : (CardView)mCardStackLayoutSecond.getTopCard();
-        return view != null ? view.userItem : null;
-    }
-
-    public List<UserItem> getFirstList() {
-        List<UserItem> firstList = new ArrayList<UserItem>();
-        if(mCardStackLayoutFirst.getmBeingDragged() != null)
-            firstList.add(((CardView)mCardStackLayoutFirst.getmBeingDragged()).userItem);
-
-        for(CardView view : mCardStackLayoutFirst.getCards()) {
-            firstList.add(view.userItem);
-        }
-
-        return firstList;
-    }
-
-    public List<UserItem> getSecondList() {
-        List<UserItem> secondList = new ArrayList<UserItem>();
-        if(mCardStackLayoutSecond.getmBeingDragged() != null)
-            secondList.add(((CardView)mCardStackLayoutSecond.getmBeingDragged()).userItem);
-
-        for(CardView view : mCardStackLayoutSecond.getCards()) {
-            secondList.add(view.userItem);
-        }
-
-        return secondList;
+        return view != null ? view.mUserId : null;
     }
 
     @Override

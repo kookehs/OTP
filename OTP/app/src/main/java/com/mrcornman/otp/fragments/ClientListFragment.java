@@ -2,26 +2,35 @@ package com.mrcornman.otp.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import com.mrcornman.otp.MainActivity;
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.adapters.ClientListCursorAdapter;
-import com.mrcornman.otp.models.UserItem;
+import com.mrcornman.otp.activities.MainActivity;
+import com.mrcornman.otp.adapters.ClientMatchAdapter;
+import com.mrcornman.otp.models.MatchItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseUser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientListFragment extends Fragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     private String sectionNumber;
+
+    private ClientListInteractionListener clientListInteractionListener;
+
+    private ClientMatchAdapter clientMatchAdapter;
+    private List<MatchItem> matchItems;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -42,11 +51,8 @@ public class ClientListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        final DatabaseHelper db = new DatabaseHelper(getActivity().getApplicationContext());
-
         // init views
         View rootView = inflater.inflate(R.layout.fragment_client_list, container, false);
-
         ListView listView = (ListView) rootView.findViewById(R.id.client_list);
 
         // set up list view input
@@ -55,26 +61,29 @@ public class ClientListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String otherId = view.getTag().toString();
-                UserItem userItem = db.getUserById(otherId);
-                if(userItem == null) {
-                    Log.e("ClientListFragment", "Got a null user from a client match click!");
-                    return;
-                }
-
-                String url = "http://www.myntra.com/" + userItem.getDreLandingPageUrl();
-                Log.i("ClientListFragment", "Heading to " + url);
-                /*
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(url));
-                getActivity().startActivity(intent);
-                */
+                DatabaseHelper.getUserById(otherId, new GetCallback<ParseUser>() {
+                    @Override
+                    public void done(ParseUser parseUser, ParseException e) {
+                        if(parseUser != null) {
+                            String recipientId = parseUser.getObjectId();
+                            clientListInteractionListener.onRequestOpenConversation(recipientId);
+                        }
+                    }
+                });
             }
         });
 
+        matchItems = new ArrayList<>();
+        clientMatchAdapter = new ClientMatchAdapter(getActivity().getApplicationContext(), matchItems);
+
         // fill list up
-        Cursor cursor = db.getTopMatches(20);
-        ListAdapter adapter = new ClientListCursorAdapter(getActivity(), cursor, false);
-        listView.setAdapter(adapter);
+        DatabaseHelper.findTopMatches(20, new FindCallback<MatchItem>() {
+            @Override
+            public void done(List<MatchItem> list, ParseException e) {
+                matchItems = list;
+                clientMatchAdapter.notifyDataSetChanged();
+            }
+        });
 
         return rootView;
     }
@@ -92,5 +101,16 @@ public class ClientListFragment extends Fragment {
         super.onAttach(activity);
         ((MainActivity) activity).onSectionAttached(
                 getArguments().getInt(ARG_SECTION_NUMBER));
+
+        try {
+            clientListInteractionListener = (ClientListInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    public interface ClientListInteractionListener {
+        void onRequestOpenConversation(String recipientId);
     }
 }
