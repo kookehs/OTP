@@ -25,6 +25,8 @@ import java.util.List;
  */
 public class ProfileBuilder {
 
+    public final static int DEFAULT_NUM_PHOTOS = 1;
+
     private final static String FACEBOOK_KEY_NAME = "first_name";
     private final static String FACEBOOK_KEY_GENDER = "gender";
     private final static String FACEBOOK_KEY_BIRTHDAY = "birthday";
@@ -33,6 +35,11 @@ public class ProfileBuilder {
     private final static String FACEBOOK_KEY_ALBUMS = "albums";
     private final static String FACEBOOK_KEY_PHOTOS = "photos";
 
+    /**
+     *
+     * @param context
+     * @param buildProfileCallback
+     */
     public static void buildCurrentProfile(Context context, ProfileBuilder.BuildProfileCallback buildProfileCallback) {
 
         final Context mContext = context;
@@ -110,7 +117,8 @@ public class ProfileBuilder {
                                                         Target target = new Target() {
                                                             @Override
                                                             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-
+                                                                Log.i("ProfileBuilder", "Finished loading - " + from.name());
+                                                                //ParseFile imageFile = new ParseFile(from.name())
                                                             }
 
                                                             @Override
@@ -120,14 +128,16 @@ public class ProfileBuilder {
 
                                                             @Override
                                                             public void onPrepareLoad(Drawable placeHolderDrawable) {
-
                                                             }
                                                         };
 
-                                                        for(int i = 0; i < photoImages.size(); i++) {
+                                                        for(int i = 0; i < Math.min(DEFAULT_NUM_PHOTOS, photoImages.size()); i++) {
                                                             photoImageObj = photoImages.get(i);
+                                                            Log.i("ProfileBuilder", photoImageObj.getString("source"));
                                                             Picasso.with(mContext).load(photoImageObj.getString("source")).into(target);
                                                         }
+
+                                                        buildCallback.done(ParseUser.getCurrentUser(), null);
                                                     } catch(Exception e) {
                                                         buildCallback.done(null, e);
                                                         return;
@@ -162,6 +172,12 @@ public class ProfileBuilder {
         meRequest.executeAsync();
     }
 
+    /**
+     * Fetches photos from a user's album.
+     * @param accessToken The access token for the user.
+     * @param albumId The album id.
+     * @param fetchPhotosCallback The callback for when the photos are fetched.
+     */
     public static void fetchPhotosFromAlbum(AccessToken accessToken, String albumId, FetchPhotosCallback fetchPhotosCallback) {
         final FetchPhotosCallback photosCallback = fetchPhotosCallback;
 
