@@ -11,6 +11,8 @@ import android.view.MenuItem;
 
 import com.mrcornman.otp.fragments.ClientListFragment;
 import com.mrcornman.otp.fragments.GameFragment;
+import com.mrcornman.otp.fragments.PrefileFragment;
+import com.mrcornman.otp.fragments.SettingFragment;
 import com.mrcornman.otp.fragments.MatchMakerListFragment;
 import com.mrcornman.otp.fragments.NavigationDrawerFragment;
 
@@ -21,6 +23,8 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
      */
     public static final int NAV_GAME = 0;
     public static final int NAV_SETTINGS = 1;
+    public static final int NAV_PROFILE = 2;
+
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -58,7 +62,10 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
                 fragment = GameFragment.newInstance();
                 break;
             case NAV_SETTINGS:
-                fragment = GameFragment.newInstance();
+                fragment = SettingFragment.newInstance();
+                break;
+            case NAV_PROFILE :
+                fragment = PrefileFragment.newInstance();
                 break;
         }
 

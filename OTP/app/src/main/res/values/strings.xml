@@ -26,4 +26,7 @@
     <string name="action_client_list">Matches</string>
     <string name="action_matchmaker_list">MatchMaker</string>
 
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

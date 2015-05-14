@@ -103,7 +103,8 @@ public class NavigationDrawerFragment extends Fragment {
                 R.id.list_item_title,
                 new String[]{
                         "Home",
-                        "Settings"
+                        "Settings",
+                        "Profile"
                 }
         ));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);

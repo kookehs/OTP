@@ -169,6 +169,7 @@ public class GameFragment extends Fragment {
         return view;
     }
 
+
     private void buildPotentialMatch(String firstId, String secondId) {
         potentialMatch = new MatchItem();
         potentialMatch.setFirstId(firstId);
