@@ -9,6 +9,7 @@ buildscript {
 
 apply plugin: 'android'
 apply plugin: 'android-apt'
+apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 21

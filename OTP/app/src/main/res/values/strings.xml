@@ -15,6 +15,7 @@
 
     <!--General-->
     <string name="content_missing_description">Missing</string>
+    <string name="app_id">1615989515312175</string>
 
     <!--Nav-->
     <string-array name="nav_drawer_items">
@@ -30,6 +31,10 @@
     <!--Action Bar-->
     <string name="action_client_list">Matches</string>
     <string name="action_matchmaker_list">MatchMaker</string>
+    <string name="title_activity_fbloginactivity">fbloginactivity</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!--Login-->
     <string name="login_disclaimer">We do not post to Facebook.</string>

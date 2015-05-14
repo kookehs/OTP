@@ -133,7 +133,6 @@ public class ProfileBuilder {
 
                                                         for(int i = 0; i < Math.min(DEFAULT_NUM_PHOTOS, photoImages.size()); i++) {
                                                             photoImageObj = photoImages.get(i);
-                                                            Log.i("ProfileBuilder", photoImageObj.getString("source"));
                                                             Picasso.with(mContext).load(photoImageObj.getString("source")).into(target);
                                                         }
 
