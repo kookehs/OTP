@@ -1,0 +1,43 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center">
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.mrcornman.otp.fragments.PrefileFragment">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView"
+            android:layout_gravity="center_horizontal|top"
+            android:src="@drawable/mj"/>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+            android:weightSum="1"
+            android:layout_gravity="center_horizontal|top">
+
+
+            <TextView
+                android:layout_width="69dp"
+                android:layout_height="146dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Name"
+                android:id="@+id/name_text"
+                android:layout_gravity="bottom" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="113dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Age"
+                android:id="@+id/age_text"
+                android:layout_gravity="bottom"
+                android:layout_weight="0.12" />
+        </LinearLayout>
+
+    </FrameLayout>
+</RelativeLayout>
