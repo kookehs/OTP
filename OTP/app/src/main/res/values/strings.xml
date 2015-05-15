@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="parse_app_id">LW1vmtFBXLdNp5luR1PYKojwYe8lUfm5cRZ3ZNwn</string>
-    <string name="parse_client_key">mHDq5qR9y9Dq52optRUYPubqkH4BF7UoK3PBDq2z</string>
-
     <string name="facebook_app_id">472424749579148</string>
 
-    <string name="app_name">OTP</string>
+    <string name="app_name">Seedr</string>
 
     <string name="action_settings">Settings</string>
 
@@ -15,7 +12,6 @@
 
     <!--General-->
     <string name="content_missing_description">Missing</string>
-    <string name="app_id">1615989515312175</string>
 
     <!--Nav-->
     <string-array name="nav_drawer_items">

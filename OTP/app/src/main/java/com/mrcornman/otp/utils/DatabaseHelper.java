@@ -14,13 +14,6 @@ import com.parse.ParseUser;
  */
 public class DatabaseHelper {
 
-    // user specific
-    public static final String USER_KEY_NAME = "name";
-    public static final String USER_KEY_GENDER = "gender";
-    public static final String USER_KEY_AGE = "age";
-    public static final String USER_KEY_IMAGE_URL = "image_url";
-    public static final String USER_KEY_LANDING_PAGE_URL = "landing_page_url";
-
     private DatabaseHelper() {}
 
     public static void insertNewMatchByPair(String firstId, String secondId) {

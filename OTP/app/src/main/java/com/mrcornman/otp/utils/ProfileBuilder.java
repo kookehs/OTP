@@ -9,14 +9,21 @@ import android.util.Log;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.mrcornman.otp.models.PhotoFile;
+import com.mrcornman.otp.models.PhotoItem;
+import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +32,12 @@ import java.util.List;
  */
 public class ProfileBuilder {
 
-    public final static int DEFAULT_NUM_PHOTOS = 1;
+    public final static int DEFAULT_NUM_PHOTOS = 2;
+
+    public final static String PROFILE_KEY_NAME = "name";
+    public final static String PROFILE_KEY_GENDER = "gender";
+    public final static String PROFILE_KEY_BIRTHDATE = "birthdate";
+    public final static String PROFILE_KEY_PHOTOS = "photos";
 
     private final static String FACEBOOK_KEY_NAME = "first_name";
     private final static String FACEBOOK_KEY_GENDER = "gender";
@@ -35,12 +47,20 @@ public class ProfileBuilder {
     private final static String FACEBOOK_KEY_ALBUMS = "albums";
     private final static String FACEBOOK_KEY_PHOTOS = "photos";
 
+    private static Target[] targets;
+
+    private static boolean userImagesFailed = false;
+    private static int userImagesCount = 0;
+    private static int userImagesThreshold = 0;
+
     /**
-     *
-     * @param context
-     * @param buildProfileCallback
+     * Builds the current user's profile and saves it to the database.
+     * @param context The context of the method.
+     * @param buildProfileCallback To execute once the profile is built or there is an error.
      */
     public static void buildCurrentProfile(Context context, ProfileBuilder.BuildProfileCallback buildProfileCallback) {
+
+        final ParseUser user = ParseUser.getCurrentUser();
 
         final Context mContext = context;
         final BuildProfileCallback buildCallback = buildProfileCallback;
@@ -52,15 +72,20 @@ public class ProfileBuilder {
                     @Override
                     public void onCompleted(JSONObject object, GraphResponse response) {
                         if (response.getError() != null || object == null) {
-                            buildCallback.done(null, response.getError());
+                            buildCallback.done(user, response.getError());
                             return;
                         }
 
                         try {
-                            // name
+                            /*
+                             * Name
+                             */
                             String name = object.getString(FACEBOOK_KEY_NAME);
+                            user.put(PROFILE_KEY_NAME, name);
 
-                            // gender
+                            /*
+                             * Gender
+                             */
                             String gender = object.optString(FACEBOOK_KEY_GENDER);
                             int genderId = -1;
                             switch (gender) {
@@ -72,14 +97,22 @@ public class ProfileBuilder {
                                     break;
                             }
 
-                            // birthday
+                            user.put(PROFILE_KEY_GENDER, genderId);
+
+                            /*
+                             * Birthday
+                             */
                             // TODO: birthday we get is not exact
                             String birthdayStr = object.getString(FACEBOOK_KEY_BIRTHDAY);
                             Date birthDate = PrettyTime.getDateFromBirthdayString(birthdayStr);
 
+                            user.put(PROFILE_KEY_BIRTHDATE, birthDate);
+
                             int i = 0;
 
-                            // interested in
+                            /*
+                             * Interested In
+                             */
                             JSONArray interestedIn = object.optJSONArray(FACEBOOK_KEY_INTERESTED_IN);
                             List<Integer> interestedInList = new ArrayList<>();
                             if (interestedIn != null) {
@@ -88,7 +121,14 @@ public class ProfileBuilder {
                                 }
                             }
 
-                            // profile pictures
+                            /*
+                             * Profile Pictures
+                             */
+
+                            // first reset the book keeping for loaded user images
+                            userImagesFailed = false;
+                            userImagesCount = 0;
+
                             JSONObject albumsObj = object.getJSONObject(FACEBOOK_KEY_ALBUMS);
                             if (albumsObj != null) {
 
@@ -107,38 +147,96 @@ public class ProfileBuilder {
                                                 @Override
                                                 public void done(List<JSONObject> photoImages, Object err) {
                                                     if (err != null || photoImages == null) {
-                                                        buildCallback.done(null, err);
+                                                        buildCallback.done(user, err);
                                                         return;
                                                     }
 
                                                     // get 3 of the profile photo images and use them as our default pics
                                                     try {
                                                         JSONObject photoImageObj = null;
-                                                        Target target = new Target() {
-                                                            @Override
-                                                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                                                                Log.i("ProfileBuilder", "Finished loading - " + from.name());
-                                                                //ParseFile imageFile = new ParseFile(from.name())
-                                                            }
 
-                                                            @Override
-                                                            public void onBitmapFailed(Drawable errorDrawable) {
-                                                                buildCallback.done(null, errorDrawable);
-                                                            }
+                                                        int numPhotos = Math.min(DEFAULT_NUM_PHOTOS, photoImages.size());
+                                                        final PhotoItem[] photos = new PhotoItem[numPhotos];
 
-                                                            @Override
-                                                            public void onPrepareLoad(Drawable placeHolderDrawable) {
-                                                            }
-                                                        };
+                                                        // TODO: Check if there are no profile photos (numPhotos == 0) and generate stock main photo for them then build
 
-                                                        for(int i = 0; i < Math.min(DEFAULT_NUM_PHOTOS, photoImages.size()); i++) {
+                                                        targets = new Target[numPhotos];
+
+                                                        // download each photo then upload to Parse
+                                                        for(int i = 0; i < numPhotos; i++) {
+
+                                                            final List<PhotoFile> photoFiles = new ArrayList<PhotoFile>();
+                                                            final int index = i;
+
+                                                            targets[index] = new Target() {
+                                                                @Override
+                                                                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                                                    final Bitmap mBitmap = bitmap;
+                                                                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                                                    mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                                                                    final byte[] imageBytes = stream.toByteArray();
+
+                                                                    final ParseFile imageFile = new ParseFile("prof_" + index + ".jpg", imageBytes);
+                                                                    imageFile.saveInBackground(new SaveCallback() {
+                                                                        @Override
+                                                                        public void done(ParseException e) {
+                                                                            if(e != null) {
+                                                                                buildCallback.done(null, e);
+                                                                                return;
+                                                                            }
+
+                                                                            PhotoFile photoFile = new PhotoFile();
+                                                                            photoFile.width = mBitmap.getWidth();
+                                                                            photoFile.height = mBitmap.getHeight();
+                                                                            photoFile.url = imageFile.getUrl();
+                                                                            photoFiles.add(photoFile);
+
+                                                                            Log.i("ProfileBuilder", "New photo file at " + photoFile.url);
+
+                                                                            PhotoItem photo = new PhotoItem();
+                                                                            photo.setPhotoFiles(photoFiles);
+                                                                            photos[index] = photo;
+
+                                                                            userImagesCount++;
+                                                                            if(userImagesCount >= userImagesThreshold) {
+                                                                                if(!userImagesFailed) {
+                                                                                    // TODO
+                                                                                    user.put(PROFILE_KEY_PHOTOS, Arrays.asList(photos));
+
+                                                                                    // finally we have all our images and we are done building our profile
+                                                                                    user.saveInBackground(new SaveCallback() {
+                                                                                        @Override
+                                                                                        public void done(ParseException e) {
+                                                                                            buildCallback.done(user, null);
+                                                                                        }
+                                                                                    });
+                                                                                } else {
+                                                                                    buildCallback.done(user, new Exception("Profile images failed to load."));
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    });
+                                                                }
+
+                                                                @Override
+                                                                public void onBitmapFailed(Drawable errorDrawable) {
+                                                                    userImagesFailed = true;
+                                                                    userImagesCount++;
+                                                                    if(userImagesCount >= userImagesThreshold) {
+                                                                        buildCallback.done(user, new Exception("Profile images failed to load."));
+                                                                    }
+                                                                }
+
+                                                                @Override
+                                                                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                                                                }
+                                                            };
+
                                                             photoImageObj = photoImages.get(i);
-                                                            Picasso.with(mContext).load(photoImageObj.getString("source")).into(target);
+                                                            Picasso.with(mContext).load(photoImageObj.getString("source")).into(targets[i]);
                                                         }
-
-                                                        buildCallback.done(ParseUser.getCurrentUser(), null);
                                                     } catch(Exception e) {
-                                                        buildCallback.done(null, e);
+                                                        buildCallback.done(user, e);
                                                         return;
                                                     }
                                                 }
@@ -152,7 +250,7 @@ public class ProfileBuilder {
                             Log.i("ProfileBuilder", "Generated new profile -> Name = " + name + " | " + "Gender = " + genderId + " | " + "Birthday = " + birthDate.toString() + " | " + "Interested in = " + interestedInList.toString());
 
                         } catch (Exception e) {
-                            buildCallback.done(null, e);
+                            buildCallback.done(user, e);
                             return;
                         }
                     }

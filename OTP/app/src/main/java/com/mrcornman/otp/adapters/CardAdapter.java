@@ -1,6 +1,7 @@
 package com.mrcornman.otp.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -8,12 +9,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mrcornman.otp.R;
+import com.mrcornman.otp.models.PhotoFile;
+import com.mrcornman.otp.models.PhotoItem;
+import com.mrcornman.otp.utils.PrettyTime;
+import com.mrcornman.otp.utils.ProfileBuilder;
 import com.mrcornman.otp.views.CardView;
 import com.mrcornman.otp.views.CardView_;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.parse.GetCallback;
+import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -71,13 +79,24 @@ public class CardAdapter extends BaseAdapter {
         ParseUser userItem = getItem(position);
         cardView.bind(userItem.getObjectId());
 
-        ImageView productImage = (ImageView) cardView.findViewById(R.id.picture);
+        final ImageView pictureImage = (ImageView) cardView.findViewById(R.id.picture);
         // fixme: maybe we need a progressbar when the image is loading?
 
         TextView nameText = (TextView) cardView.findViewById(R.id.name_text);
-        nameText.setText(userItem.getUsername());
+        nameText.setText(userItem.getString(ProfileBuilder.PROFILE_KEY_NAME));
         TextView ageText = (TextView) cardView.findViewById(R.id.age_text);
-        ageText.setText(userItem.getEmail() + "");
+        ageText.setText(PrettyTime.getAgeFromBirthDate(userItem.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE)) + "");
+
+        List<PhotoItem> photoItems = userItem.getList(ProfileBuilder.PROFILE_KEY_PHOTOS);
+        PhotoItem mainPhoto = photoItems.get(0);
+        mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
+            @Override
+            public void done(PhotoItem photoItem, ParseException e) {
+                PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
+                Log.i("CardAdapter", pictureImage.toString());
+                Picasso.with(mContext).load(mainFile.url).into(pictureImage);
+            }
+        });
 
         return cardView;
     }

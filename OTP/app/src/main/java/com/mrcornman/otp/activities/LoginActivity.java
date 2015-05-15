@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.services.MessageService;
@@ -47,7 +46,7 @@ public class LoginActivity extends Activity {
 
         ParseUser currentUser = ParseUser.getCurrentUser();
         if (currentUser != null) {
-            onSuccessfulLogin(currentUser);
+            onSuccessfulLogin();
             return;
         }
 
@@ -72,15 +71,16 @@ public class LoginActivity extends Activity {
                                 @Override
                                 public void done(ParseUser user, Object err) {
                                     if (err != null) {
-                                        Log.e("LoginActivity", "Creating profile from Facebook failed.");
+                                        Log.e("LoginActivity", "Creating profile from Facebook failed: " + err.toString());
+                                        user.deleteInBackground();
                                         return;
                                     }
 
-                                    onSuccessfulLogin(user);
+                                    onSuccessfulLogin();
                                 }
                             });
                         } else {
-                            onSuccessfulLogin(user);
+                            onSuccessfulLogin();
                         }
                     }
                 });
@@ -94,25 +94,14 @@ public class LoginActivity extends Activity {
         ParseFacebookUtils.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void onSuccessfulLogin(ParseUser user) {
-        ProfileBuilder.buildCurrentProfile(getApplicationContext(), new ProfileBuilder.BuildProfileCallback() {
-            @Override
-            public void done(ParseUser user, Object err) {
-                if(err != null) {
-                    Toast.makeText(getApplicationContext(), "Creating profile from Facebook failed. Please try again.", Toast.LENGTH_LONG);
-                    Log.e("LoginActivity", "Creating profile from Facebook failed.");
-                    return;
-                }
+    private void onSuccessfulLogin() {
+        final Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
 
-                final Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
+        startActivity(intent);
+        startService(serviceIntent);
 
-                startActivity(intent);
-                startService(serviceIntent);
-
-                finish();
-            }
-        });
+        finish();
     }
 
     @Override
