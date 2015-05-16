@@ -56,18 +56,18 @@ public class CardAdapter extends BaseAdapter {
             cardView = (CardView_) convertView;
         }
 
-        ParseUser userItem = getItem(position);
-        cardView.bind(userItem.getObjectId());
+        ParseUser user = getItem(position);
+        cardView.bind(user.getObjectId());
 
         final ImageView pictureImage = (ImageView) cardView.findViewById(R.id.picture);
         // fixme: maybe we need a progressbar when the image is loading?
 
         TextView nameText = (TextView) cardView.findViewById(R.id.name_text);
-        nameText.setText(userItem.getString(ProfileBuilder.PROFILE_KEY_NAME));
+        nameText.setText(user.getString(ProfileBuilder.PROFILE_KEY_NAME));
         TextView ageText = (TextView) cardView.findViewById(R.id.age_text);
-        ageText.setText(PrettyTime.getAgeFromBirthDate(userItem.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE)) + "");
+        ageText.setText(PrettyTime.getAgeFromBirthDate(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE)) + "");
 
-        List<PhotoItem> photoItems = userItem.getList(ProfileBuilder.PROFILE_KEY_PHOTOS);
+        List<PhotoItem> photoItems = user.getList(ProfileBuilder.PROFILE_KEY_PHOTOS);
         PhotoItem mainPhoto = photoItems.get(0);
         mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
             @Override

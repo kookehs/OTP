@@ -19,7 +19,8 @@
             android:name="com.mrcornman.otp.services.MessageService">
         </service>
 
-        <provider android:authorities="com.facebook.app.FacebookContentProvider472424749579148"
+        <provider 
+            android:authorities="com.facebook.app.FacebookContentProvider472424749579148"
             android:name="com.facebook.FacebookContentProvider"
             android:exported="true" />
 
@@ -38,9 +39,11 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeWithActionBar" />
-        <activity android:name="com.mrcornman.otp.activities.MessagingActivity"
+        <activity 
+            android:name="com.mrcornman.otp.activities.MessagingActivity"
             android:label="Message Activity" />
-        <activity android:name="com.facebook.FacebookActivity"
+        <activity 
+            android:name="com.facebook.FacebookActivity"
             android:configChanges=
                 "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
