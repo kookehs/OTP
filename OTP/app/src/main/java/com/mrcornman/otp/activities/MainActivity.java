@@ -74,7 +74,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
                 if(!success) {
                     Toast.makeText(getApplicationContext(),
-                            "There was a problem with the messaging service, please restart the app.",
+                            "There was a problem with the messaging service, please restart the app",
                             Toast.LENGTH_LONG).show();
                 }
             }

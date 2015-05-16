@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -176,19 +177,24 @@ public class GameFragment extends Fragment {
         final String cachedFirstId = potentialFirstId;
         final String cachedSecondId = potentialSecondId;
 
+        clearPotentialMatch();
+
+        if(cachedFirstId == cachedSecondId) {
+            Log.e("Game Fragment", "User tried to match up with self.");
+            return;
+        }
+
         // TODO: Possibly make it update on insert match instead of doing a costly check beforehand
-        DatabaseHelper.getMatchByPair(potentialFirstId, potentialSecondId, new GetCallback<MatchItem>() {
+        DatabaseHelper.getMatchByPair(cachedFirstId, cachedSecondId, new GetCallback<MatchItem>() {
             @Override
             public void done(MatchItem matchItem, ParseException e) {
-                if(matchItem == null) {
+                if (matchItem == null) {
                     DatabaseHelper.insertNewMatchByPair(cachedFirstId, cachedSecondId);
                 } else {
                     DatabaseHelper.updateMatchNumLikes(matchItem.getObjectId(), matchItem.getNumLikes() + 1);
                 }
             }
         });
-
-        clearPotentialMatch();
     }
 
     //fixme: figure out how to eliminate the ui lag when the database gets new products from the internet..

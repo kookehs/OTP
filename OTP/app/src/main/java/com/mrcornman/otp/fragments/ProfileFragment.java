@@ -3,7 +3,6 @@ package com.mrcornman.otp.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +55,6 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onGlobalLayout() {
                 int pictureWidth = pictureContainer.getWidth();
-                Log.i("ProfileFragment", pictureWidth + "");
                 pictureContainer.setLayoutParams(new RelativeLayout.LayoutParams(pictureWidth, pictureWidth));
             }
         });

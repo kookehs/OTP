@@ -101,11 +101,7 @@ public class NavigationDrawerFragment extends Fragment {
                 getActivity().getActionBar().getThemedContext(),
                 R.layout.drawer_list_item,
                 R.id.list_item_title,
-                new String[]{
-                        "Home",
-                        "Settings",
-                        "Profile"
-                }
+                getResources().getStringArray(R.array.nav_drawer_items)
         ));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
 

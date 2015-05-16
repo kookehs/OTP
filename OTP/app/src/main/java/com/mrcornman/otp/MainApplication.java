@@ -24,7 +24,7 @@ public class MainApplication extends Application {
         // parse
         ParseObject.registerSubclass(MatchItem.class);
         ParseObject.registerSubclass(PhotoItem.class);
-        Parse.initialize(this, PARSE_APP_ID, PARSE_CLIENT_KEY);
+        Parse.initialize(getApplicationContext(), PARSE_APP_ID, PARSE_CLIENT_KEY);
 
         // facebook
         FacebookSdk.sdkInitialize(getApplicationContext());

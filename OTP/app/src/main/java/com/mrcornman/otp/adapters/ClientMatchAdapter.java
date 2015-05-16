@@ -65,10 +65,13 @@ public class ClientMatchAdapter extends BaseAdapter {
 
         MatchItem match = getItem(position);
 
-        convertView.setTag(match.getSecondId());
+        String currId = ParseUser.getCurrentUser().getObjectId();
+        String otherId = match.getFirstId().equals(currId) ? match.getSecondId() : match.getFirstId();
+
+        convertView.setTag(otherId);
         countText.setText(match.getNumLikes() + "");
 
-        DatabaseHelper.getUserById(match.getSecondId(), new GetCallback<ParseUser>() {
+        DatabaseHelper.getUserById(otherId, new GetCallback<ParseUser>() {
             @Override
             public void done(ParseUser parseUser, ParseException e) {
                 if (parseUser != null) {

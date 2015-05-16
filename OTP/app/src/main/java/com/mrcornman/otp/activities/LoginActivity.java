@@ -100,8 +100,6 @@ public class LoginActivity extends Activity {
 
         startActivity(intent);
         startService(serviceIntent);
-
-        finish();
     }
 
     @Override
