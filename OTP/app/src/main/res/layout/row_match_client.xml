@@ -35,14 +35,6 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp">
 
-                <ProgressBar
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:id="@+id/thumb_progress"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:layout_gravity="center" />
-
                 <com.mrcornman.otp.views.CircularImageView
                     android:layout_width="64dp"
                     android:layout_height="64dp"

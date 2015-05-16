@@ -47,20 +47,19 @@ public class PrettyTime {
     }
 
     /**
-     * Converts a formatted birthday string to an age. Returns -1
-     * if the birthday could not be converted.
-     * @param birthdayString Must in the format yyyy or mm/dd/yyyy
+     * Converts a birth Date to an age. Returns -1
+     * if the Date could not be converted.
+     * @param birthDate Must in the format yyyy or mm/dd/yyyy
      * @return The age as an integer
      */
-    public static int getAgeFromBirthdayString(String birthdayString) {
+    public static int getAgeFromBirthDate(Date birthDate) {
         int age = -1;
 
-        if(birthdayString == null || birthdayString.length() == 0) return age;
+        if(birthDate == null || birthDate == null) return age;
 
         Calendar today = Calendar.getInstance();
         Calendar dob = Calendar.getInstance();
-        Date dateOfBirth = getDateFromBirthdayString(birthdayString);
-        dob.setTime(dateOfBirth);
+        dob.setTime(birthDate);
 
         age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
         if (today.get(Calendar.MONTH) < dob.get(Calendar.MONTH)) {

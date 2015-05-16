@@ -8,14 +8,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.models.NavDrawerItem;
 
-/**
- * Created by Anil on 7/24/2014.
- */
+import java.util.ArrayList;
+
 public class NavDrawerListAdapter extends BaseAdapter {
 
     private Context context;

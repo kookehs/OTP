@@ -59,14 +59,6 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true">
 
-            <ProgressBar
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:id="@+id/thumb_progress_first"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:layout_gravity="center" />
-
             <com.mrcornman.otp.views.CircularImageView
                 android:layout_width="64dp"
                 android:layout_height="64dp"
@@ -109,14 +101,6 @@
             android:layout_centerVertical="true"
             android:id="@+id/thumb_frame_second"
             android:padding="8dp">
-
-            <ProgressBar
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:id="@+id/thumb_progress_second"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:layout_gravity="center" />
 
             <com.mrcornman.otp.views.CircularImageView
                 android:layout_width="64dp"

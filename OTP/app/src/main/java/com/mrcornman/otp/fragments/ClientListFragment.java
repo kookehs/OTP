@@ -44,8 +44,7 @@ public class ClientListFragment extends Fragment {
         return fragment;
     }
 
-    public ClientListFragment() {
-    }
+    public ClientListFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -75,13 +74,15 @@ public class ClientListFragment extends Fragment {
 
         matchItems = new ArrayList<>();
         clientMatchAdapter = new ClientMatchAdapter(getActivity().getApplicationContext(), matchItems);
+        listView.setAdapter(clientMatchAdapter);
 
         // fill list up
         DatabaseHelper.findTopMatches(20, new FindCallback<MatchItem>() {
             @Override
             public void done(List<MatchItem> list, ParseException e) {
-                matchItems = list;
-                clientMatchAdapter.notifyDataSetChanged();
+                for(MatchItem match : list) {
+                    clientMatchAdapter.addMatch(match);
+                }
             }
         });
 
