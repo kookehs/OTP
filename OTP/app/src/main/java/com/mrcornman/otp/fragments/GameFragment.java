@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -147,13 +146,11 @@ public class GameFragment extends Fragment {
         // resetStoredValues();
 
         mCardUsersFirst = new ArrayList<>();
-        mCardAdapterFirst = new CardAdapter(getActivity().getApplicationContext(),
-                R.layout.card_item, mCardUsersFirst);
+        mCardAdapterFirst = new CardAdapter(getActivity().getApplicationContext(), mCardUsersFirst);
         mCardStackLayoutFirst.setAdapter(mCardAdapterFirst);
 
         mCardUsersSecond = new ArrayList<>();
-        mCardAdapterSecond = new CardAdapter(getActivity().getApplicationContext(),
-                R.layout.card_item, mCardUsersSecond);
+        mCardAdapterSecond = new CardAdapter(getActivity().getApplicationContext(), mCardUsersSecond);
         mCardStackLayoutSecond.setAdapter(mCardAdapterSecond);
 
         refreshFirst();
@@ -162,9 +159,10 @@ public class GameFragment extends Fragment {
         return view;
     }
 
+
     private void buildPotentialMatch(String firstId, String secondId) {
-        potentialFirstId = firstId;
-        potentialSecondId = secondId;
+        potentialFirstId = firstId != null ? firstId : "";
+        potentialSecondId = secondId != null ? secondId : "";
     }
 
     private void clearPotentialMatch() {
@@ -178,17 +176,10 @@ public class GameFragment extends Fragment {
         final String cachedFirstId = potentialFirstId;
         final String cachedSecondId = potentialSecondId;
 
-        Log.e("Current cached first id", cachedFirstId);
-
         // TODO: Possibly make it update on insert match instead of doing a costly check beforehand
         DatabaseHelper.getMatchByPair(potentialFirstId, potentialSecondId, new GetCallback<MatchItem>() {
             @Override
             public void done(MatchItem matchItem, ParseException e) {
-                if(e != null) {
-                    Log.e("GameFragment", "There was a problem accessing the match tables.");
-                    return;
-                }
-
                 if(matchItem == null) {
                     DatabaseHelper.insertNewMatchByPair(cachedFirstId, cachedSecondId);
                 } else {

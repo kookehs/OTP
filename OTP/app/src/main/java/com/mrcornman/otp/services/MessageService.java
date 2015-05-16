@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.parse.ParseUser;
 import com.sinch.android.rtc.ClientRegistration;
@@ -76,6 +77,8 @@ public class MessageService extends Service implements SinchClientListener {
     public void onClientStarted(SinchClient client) {
         client.startListeningOnActiveConnection();
         messageClient = client.getMessageClient();
+
+        Log.i("MessageService", "Message activity successfully started.");
 
         broadcastIntent.putExtra("success", true);
         broadcaster.sendBroadcast(broadcastIntent);
