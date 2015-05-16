@@ -1,7 +1,6 @@
 package com.mrcornman.otp.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -15,9 +14,6 @@ import com.mrcornman.otp.utils.PrettyTime;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.mrcornman.otp.views.CardView;
 import com.mrcornman.otp.views.CardView_;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -27,29 +23,13 @@ import java.util.List;
 
 public class CardAdapter extends BaseAdapter {
 
-    List<ParseUser> mItems;
-
     private Context mContext;
-    private int mResourceId;
+    private List<ParseUser> mItems;
 
-    private ImageLoader imageLoader;
-    private DisplayImageOptions options;
-
-    public CardAdapter(Context context, int resourceId, List<ParseUser> users) {
+    public CardAdapter(Context context, List<ParseUser> users) {
         // fixme: should we download the json file here?
         mContext = context;
-        mResourceId = resourceId;
         mItems = users;
-
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(mContext).build();
-        imageLoader = ImageLoader.getInstance();
-        imageLoader.init(config);
-
-        options = new DisplayImageOptions.Builder()
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .build();
-
     }
 
     @Override
@@ -93,8 +73,7 @@ public class CardAdapter extends BaseAdapter {
             @Override
             public void done(PhotoItem photoItem, ParseException e) {
                 PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
-                Log.i("CardAdapter", pictureImage.toString());
-                Picasso.with(mContext).load(mainFile.url).into(pictureImage);
+                Picasso.with(mContext).load(mainFile.url).resize(pictureImage.getWidth(), pictureImage.getHeight()).centerCrop().into(pictureImage);
             }
         });
 

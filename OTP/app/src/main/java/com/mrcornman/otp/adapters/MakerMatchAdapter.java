@@ -4,33 +4,57 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.models.MatchItem;
+import com.mrcornman.otp.models.PhotoFile;
+import com.mrcornman.otp.models.PhotoItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
+import com.mrcornman.otp.utils.ProfileBuilder;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-/**
- * Created by Anil on 8/29/2014.
- */
-public class MakerMatchAdapter extends ArrayAdapter<MatchItem> {
+public class MakerMatchAdapter extends BaseAdapter {
+
+    private Context mContext;
+    private List<MatchItem> mItems;
 
     public MakerMatchAdapter(Context context, List<MatchItem> matches) {
-        super(context, 0, matches);
+        mContext = context;
+        mItems = matches;
+    }
+
+    public void addMatch(MatchItem match) {
+        mItems.add(match);
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public int getCount() {
+        return mItems.size();
+    }
+
+    @Override
+    public MatchItem getItem(int i) {
+        return mItems.get(i);
+    }
+
+    @Override
+    public long getItemId(int i) {
+        return i;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if(convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_match_matchmaker, parent, false);
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.row_match_maker, parent, false);
         }
 
         // init views first
@@ -38,18 +62,10 @@ public class MakerMatchAdapter extends ArrayAdapter<MatchItem> {
 
         final ImageView thumbImageFirst = (ImageView) convertView.findViewById(R.id.thumb_image_first);
         final TextView nameTextFirst = (TextView) convertView.findViewById(R.id.name_text_first);
-        final ProgressBar progressBarFirst = (ProgressBar) convertView.findViewById(R.id.thumb_progress_first);
-
-        progressBarFirst.setVisibility(View.VISIBLE);
-        thumbImageFirst.setVisibility(View.INVISIBLE);
 
         // init views second
         final ImageView thumbImageSecond = (ImageView) convertView.findViewById(R.id.thumb_image_second);
         final TextView nameTextSecond = (TextView) convertView.findViewById(R.id.name_text_second);
-        final ProgressBar progressBarSecond = (ProgressBar) convertView.findViewById(R.id.thumb_progress_second);
-
-        progressBarSecond.setVisibility(View.VISIBLE);
-        thumbImageSecond.setVisibility(View.INVISIBLE);
 
         // use match item to fill views
         MatchItem match = getItem(position);
@@ -62,7 +78,17 @@ public class MakerMatchAdapter extends ArrayAdapter<MatchItem> {
             @Override
             public void done(ParseUser parseUser, ParseException e) {
                 if(parseUser != null) {
-                    nameTextFirst.setText(parseUser.getUsername());
+                    nameTextFirst.setText(parseUser.getString(ProfileBuilder.PROFILE_KEY_NAME));
+
+                    List<PhotoItem> photoItems = parseUser.getList(ProfileBuilder.PROFILE_KEY_PHOTOS);
+                    PhotoItem mainPhoto = photoItems.get(0);
+                    mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
+                        @Override
+                        public void done(PhotoItem photoItem, ParseException e) {
+                            PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
+                            Picasso.with(mContext).load(mainFile.url).resize(thumbImageFirst.getWidth(), thumbImageFirst.getHeight()).centerCrop().into(thumbImageFirst);
+                        }
+                    });
                 }
             }
         });
@@ -72,7 +98,17 @@ public class MakerMatchAdapter extends ArrayAdapter<MatchItem> {
             @Override
             public void done(ParseUser parseUser, ParseException e) {
                 if(parseUser != null) {
-                    nameTextSecond.setText(parseUser.getUsername());
+                    nameTextSecond.setText(parseUser.getString(ProfileBuilder.PROFILE_KEY_NAME));
+
+                    List<PhotoItem> photoItems = parseUser.getList(ProfileBuilder.PROFILE_KEY_PHOTOS);
+                    PhotoItem mainPhoto = photoItems.get(0);
+                    mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
+                        @Override
+                        public void done(PhotoItem photoItem, ParseException e) {
+                            PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
+                            Picasso.with(mContext).load(mainFile.url).resize(thumbImageSecond.getWidth(), thumbImageSecond.getHeight()).centerCrop().into(thumbImageSecond);
+                        }
+                    });
                 }
             }
         });

@@ -20,7 +20,7 @@ import android.widget.Toast;
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.fragments.ClientListFragment;
 import com.mrcornman.otp.fragments.GameFragment;
-import com.mrcornman.otp.fragments.MatchMakerListFragment;
+import com.mrcornman.otp.fragments.MakerListFragment;
 import com.mrcornman.otp.fragments.NavigationDrawerFragment;
 
 public class MainActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks, ClientListFragment.ClientListInteractionListener {
@@ -117,7 +117,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
     public void onMenuItemMatchmakerList() {
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, MatchMakerListFragment.newInstance(1))
+                .replace(R.id.container, MakerListFragment.newInstance(1))
                         //.addToBackStack(null)
                 .commit();
         restoreActionBar();

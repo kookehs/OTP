@@ -151,7 +151,7 @@ public class ProfileBuilder {
                                                         return;
                                                     }
 
-                                                    // get 3 of the profile photo images and use them as our default pics
+                                                    // get some of the profile photo images and use them as our default pics
                                                     try {
                                                         JSONObject photoImageObj = null;
 

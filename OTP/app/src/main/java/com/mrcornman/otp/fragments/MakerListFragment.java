@@ -22,7 +22,7 @@ import com.parse.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MatchMakerListFragment extends Fragment {
+public class MakerListFragment extends Fragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     private String sectionNumber;
@@ -34,15 +34,15 @@ public class MatchMakerListFragment extends Fragment {
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static MatchMakerListFragment newInstance(int sectionNumber) {
-        MatchMakerListFragment fragment = new MatchMakerListFragment();
+    public static MakerListFragment newInstance(int sectionNumber) {
+        MakerListFragment fragment = new MakerListFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public MatchMakerListFragment() {
+    public MakerListFragment() {
     }
 
     @Override
@@ -71,13 +71,15 @@ public class MatchMakerListFragment extends Fragment {
 
         matchItems = new ArrayList<>();
         makerMatchAdapter = new MakerMatchAdapter(getActivity().getApplicationContext(), matchItems);
+        listView.setAdapter(makerMatchAdapter);
 
         // fill list up
         DatabaseHelper.findTopMatches(20, new FindCallback<MatchItem>() {
             @Override
             public void done(List<MatchItem> list, ParseException e) {
-                matchItems = list;
-                makerMatchAdapter.notifyDataSetChanged();
+                for(MatchItem match : list) {
+                    makerMatchAdapter.addMatch(match);
+                }
             }
         });
 
