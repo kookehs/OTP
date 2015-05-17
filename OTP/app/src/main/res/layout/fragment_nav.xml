@@ -9,7 +9,7 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/listView"
+        android:id="@+id/nav_list"
         android:choiceMode="none"
         android:background="#fff"
         android:scrollbars="none"/>

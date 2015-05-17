@@ -30,11 +30,13 @@ import java.util.List;
 public class NavFragment extends Fragment {
 
     private final static String[] titles = {
+            "Profile",
             "Settings",
             "Share"
     };
 
     private final static int[] iconIds = {
+            R.mipmap.ic_nav_prefs,
             R.mipmap.ic_nav_settings,
             R.mipmap.ic_nav_share
     };
@@ -62,7 +64,7 @@ public class NavFragment extends Fragment {
                              Bundle savedInstanceState) {
         View fragmentView =  inflater.inflate(R.layout.fragment_nav, container, false);
 
-        ListView listView = (ListView) fragmentView.findViewById(R.id.listView);
+        ListView listView = (ListView) fragmentView.findViewById(R.id.nav_list);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -173,7 +175,6 @@ public class NavFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // todo: code to handle menu clicks
         if (mDrawerToggle.onOptionsItemSelected(item)) return true;
 
         return super.onOptionsItemSelected(item);

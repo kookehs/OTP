@@ -14,6 +14,7 @@
     <string name="content_missing_description">Missing</string>
 
     <!--Action Bar-->
+    <string name="action_game">Game</string>
     <string name="action_client_list">Matches</string>
     <string name="action_maker_list">Maker</string>
 

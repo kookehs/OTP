@@ -21,18 +21,18 @@ import com.mrcornman.otp.R;
 import com.mrcornman.otp.fragments.ClientListFragment;
 import com.mrcornman.otp.fragments.GameFragment;
 import com.mrcornman.otp.fragments.MakerListFragment;
+import com.mrcornman.otp.fragments.NavFragment;
 import com.mrcornman.otp.fragments.ProfileFragment;
 import com.mrcornman.otp.fragments.SettingsFragment;
-import com.mrcornman.otp.fragments.NavFragment;
 
 public class MainActivity extends Activity implements NavFragment.NavigationDrawerCallbacks, ClientListFragment.ClientListInteractionListener {
 
     /**
      * Navigation Identifiers
      */
-    public static final int NAV_GAME = 0;
+    public static final int NAV_PROFILE = 0;
     public static final int NAV_SETTINGS = 1;
-    public static final int NAV_PROFILE = 2;
+    public static final int NAV_SHARE = 2;
 
 
     /**
@@ -84,37 +84,45 @@ public class MainActivity extends Activity implements NavFragment.NavigationDraw
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        // update the main content by replacing fragments
-        FragmentManager fragmentManager = getFragmentManager();
-        Fragment fragment = null;
 
         switch(position) {
-            case NAV_GAME:
-                fragment = GameFragment.newInstance();
+            case NAV_PROFILE:
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.container, ProfileFragment.newInstance())
+                                //.addToBackStack(null)
+                        .commit();
+
+                onSectionAttached(position);
+                restoreActionBar();
                 break;
             case NAV_SETTINGS:
-                fragment = SettingsFragment.newInstance();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.container, SettingsFragment.newInstance())
+                                //.addToBackStack(null)
+                        .commit();
+
+                onSectionAttached(position);
+                restoreActionBar();
                 break;
-            case NAV_PROFILE :
-                fragment = ProfileFragment.newInstance();
+            case NAV_SHARE:
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_TEXT, "Check out this great new app that lets you match two people up! http://mrcornman.com/");
+                shareIntent.setType("text/plain");
+                startActivity(shareIntent);
                 break;
         }
-
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, fragment)
-                //.addToBackStack(null)
-                .commit();
-        onSectionAttached(position + 1);
-        restoreActionBar();
     }
 
     public void onSectionAttached(int number) {
         switch (number) {
-            case 1:
-                mTitle = "Game";
+            case NAV_PROFILE:
+                mTitle = "Profile";
                 break;
-            case 2:
+            case NAV_SETTINGS:
                 mTitle = "Settings";
+                break;
+            case NAV_SHARE:
+                mTitle = "Share";
                 break;
         }
     }
@@ -122,6 +130,7 @@ public class MainActivity extends Activity implements NavFragment.NavigationDraw
     public void restoreActionBar() {
         ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        actionBar.setIcon(android.R.color.transparent);
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
@@ -144,13 +153,25 @@ public class MainActivity extends Activity implements NavFragment.NavigationDraw
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        if(mNavFragment.onOptionsItemSelected(item)) return true;
+
         boolean handled = false;
-        int id = item.getItemId();
 
         FragmentManager fragmentManager = getFragmentManager();
         Fragment fragment = null;
 
-        switch(id) {
+        switch(item.getItemId()) {
+            case R.id.action_game:
+                fragment = GameFragment.newInstance();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, fragment)
+                                //.addToBackStack(null)
+                        .commit();
+
+                restoreActionBar();
+                handled = true;
+                break;
             case R.id.action_client_list:
                 fragment = ClientListFragment.newInstance(1);
                 fragmentManager.beginTransaction()
