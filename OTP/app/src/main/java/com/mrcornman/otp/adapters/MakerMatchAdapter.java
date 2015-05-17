@@ -19,6 +19,7 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MakerMatchAdapter extends BaseAdapter {
@@ -26,9 +27,9 @@ public class MakerMatchAdapter extends BaseAdapter {
     private Context mContext;
     private List<MatchItem> mItems;
 
-    public MakerMatchAdapter(Context context, List<MatchItem> matches) {
+    public MakerMatchAdapter(Context context) {
         mContext = context;
-        mItems = matches;
+        mItems = new ArrayList<>();
     }
 
     public void addMatch(MatchItem match) {

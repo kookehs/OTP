@@ -144,7 +144,6 @@ public class GameFragment extends Fragment {
 
         // init data
         sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-        // resetStoredValues();
 
         mCardUsersFirst = new ArrayList<>();
         mCardAdapterFirst = new CardAdapter(getActivity().getApplicationContext(), mCardUsersFirst);
@@ -197,19 +196,7 @@ public class GameFragment extends Fragment {
         });
     }
 
-    //fixme: figure out how to eliminate the ui lag when the database gets new products from the internet..
-    // already tried initializing the product stack inside the overridden method onViewCreated, and it didn't improve anything..
-
     private void refreshFirst() {
-        /*
-        if (startFromFirst > Integer.parseInt(maxCardsFirst)){
-            startFromFirst = 0;
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            //editor.putInt(getString(R.string.men_shoes_start_from_key), 0);
-            editor.commit();
-        }
-        */
-
         ParseQuery<ParseUser> query = ParseUser.getQuery();
 
         // exclude self

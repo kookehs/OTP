@@ -23,9 +23,9 @@ import com.mrcornman.otp.fragments.GameFragment;
 import com.mrcornman.otp.fragments.MakerListFragment;
 import com.mrcornman.otp.fragments.ProfileFragment;
 import com.mrcornman.otp.fragments.SettingsFragment;
-import com.mrcornman.otp.fragments.NavigationDrawerFragment;
+import com.mrcornman.otp.fragments.NavFragment;
 
-public class MainActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks, ClientListFragment.ClientListInteractionListener {
+public class MainActivity extends Activity implements NavFragment.NavigationDrawerCallbacks, ClientListFragment.ClientListInteractionListener {
 
     /**
      * Navigation Identifiers
@@ -38,7 +38,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
-    private NavigationDrawerFragment mNavigationDrawerFragment;
+    private NavFragment mNavFragment;
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -50,21 +50,19 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getFragmentManager().findFragmentById(R.id.navigation_drawer);
+        // Set up the drawer.
+        mNavFragment = (NavFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
-        // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
+        mNavFragment.setUp((DrawerLayout) findViewById(R.id.drawer_layout));
 
+        // start up progress dialog until MessageService is started
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Loading");
         progressDialog.setTitle("Please wait...");
         progressDialog.show();
 
-        // listen for successful startup broadcast from MessageService
+        // init receiver for successful startup broadcast from MessageService
         BroadcastReceiver mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -74,7 +72,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
                 if(!success) {
                     Toast.makeText(getApplicationContext(),
-                            "There was a problem with the messaging service, please restart the app",
+                            "There was a problem with the activity_messaging service, please restart the app",
                             Toast.LENGTH_LONG).show();
                 }
             }
@@ -106,27 +104,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
                 .replace(R.id.container, fragment)
                 //.addToBackStack(null)
                 .commit();
-        onSectionAttached(position+1);
-        restoreActionBar();
-    }
-
-    @Override
-    public void onMenuItemClientList() {
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, ClientListFragment.newInstance(1))
-                //.addToBackStack(null)
-                .commit();
-        restoreActionBar();
-    }
-
-    @Override
-    public void onMenuItemMatchmakerList() {
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, MakerListFragment.newInstance(1))
-                        //.addToBackStack(null)
-                .commit();
+        onSectionAttached(position + 1);
         restoreActionBar();
     }
 
@@ -144,14 +122,16 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
     public void restoreActionBar() {
         ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
         actionBar.setTitle(mTitle);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
+        if (!mNavFragment.isDrawerOpen()) {
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
@@ -164,14 +144,36 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        boolean handled = false;
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+
+        FragmentManager fragmentManager = getFragmentManager();
+        Fragment fragment = null;
+
+        switch(id) {
+            case R.id.action_client_list:
+                fragment = ClientListFragment.newInstance(1);
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, fragment)
+                                //.addToBackStack(null)
+                        .commit();
+
+                restoreActionBar();
+                handled = true;
+                break;
+            case R.id.action_matchmaker_list:
+                fragment = MakerListFragment.newInstance(1);
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, fragment)
+                                //.addToBackStack(null)
+                        .commit();
+
+                restoreActionBar();
+                handled = true;
+                break;
         }
-        return super.onOptionsItemSelected(item);
+
+        return handled || super.onOptionsItemSelected(item);
     }
 
     // fragment interface actions

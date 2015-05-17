@@ -6,7 +6,7 @@
         android:icon="@mipmap/ic_action_client"
         android:showAsAction="ifRoom" />
     <item android:id="@+id/action_matchmaker_list"
-        android:title="@string/action_matchmaker_list"
-        android:icon="@mipmap/ic_action_matchmaker"
+        android:title="@string/action_maker_list"
+        android:icon="@mipmap/ic_action_maker"
         android:showAsAction="ifRoom" />
 </menu>

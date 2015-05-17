@@ -13,23 +13,9 @@
     <!--General-->
     <string name="content_missing_description">Missing</string>
 
-    <!--Nav-->
-    <string-array name="nav_drawer_items">
-        <item>Home</item>
-        <item>Settings</item>
-        <item>Profile</item>
-        <item>Share</item>
-    </string-array>
-
-    <array name="nav_drawer_icons">
-        <item>@mipmap/ic_launcher</item>
-        <item>@drawable/ic_settings</item>
-    </array>
-
     <!--Action Bar-->
     <string name="action_client_list">Matches</string>
-    <string name="action_matchmaker_list">MatchMaker</string>
-    <string name="title_activity_fbloginactivity">fbloginactivity</string>
+    <string name="action_maker_list">Maker</string>
 
     <!--Login-->
     <string name="login_disclaimer">We do not post to Facebook.</string>

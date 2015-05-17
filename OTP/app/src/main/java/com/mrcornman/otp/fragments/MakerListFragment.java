@@ -48,7 +48,7 @@ public class MakerListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_matchmaker_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_maker_list, container, false);
         ListView listView = (ListView) rootView.findViewById(R.id.matchmaker_list);
 
         // set up list view input
@@ -70,7 +70,7 @@ public class MakerListFragment extends Fragment {
         });
 
         matchItems = new ArrayList<>();
-        makerMatchAdapter = new MakerMatchAdapter(getActivity().getApplicationContext(), matchItems);
+        makerMatchAdapter = new MakerMatchAdapter(getActivity().getApplicationContext());
         listView.setAdapter(makerMatchAdapter);
 
         // fill list up

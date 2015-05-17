@@ -19,6 +19,7 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClientMatchAdapter extends BaseAdapter {
@@ -26,9 +27,9 @@ public class ClientMatchAdapter extends BaseAdapter {
     private Context mContext;
     private List<MatchItem> mItems;
 
-    public ClientMatchAdapter(Context context, List<MatchItem> matches) {
+    public ClientMatchAdapter(Context context) {
         mContext = context;
-        mItems = matches;
+        mItems = new ArrayList<>();
     }
 
     public void addMatch(MatchItem match) {

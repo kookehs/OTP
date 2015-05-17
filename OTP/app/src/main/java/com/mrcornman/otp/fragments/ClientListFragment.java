@@ -73,7 +73,7 @@ public class ClientListFragment extends Fragment {
         });
 
         matchItems = new ArrayList<>();
-        clientMatchAdapter = new ClientMatchAdapter(getActivity().getApplicationContext(), matchItems);
+        clientMatchAdapter = new ClientMatchAdapter(getActivity().getApplicationContext());
         listView.setAdapter(clientMatchAdapter);
 
         // fill list up

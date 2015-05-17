@@ -79,24 +79,25 @@
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.15">
+            android:layout_weight="0.20">
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/container_count"
-                android:src="@drawable/love"
+                android:src="@mipmap/ic_likes_container"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:padding="8dp" />
 
             <TextView
                 tools:text="99"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/count_text"
-                android:textSize="14sp"
-                android:textColor="#ddd"
+                android:textSize="20sp"
+                android:textColor="#333"
                 android:textStyle="normal"
                 android:layout_gravity="center"
                 android:focusable="false"
