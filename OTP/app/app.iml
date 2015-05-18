@@ -115,6 +115,7 @@
     <orderEntry type="library" exported="" name="support-v4-22.0.0" level="project" />
     <orderEntry type="library" exported="" name="androidannotations-api-3.0.1" level="project" />
     <orderEntry type="library" exported="" name="universal-image-loader-1.9.2-with-sources" level="project" />
+    <orderEntry type="library" exported="" name="pagerslidingtabstrip-1.0.1" level="project" />
     <orderEntry type="library" exported="" name="facebook-android-sdk-4.0.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-analytics-7.0.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-appstate-7.0.0" level="project" />

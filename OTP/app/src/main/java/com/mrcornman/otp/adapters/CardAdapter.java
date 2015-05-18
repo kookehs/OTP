@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -56,16 +57,16 @@ public class CardAdapter extends BaseAdapter {
             cardView = (CardView_) convertView;
         }
 
-        ParseUser user = getItem(position);
+        final ParseUser user = getItem(position);
         cardView.bind(user.getObjectId());
-
-        final ImageView pictureImage = (ImageView) cardView.findViewById(R.id.picture);
-        // fixme: maybe we need a progressbar when the image is loading?
 
         TextView nameText = (TextView) cardView.findViewById(R.id.name_text);
         nameText.setText(user.getString(ProfileBuilder.PROFILE_KEY_NAME));
         TextView ageText = (TextView) cardView.findViewById(R.id.age_text);
         ageText.setText(PrettyTime.getAgeFromBirthDate(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE)) + "");
+
+        final FrameLayout pictureContainer = (FrameLayout) cardView.findViewById(R.id.picture_container);
+        final ImageView pictureImage = (ImageView) cardView.findViewById(R.id.picture);
 
         List<PhotoItem> photoItems = user.getList(ProfileBuilder.PROFILE_KEY_PHOTOS);
         PhotoItem mainPhoto = photoItems.get(0);
@@ -73,7 +74,7 @@ public class CardAdapter extends BaseAdapter {
             @Override
             public void done(PhotoItem photoItem, ParseException e) {
                 PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
-                Picasso.with(mContext).load(mainFile.url).resize(pictureImage.getWidth(), pictureImage.getHeight()).centerCrop().into(pictureImage);
+                Picasso.with(mContext).load(mainFile.url).fit().centerCrop().into(pictureImage);
             }
         });
 

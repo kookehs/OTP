@@ -1,6 +1,7 @@
 package com.mrcornman.otp.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import com.mrcornman.otp.models.MatchItem;
 import com.mrcornman.otp.models.PhotoFile;
 import com.mrcornman.otp.models.PhotoItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
+import com.mrcornman.otp.utils.PrettyNumbers;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -70,7 +72,8 @@ public class ClientMatchAdapter extends BaseAdapter {
         String otherId = match.getFirstId().equals(currId) ? match.getSecondId() : match.getFirstId();
 
         convertView.setTag(otherId);
-        countText.setText(match.getNumLikes() + "");
+        countText.setText(PrettyNumbers.getPrettyNumber(match.getNumLikes()));
+        Log.i("ClientMatchAdapter", "boom");
 
         DatabaseHelper.getUserById(otherId, new GetCallback<ParseUser>() {
             @Override
@@ -84,7 +87,7 @@ public class ClientMatchAdapter extends BaseAdapter {
                         @Override
                         public void done(PhotoItem photoItem, ParseException e) {
                             PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
-                            Picasso.with(mContext).load(mainFile.url).resize(thumbImage.getWidth(), thumbImage.getHeight()).centerCrop().into(thumbImage);
+                            Picasso.with(mContext).load(mainFile.url).fit().centerCrop().into(thumbImage);
                         }
                     });
                 }
@@ -92,10 +95,5 @@ public class ClientMatchAdapter extends BaseAdapter {
         });
 
         return convertView;
-    }
-
-    @Override
-    public void notifyDataSetChanged() {
-        super.notifyDataSetChanged();
     }
 }

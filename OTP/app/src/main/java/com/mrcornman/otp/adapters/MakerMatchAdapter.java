@@ -1,6 +1,7 @@
 package com.mrcornman.otp.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import com.mrcornman.otp.models.MatchItem;
 import com.mrcornman.otp.models.PhotoFile;
 import com.mrcornman.otp.models.PhotoItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
+import com.mrcornman.otp.utils.PrettyNumbers;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -72,7 +74,8 @@ public class MakerMatchAdapter extends BaseAdapter {
         MatchItem match = getItem(position);
 
         convertView.setTag(match.getObjectId());
-        countText.setText(match.getNumLikes() + "");
+        countText.setText(PrettyNumbers.getPrettyNumber(match.getNumLikes()));
+        Log.i("MakerMatchAdapter", "hid");
 
         // fill first user
         DatabaseHelper.getUserById(match.getFirstId(), new GetCallback<ParseUser>() {
@@ -107,7 +110,7 @@ public class MakerMatchAdapter extends BaseAdapter {
                         @Override
                         public void done(PhotoItem photoItem, ParseException e) {
                             PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
-                            Picasso.with(mContext).load(mainFile.url).resize(thumbImageSecond.getWidth(), thumbImageSecond.getHeight()).centerCrop().into(thumbImageSecond);
+                            Picasso.with(mContext).load(mainFile.url).fit().centerCrop().into(thumbImageSecond);
                         }
                     });
                 }

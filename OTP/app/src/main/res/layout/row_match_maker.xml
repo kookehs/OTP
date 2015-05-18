@@ -14,41 +14,14 @@
         android:focusable="false"
         android:contentDescription="@string/content_missing_description"/>
 
-    <FrameLayout
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_centerInParent="true"
-        android:id="@+id/container_count">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/image_count"
-            android:src="@mipmap/ic_likes_container"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:layout_gravity="center"
-            android:contentDescription="@string/content_missing_description" />
-
-        <TextView
-            tools:text="99"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/count_text"
-            android:textSize="20dp"
-            android:textColor="#333"
-            android:textStyle="normal"
-            android:layout_gravity="center"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:singleLine="true" />
-    </FrameLayout>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/container_first"
-        android:layout_toLeftOf="@+id/container_count">
+        android:layout_alignParentLeft="false"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/container_count"
+        android:layout_marginBottom="8dp">
 
         <FrameLayout
             android:layout_width="wrap_content"
@@ -93,7 +66,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/container_second"
-        android:layout_toRightOf="@+id/container_count">
+        android:layout_toRightOf="@+id/container_count"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="false">
 
         <FrameLayout
             android:layout_width="wrap_content"
@@ -126,6 +101,31 @@
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/thumb_frame_second" />
 
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/container_count"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="false"
+        android:background="@drawable/likes_container"
+        android:layout_centerInParent="true">
+
+        <TextView
+            tools:text="99"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/count_text"
+            android:textSize="20sp"
+            android:textColor="#333"
+            android:layout_gravity="center"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:singleLine="true"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:padding="4dp" />
     </RelativeLayout>
 
 </RelativeLayout>

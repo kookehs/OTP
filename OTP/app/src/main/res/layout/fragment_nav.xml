@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="15"
-    android:background="#cccc">
+    android:background="#fff">
 
     <ListView
         android:layout_width="match_parent"

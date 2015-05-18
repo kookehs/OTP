@@ -15,8 +15,8 @@
 
     <!--Action Bar-->
     <string name="action_game">Game</string>
-    <string name="action_client_list">Matches</string>
-    <string name="action_maker_list">Maker</string>
+    <string name="action_client">Client</string>
+    <string name="action_maker">Maker</string>
 
     <!--Login-->
     <string name="login_disclaimer">We do not post to Facebook.</string>

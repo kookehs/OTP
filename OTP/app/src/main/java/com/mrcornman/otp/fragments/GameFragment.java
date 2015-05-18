@@ -1,10 +1,10 @@
 package com.mrcornman.otp.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -179,7 +179,7 @@ public class GameFragment extends Fragment {
         clearPotentialMatch();
 
         if(cachedFirstId == cachedSecondId) {
-            Log.e("Game Fragment", "User tried to match up with self.");
+            Log.e("Game Fragment", "User tried to match up same people.");
             return;
         }
 

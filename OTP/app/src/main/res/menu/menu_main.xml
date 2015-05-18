@@ -6,11 +6,11 @@
         android:icon="@mipmap/ic_launcher"
         android:showAsAction="ifRoom" />
     <item android:id="@+id/action_client_list"
-        android:title="@string/action_client_list"
+        android:title="@string/action_client"
         android:icon="@mipmap/ic_action_client"
         android:showAsAction="ifRoom" />
     <item android:id="@+id/action_matchmaker_list"
-        android:title="@string/action_maker_list"
+        android:title="@string/action_maker"
         android:icon="@mipmap/ic_action_maker"
         android:showAsAction="ifRoom" />
 </menu>

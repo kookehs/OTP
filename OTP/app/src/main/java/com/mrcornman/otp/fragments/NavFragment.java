@@ -2,7 +2,7 @@ package com.mrcornman.otp.fragments;
 
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -54,9 +54,6 @@ public class NavFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Select either the default item (0) or the last selected item.
-        selectItem(0);
     }
 
     @Override

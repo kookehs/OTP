@@ -1,9 +1,5 @@
 package com.mrcornman.otp.activities;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,21 +7,24 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.mrcornman.otp.R;
+import com.mrcornman.otp.adapters.MainPagerAdapter;
 import com.mrcornman.otp.fragments.ClientListFragment;
-import com.mrcornman.otp.fragments.GameFragment;
-import com.mrcornman.otp.fragments.MakerListFragment;
 import com.mrcornman.otp.fragments.NavFragment;
 import com.mrcornman.otp.fragments.ProfileFragment;
 import com.mrcornman.otp.fragments.SettingsFragment;
 
-public class MainActivity extends Activity implements NavFragment.NavigationDrawerCallbacks, ClientListFragment.ClientListInteractionListener {
+public class MainActivity extends ActionBarActivity implements NavFragment.NavigationDrawerCallbacks, ClientListFragment.ClientListInteractionListener {
 
     /**
      * Navigation Identifiers
@@ -40,9 +39,9 @@ public class MainActivity extends Activity implements NavFragment.NavigationDraw
      */
     private NavFragment mNavFragment;
 
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
+    MainPagerAdapter mPagerAdapter;
+    ViewPager mViewPager;
+
     private CharSequence mTitle;
 
     @Override
@@ -50,10 +49,20 @@ public class MainActivity extends Activity implements NavFragment.NavigationDraw
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Set up the drawer.
-        mNavFragment = (NavFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
+        // Set up toolbar and tabs
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(mTitle);
+
+        mPagerAdapter = new MainPagerAdapter(this, getSupportFragmentManager());
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.setAdapter(mPagerAdapter);
+
+        // Set up the drawer.
+        mNavFragment = (NavFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mNavFragment.setUp((DrawerLayout) findViewById(R.id.drawer_layout));
 
         // start up progress dialog until MessageService is started
@@ -66,13 +75,12 @@ public class MainActivity extends Activity implements NavFragment.NavigationDraw
         BroadcastReceiver mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.i("MainActivity", "We got yo broadcast");
                 boolean success = intent.getBooleanExtra("success", false);
                 progressDialog.dismiss();
 
                 if(!success) {
                     Toast.makeText(getApplicationContext(),
-                            "There was a problem with the activity_messaging service, please restart the app",
+                            "There was a problem with the messaging service, please restart the app",
                             Toast.LENGTH_LONG).show();
                 }
             }
@@ -87,56 +95,25 @@ public class MainActivity extends Activity implements NavFragment.NavigationDraw
 
         switch(position) {
             case NAV_PROFILE:
-                getFragmentManager().beginTransaction()
+                getSupportFragmentManager().beginTransaction()
                         .replace(R.id.container, ProfileFragment.newInstance())
                                 //.addToBackStack(null)
                         .commit();
-
-                onSectionAttached(position);
-                restoreActionBar();
                 break;
             case NAV_SETTINGS:
-                getFragmentManager().beginTransaction()
+                getSupportFragmentManager().beginTransaction()
                         .replace(R.id.container, SettingsFragment.newInstance())
                                 //.addToBackStack(null)
                         .commit();
-
-                onSectionAttached(position);
-                restoreActionBar();
                 break;
             case NAV_SHARE:
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.putExtra(Intent.EXTRA_TEXT, "Check out this great new app that lets you match two people up! http://mrcornman.com/");
                 shareIntent.setType("text/plain");
-                startActivity(shareIntent);
+                startActivity(Intent.createChooser(shareIntent, "Share with"));
                 break;
         }
     }
-
-    public void onSectionAttached(int number) {
-        switch (number) {
-            case NAV_PROFILE:
-                mTitle = "Profile";
-                break;
-            case NAV_SETTINGS:
-                mTitle = "Settings";
-                break;
-            case NAV_SHARE:
-                mTitle = "Share";
-                break;
-        }
-    }
-
-    public void restoreActionBar() {
-        ActionBar actionBar = getActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setIcon(android.R.color.transparent);
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setTitle(mTitle);
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -145,7 +122,6 @@ public class MainActivity extends Activity implements NavFragment.NavigationDraw
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
             getMenuInflater().inflate(R.menu.menu_main, menu);
-            restoreActionBar();
             return true;
         }
         return super.onCreateOptionsMenu(menu);
@@ -153,48 +129,9 @@ public class MainActivity extends Activity implements NavFragment.NavigationDraw
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         if(mNavFragment.onOptionsItemSelected(item)) return true;
 
-        boolean handled = false;
-
-        FragmentManager fragmentManager = getFragmentManager();
-        Fragment fragment = null;
-
-        switch(item.getItemId()) {
-            case R.id.action_game:
-                fragment = GameFragment.newInstance();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, fragment)
-                                //.addToBackStack(null)
-                        .commit();
-
-                restoreActionBar();
-                handled = true;
-                break;
-            case R.id.action_client_list:
-                fragment = ClientListFragment.newInstance(1);
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, fragment)
-                                //.addToBackStack(null)
-                        .commit();
-
-                restoreActionBar();
-                handled = true;
-                break;
-            case R.id.action_matchmaker_list:
-                fragment = MakerListFragment.newInstance(1);
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, fragment)
-                                //.addToBackStack(null)
-                        .commit();
-
-                restoreActionBar();
-                handled = true;
-                break;
-        }
-
-        return handled || super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item);
     }
 
     // fragment interface actions

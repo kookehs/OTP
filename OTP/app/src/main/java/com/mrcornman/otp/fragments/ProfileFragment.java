@@ -1,8 +1,8 @@
 package com.mrcornman.otp.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,30 +50,27 @@ public class ProfileFragment extends Fragment {
         final FrameLayout pictureContainer = (FrameLayout) rootView.findViewById(R.id.picture_container);
         final ImageView pictureImage = (ImageView) rootView.findViewById(R.id.picture_image);
 
+        final ParseUser user = ParseUser.getCurrentUser();
+
+        nameText.setText(user.getString(ProfileBuilder.PROFILE_KEY_NAME));
+        ageText.setText(PrettyTime.getAgeFromBirthDate(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE)) + "");
+
         // need this to get the finalized width of the framelayout after the match_parent width is calculated
         pictureContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                int pictureWidth = pictureContainer.getWidth();
+                final int pictureWidth = pictureContainer.getWidth();
                 pictureContainer.setLayoutParams(new RelativeLayout.LayoutParams(pictureWidth, pictureWidth));
-            }
-        });
 
-        // NOTE: This is how you get the current user once they've logged in from Facebook
-        ParseUser user = ParseUser.getCurrentUser();
-
-        // and this is how you can get data from the user profile
-        nameText.setText(user.getString(ProfileBuilder.PROFILE_KEY_NAME));
-        ageText.setText(PrettyTime.getAgeFromBirthDate(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE)) + "");
-
-        // and this is how you grab an image from the user profile and put it into image view
-        List<PhotoItem> photoItems = user.getList(ProfileBuilder.PROFILE_KEY_PHOTOS);
-        PhotoItem mainPhoto = photoItems.get(0);
-        mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
-            @Override
-            public void done(PhotoItem photoItem, ParseException e) {
-                PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
-                Picasso.with(getActivity().getApplicationContext()).load(mainFile.url).resize(pictureImage.getMeasuredWidth(), pictureImage.getMeasuredHeight()).centerCrop().into(pictureImage);
+                List<PhotoItem> photoItems = user.getList(ProfileBuilder.PROFILE_KEY_PHOTOS);
+                PhotoItem mainPhoto = photoItems.get(0);
+                mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
+                    @Override
+                    public void done(PhotoItem photoItem, ParseException e) {
+                        PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
+                        Picasso.with(getActivity().getApplicationContext()).load(mainFile.url).fit().centerCrop().into(pictureImage);
+                    }
+                });
             }
         });
 

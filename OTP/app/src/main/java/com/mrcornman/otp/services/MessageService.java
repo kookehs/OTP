@@ -78,8 +78,6 @@ public class MessageService extends Service implements SinchClientListener {
         client.startListeningOnActiveConnection();
         messageClient = client.getMessageClient();
 
-        Log.i("MessageService", "Sinch client successfully started.");
-
         broadcastIntent.putExtra("success", true);
         broadcaster.sendBroadcast(broadcastIntent);
     }
@@ -88,7 +86,7 @@ public class MessageService extends Service implements SinchClientListener {
     public void onClientFailed(SinchClient client, SinchError error) {
         sinchClient = null;
 
-        Log.i("MessageService", "Sinch client failed to start: " + error.getMessage());
+        Log.e("MessageService", "Sinch client failed to start: " + error.getMessage());
 
         broadcastIntent.putExtra("success", false);
         broadcaster.sendBroadcast(broadcastIntent);

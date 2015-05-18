@@ -6,4 +6,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="nav_drawer_width">320dp</dimen>
 
+    <!--Text Sizes-->
+    <dimen name="toolbar_title_text_size">12sp</dimen>
+
 </resources>

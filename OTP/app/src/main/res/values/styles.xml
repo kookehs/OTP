@@ -1,17 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--Base-->
+    <style name="Theme.BaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@color/white</item>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
-        <item name="android:windowBackground">@color/window_background</item>
-        <item name="android:windowActionBar">false</item>
-        <item name="android:windowNoTitle">true</item>
-        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryDark">@color/very_dark_gray</item>
     </style>
 
-    <style name="AppThemeWithActionBar" parent="Theme.AppCompat.Light">
-        <item name="android:windowBackground">@color/window_background</item>
-        <item name="android:windowActionBar">true</item>
-        <item name="android:windowNoTitle">false</item>
+    <!--Toolbar-->
+    <style name="ToolBarStyle" parent="ToolBarStyle.Base"/>
+
+    <style name="ToolBarStyle.Base" parent="">
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="theme">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
 
+    <style name="ToolBarStyle.Main" parent="ToolBarStyle">
+        <item name="titleTextAppearance">@style/TextAppearance.Widget.Toolbar.Title</item>
+    </style>
+
+    <style name="TextAppearance.Widget.Toolbar.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <!--Any text styling can be done here-->
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/toolbar_title_text_size</item>
+    </style>
 </resources>
