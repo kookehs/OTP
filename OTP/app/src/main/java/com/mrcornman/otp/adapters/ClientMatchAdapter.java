@@ -1,7 +1,6 @@
 package com.mrcornman.otp.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,8 +71,7 @@ public class ClientMatchAdapter extends BaseAdapter {
         String otherId = match.getFirstId().equals(currId) ? match.getSecondId() : match.getFirstId();
 
         convertView.setTag(otherId);
-        countText.setText(PrettyNumbers.getPrettyNumber(match.getNumLikes()));
-        Log.i("ClientMatchAdapter", "boom");
+        countText.setText(PrettyNumbers.formatInteger(match.getNumLikes()));
 
         DatabaseHelper.getUserById(otherId, new GetCallback<ParseUser>() {
             @Override

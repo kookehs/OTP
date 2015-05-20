@@ -20,16 +20,21 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class CardAdapter extends BaseAdapter {
+public class UserCardAdapter extends BaseAdapter {
 
     private Context mContext;
     private List<ParseUser> mItems;
 
-    public CardAdapter(Context context, List<ParseUser> users) {
+    public UserCardAdapter(Context context) {
         // fixme: should we download the json file here?
         mContext = context;
+        mItems = new ArrayList<>();
+    }
+
+    public void fillUsers(List<ParseUser> users) {
         mItems = users;
     }
 
@@ -61,7 +66,7 @@ public class CardAdapter extends BaseAdapter {
         cardView.bind(user.getObjectId());
 
         TextView nameText = (TextView) cardView.findViewById(R.id.name_text);
-        nameText.setText(user.getString(ProfileBuilder.PROFILE_KEY_NAME));
+        nameText.setText(user.getString(ProfileBuilder.PROFILE_KEY_NAME) + ",");
         TextView ageText = (TextView) cardView.findViewById(R.id.age_text);
         ageText.setText(PrettyTime.getAgeFromBirthDate(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE)) + "");
 

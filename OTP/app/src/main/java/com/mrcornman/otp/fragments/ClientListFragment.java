@@ -14,19 +14,15 @@ import com.mrcornman.otp.adapters.ClientMatchAdapter;
 import com.mrcornman.otp.models.MatchItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseException;
-import com.parse.ParseUser;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ClientListFragment extends Fragment {
 
-    private ClientListInteractionListener clientListInteractionListener;
+    private OnClientListInteractionListener onClientListInteractionListener;
 
     private ClientMatchAdapter clientMatchAdapter;
-    private List<MatchItem> matchItems;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -53,19 +49,10 @@ public class ClientListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String otherId = view.getTag().toString();
-                DatabaseHelper.getUserById(otherId, new GetCallback<ParseUser>() {
-                    @Override
-                    public void done(ParseUser parseUser, ParseException e) {
-                        if(parseUser != null) {
-                            String recipientId = parseUser.getObjectId();
-                            clientListInteractionListener.onRequestOpenConversation(recipientId);
-                        }
-                    }
-                });
+                onClientListInteractionListener.onRequestOpenClientMatch(otherId);
             }
         });
 
-        matchItems = new ArrayList<>();
         clientMatchAdapter = new ClientMatchAdapter(getActivity().getApplicationContext());
         listView.setAdapter(clientMatchAdapter);
 
@@ -92,14 +79,14 @@ public class ClientListFragment extends Fragment {
         super.onAttach(activity);
 
         try {
-            clientListInteractionListener = (ClientListInteractionListener) activity;
+            onClientListInteractionListener = (OnClientListInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnClientListInteractionListener");
         }
     }
 
-    public interface ClientListInteractionListener {
-        void onRequestOpenConversation(String recipientId);
+    public interface OnClientListInteractionListener {
+        void onRequestOpenClientMatch(String otherId);
     }
 }

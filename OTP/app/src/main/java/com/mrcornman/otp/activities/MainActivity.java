@@ -13,34 +13,32 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.astuetz.PagerSlidingTabStrip;
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.adapters.MainPagerAdapter;
 import com.mrcornman.otp.fragments.ClientListFragment;
+import com.mrcornman.otp.fragments.MakerListFragment;
 import com.mrcornman.otp.fragments.NavFragment;
-import com.mrcornman.otp.fragments.ProfileFragment;
-import com.mrcornman.otp.fragments.SettingsFragment;
 
-public class MainActivity extends ActionBarActivity implements NavFragment.NavigationDrawerCallbacks, ClientListFragment.ClientListInteractionListener {
+public class MainActivity extends ActionBarActivity implements NavFragment.NavigationDrawerCallbacks, ClientListFragment.OnClientListInteractionListener, MakerListFragment.OnMakerListInteractionListener {
 
     /**
      * Navigation Identifiers
      */
     public static final int NAV_PROFILE = 0;
-    public static final int NAV_SETTINGS = 1;
-    public static final int NAV_SHARE = 2;
-
+    public static final int NAV_PREFERENCES = 1;
+    public static final int NAV_SETTINGS = 2;
+    public static final int NAV_SHARE = 3;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
     private NavFragment mNavFragment;
 
-    MainPagerAdapter mPagerAdapter;
-    ViewPager mViewPager;
+    private MainPagerAdapter mPagerAdapter;
+    private ViewPager mViewPager;
 
     private CharSequence mTitle;
 
@@ -56,10 +54,32 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(mTitle);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
 
         mPagerAdapter = new MainPagerAdapter(this, getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setOffscreenPageLimit(MainPagerAdapter.NUM_PAGES);
+
+        final PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        tabStrip.setViewPager(mViewPager);
+
+        // TODO: Use push notifications to update the list fragments not this shit
+        tabStrip.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                Log.i("MainActivity", "Page selected");
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
 
         // Set up the drawer.
         mNavFragment = (NavFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -95,16 +115,13 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
 
         switch(position) {
             case NAV_PROFILE:
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container, ProfileFragment.newInstance())
-                                //.addToBackStack(null)
-                        .commit();
+                // start profile activity
+                break;
+            case NAV_PREFERENCES:
+                // start prefs activity
                 break;
             case NAV_SETTINGS:
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container, SettingsFragment.newInstance())
-                                //.addToBackStack(null)
-                        .commit();
+                // start settings activity
                 break;
             case NAV_SHARE:
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
@@ -115,37 +132,20 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (!mNavFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.menu_main, menu);
-            return true;
-        }
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if(mNavFragment.onOptionsItemSelected(item)) return true;
-
-        return super.onOptionsItemSelected(item);
-    }
-
     // fragment interface actions
     @Override
-    public void onRequestOpenConversation(String recipientId) {
-        openConversation(recipientId);
+    public void onRequestOpenClientMatch(String otherId) {
+        // TODO: Make sure the user exists when populating the list view in client list fragment so that there isn't the potential problem of the user not existing here
+        Intent intent = new Intent(getApplicationContext(), ClientMatchActivity.class);
+        intent.putExtra("other_id", otherId);
+        startActivity(intent);
     }
 
-    // helpers
-    public void openConversation(String recipientId) {
+    @Override
+    public void onRequestOpenMakerMatch(String matchId) {
         // TODO: Make sure the user exists when populating the list view in client list fragment so that there isn't the potential problem of the user not existing here
-        Intent intent = new Intent(getApplicationContext(), MessagingActivity.class);
-        intent.putExtra("recipient_id", recipientId);
+        Intent intent = new Intent(getApplicationContext(), MakerMatchActivity.class);
+        intent.putExtra("match_id", matchId);
         startActivity(intent);
-        Log.i("MainActivity", "Beginning conversation with " + recipientId);
     }
 }

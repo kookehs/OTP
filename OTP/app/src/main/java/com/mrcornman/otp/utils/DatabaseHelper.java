@@ -65,4 +65,15 @@ public class DatabaseHelper {
             }
         });
     }
+
+    public static void updateMatchNumMessages(String matchId, final int numMessages){
+        ParseQuery<MatchItem> query = ParseQuery.getQuery(MatchItem.class);
+        query.getInBackground(matchId, new GetCallback<MatchItem>() {
+            @Override
+            public void done(MatchItem matchItem, ParseException e) {
+                matchItem.setNumMessages(numMessages);
+                matchItem.saveInBackground();
+            }
+        });
+    }
 }

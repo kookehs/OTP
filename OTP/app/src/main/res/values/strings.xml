@@ -13,10 +13,17 @@
     <!--General-->
     <string name="content_missing_description">Missing</string>
 
-    <!--Action Bar-->
+    <!--Main Action Bar-->
     <string name="action_game">Game</string>
-    <string name="action_client">Client</string>
-    <string name="action_maker">Maker</string>
+    <string name="action_client">Matches</string>
+    <string name="action_maker">Seeds</string>
+
+    <!--Client Match Action Bar-->
+    <string name="action_messaging">Messages</string>
+    <string name="action_profile">Profile</string>
+
+    <!--Maker Match Action Bar-->
+    <string name="action_stats">Stats</string>
 
     <!--Login-->
     <string name="login_disclaimer">We do not post to Facebook.</string>

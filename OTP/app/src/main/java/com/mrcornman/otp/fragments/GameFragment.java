@@ -9,11 +9,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.adapters.CardAdapter;
+import com.mrcornman.otp.adapters.UserCardAdapter;
 import com.mrcornman.otp.models.MatchItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.mrcornman.otp.views.CardStackLayout;
@@ -24,7 +23,6 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,13 +31,11 @@ public class GameFragment extends Fragment {
 
     private CardStackLayout mCardStackLayoutFirst;
     private CardStackLayout mCardStackLayoutSecond;
-    private CardAdapter mCardAdapterFirst;
-    private CardAdapter mCardAdapterSecond;
+    private UserCardAdapter mUserCardAdapterFirst;
+    private UserCardAdapter mUserCardAdapterSecond;
 
     private SharedPreferences sharedPreferences;
 
-    private List<ParseUser> mCardUsersFirst;
-    private List<ParseUser> mCardUsersSecond;
     private String potentialFirstId = "";
     private String potentialSecondId = "";
 
@@ -65,43 +61,23 @@ public class GameFragment extends Fragment {
         mCardStackLayoutFirst = (CardStackLayout) view.findViewById(R.id.cardstack_first);
         mCardStackLayoutSecond = (CardStackLayout) view.findViewById(R.id.cardstack_second);
 
-        Button refreshButtonFirst = (Button) view.findViewById(R.id.btn_refresh_first);
-        refreshButtonFirst.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                refreshFirst();
-            }
-        });
-
-        Button refreshButtonSecond = (Button) view.findViewById(R.id.btn_refresh_second);
-        refreshButtonSecond.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                refreshSecond();
-            }
-        });
-
         mCardStackLayoutFirst.setCardStackListener(new CardStackLayout.CardStackListener() {
             @Override
-            public void onBeginProgress(View view) {
+            public void onBeginProgress() {
                 buildPotentialMatch(getCurrentFirstId(), getCurrentSecondId());
             }
 
             @Override
-            public void onUpdateProgress(boolean positif, float percent, View view) {
-                CardView item = (CardView) view;
-                item.onUpdateProgress(positif, percent, view);
+            public void onUpdateProgress(boolean positif, float percent) {
             }
 
             @Override
-            public void onCancelled(View beingDragged) {
-                CardView item = (CardView) beingDragged;
-                item.onCancelled(beingDragged);
+            public void onCancelled() {
                 clearPotentialMatch();
             }
 
             @Override
-            public void onChoiceMade(boolean choice, View beingDragged) {
+            public void onChoiceMade(boolean choice) {
                 /*
                 SingleUserView item = (SingleUserView) beingDragged;
                 item.onChoiceMade(choice, beingDragged);
@@ -114,44 +90,46 @@ public class GameFragment extends Fragment {
                 Log.d("game fragment", "updated the choice made " + String.valueOf(choice) + " " + item.userItem.getName());
                 */
                 onCreateMatch();
+
+                if(!mCardStackLayoutFirst.hasMoreItems()) {
+                    refreshFirst();
+                }
             }
         });
 
         mCardStackLayoutSecond.setCardStackListener(new CardStackLayout.CardStackListener() {
             @Override
-            public void onBeginProgress(View view) {
+            public void onBeginProgress() {
                 buildPotentialMatch(getCurrentFirstId(), getCurrentSecondId());
             }
 
             @Override
-            public void onUpdateProgress(boolean positif, float percent, View view) {
-                CardView item = (CardView) view;
-                item.onUpdateProgress(positif, percent, view);
+            public void onUpdateProgress(boolean positif, float percent) {
             }
 
             @Override
-            public void onCancelled(View beingDragged) {
-                CardView item = (CardView) beingDragged;
-                item.onCancelled(beingDragged);
+            public void onCancelled() {
                 clearPotentialMatch();
             }
 
             @Override
-            public void onChoiceMade(boolean choice, View beingDragged) {
+            public void onChoiceMade(boolean choice) {
                 onCreateMatch();
+
+                if(!mCardStackLayoutSecond.hasMoreItems()) {
+                    refreshSecond();
+                }
             }
         });
 
         // init data
         sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
 
-        mCardUsersFirst = new ArrayList<>();
-        mCardAdapterFirst = new CardAdapter(getActivity().getApplicationContext(), mCardUsersFirst);
-        mCardStackLayoutFirst.setAdapter(mCardAdapterFirst);
+        mUserCardAdapterFirst = new UserCardAdapter(getActivity().getApplicationContext());
+        mCardStackLayoutFirst.setAdapter(mUserCardAdapterFirst);
 
-        mCardUsersSecond = new ArrayList<>();
-        mCardAdapterSecond = new CardAdapter(getActivity().getApplicationContext(), mCardUsersSecond);
-        mCardStackLayoutSecond.setAdapter(mCardAdapterSecond);
+        mUserCardAdapterSecond = new UserCardAdapter(getActivity().getApplicationContext());
+        mCardStackLayoutSecond.setAdapter(mUserCardAdapterSecond);
 
         refreshFirst();
         refreshSecond();
@@ -206,10 +184,8 @@ public class GameFragment extends Fragment {
             @Override
             public void done(List<ParseUser> list, ParseException e) {
                 if (e == null) {
-                    for (int i = 0; i < list.size(); i++) {
-                        mCardUsersFirst.add(list.get(i));
-                    }
-                    mCardAdapterFirst.notifyDataSetChanged();
+                    mUserCardAdapterFirst.fillUsers(list);
+
                     mCardStackLayoutFirst.refreshStack();
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(),
@@ -230,10 +206,8 @@ public class GameFragment extends Fragment {
             @Override
             public void done(List<ParseUser> list, ParseException e) {
                 if (e == null) {
-                    for (int i = 0; i < list.size(); i++) {
-                        mCardUsersSecond.add(list.get(i));
-                    }
-                    mCardAdapterSecond.notifyDataSetChanged();
+                    mUserCardAdapterSecond.fillUsers(list);
+
                     mCardStackLayoutSecond.refreshStack();
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(),
@@ -245,17 +219,21 @@ public class GameFragment extends Fragment {
     }
 
     public String getCurrentFirstId() {
-        CardView view = mCardStackLayoutFirst.getmBeingDragged() != null ? (CardView)mCardStackLayoutFirst.getmBeingDragged() : (CardView)mCardStackLayoutFirst.getTopCard();
-        return view != null ? view.mUserId : null;
+        CardView view = mCardStackLayoutFirst.getDraggedCard() != null ? (CardView)mCardStackLayoutFirst.getDraggedCard() : (CardView)mCardStackLayoutFirst.getTopCard();
+        return view != null ? view.boundUserId : null;
     }
 
     public String getCurrentSecondId() {
-        CardView view = mCardStackLayoutSecond.getmBeingDragged() != null ? (CardView)mCardStackLayoutSecond.getmBeingDragged() : (CardView)mCardStackLayoutSecond.getTopCard();
-        return view != null ? view.mUserId : null;
+        CardView view = mCardStackLayoutSecond.getDraggedCard() != null ? (CardView)mCardStackLayoutSecond.getDraggedCard() : (CardView)mCardStackLayoutSecond.getTopCard();
+        return view != null ? view.boundUserId : null;
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+    }
+
+    public interface GameInteractionListener {
+        //void onRequestOpenClientMatch(String recipientId);
     }
 }

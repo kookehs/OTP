@@ -2,10 +2,10 @@ package com.mrcornman.otp.fragments;
 
 
 import android.app.Activity;
-import android.support.v4.app.Fragment;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
@@ -13,11 +13,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.adapters.NavAdapter;
 import com.mrcornman.otp.models.NavItem;
+import com.mrcornman.otp.models.PhotoFile;
+import com.mrcornman.otp.models.PhotoItem;
+import com.mrcornman.otp.utils.ProfileBuilder;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +39,7 @@ import java.util.List;
 public class NavFragment extends Fragment {
 
     private final static String[] titles = {
-            "Profile",
+            "Preferences",
             "Settings",
             "Share"
     };
@@ -65,7 +74,33 @@ public class NavFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectItem(position);
+                selectItem(position + 1);
+            }
+        });
+
+        final ImageView navProfileImage = (ImageView) fragmentView.findViewById(R.id.nav_profile_image);
+        final TextView navProfileNameText = (TextView) fragmentView.findViewById(R.id.name_text);
+
+        final ImageView navProfileListenerImage = (ImageView) fragmentView.findViewById(R.id.nav_profile_listener_backdrop);
+        navProfileListenerImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectItem(0);
+            }
+        });
+
+        ParseUser user = ParseUser.getCurrentUser();
+
+        navProfileNameText.setText(user.getString(ProfileBuilder.PROFILE_KEY_NAME) + "'s Profile");
+
+        List<PhotoItem> photoItems = user.getList(ProfileBuilder.PROFILE_KEY_PHOTOS);
+        PhotoItem mainPhoto = photoItems.get(0);
+        mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
+            @Override
+            public void done(PhotoItem photoItem, ParseException e) {
+                PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
+                if (getActivity() != null)
+                    Picasso.with(getActivity().getApplicationContext()).load(mainFile.url).fit().centerCrop().into(navProfileImage);
             }
         });
 
@@ -82,6 +117,13 @@ public class NavFragment extends Fragment {
         listView.setAdapter(navAdapter);
 
         return fragmentView;
+    }
+
+    @Override
+    public void onActivityCreated (Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        // Indicate that this fragment would like to influence the set of actions in the action bar.
+        setHasOptionsMenu(true);
     }
 
     public boolean isDrawerOpen() {
@@ -103,7 +145,7 @@ public class NavFragment extends Fragment {
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the navigation drawer and the action bar app icon.
         mDrawerToggle = new ActionBarDrawerToggle(getActivity(), mDrawerLayout,
-                R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
+                R.mipmap.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
 
             @Override
             public void onDrawerClosed(View drawerView) {
@@ -155,13 +197,6 @@ public class NavFragment extends Fragment {
         super.onDetach();
         mCallbacks = null;
     }
-
-    /*
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
-    }*/
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {

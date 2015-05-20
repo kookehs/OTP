@@ -11,6 +11,7 @@ public class MatchItem extends ParseObject {
     public static final String MATCH_KEY_SECOND_ID = "second_id";
     public static final String MATCH_KEY_MATCHMAKER_ID = "matchmaker_id";
     public static final String MATCH_KEY_NUM_LIKES = "num_likes";
+    public static final String MATCH_KEY_NUM_MESSAGES = "num_messages";
 
     public String getFirstId() {
         return getString(MATCH_KEY_FIRST_ID);
@@ -39,6 +40,9 @@ public class MatchItem extends ParseObject {
     public void setNumLikes(int numLikes) {
         put(MATCH_KEY_NUM_LIKES, numLikes);
     }
+
+    public int getNumMessages() { return getInt(MATCH_KEY_NUM_MESSAGES); }
+    public void setNumMessages(int numMessages) { put(MATCH_KEY_NUM_MESSAGES, numMessages); }
 
     @Override
     public String toString() {

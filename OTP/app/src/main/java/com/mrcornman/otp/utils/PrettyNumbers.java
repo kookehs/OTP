@@ -7,7 +7,7 @@ public class PrettyNumbers {
 
     private static char[] c = new char[]{'k', 'm', 'b', 't'};
 
-    public static String getPrettyNumber(int n) {
+    public static String formatInteger(int n) {
         return n >= 1000 ? coolFormat(n, 0) : (n + "");
     }
 

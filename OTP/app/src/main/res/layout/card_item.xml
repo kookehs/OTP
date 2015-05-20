@@ -2,54 +2,22 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/gray_border">
+    android:layout_height="match_parent" >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:alpha="1"
-        android:alpha="0"
-        android:id="@+id/no"
-        android:text="dislike"
-        android:textSize="60dp"
-        android:textColor="#ffbe0000"
-        android:textStyle="bold"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="7dp"
-        android:layout_marginRight="20dp"/>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/picture_container"
+        android:layout_centerInParent="true">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/yes"
-        tools:alpha="1"
-        android:alpha="0"
-        android:text="like"
-        android:textColor="#ff258d02"
-        android:textSize="60dp"
-        android:textStyle="bold"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="7dp"
-        android:layout_marginLeft="20dp"/>
-    <ImageView
-        android:id="@+id/yesicon"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:src="@drawable/like"
-        android:layout_below="@id/yes"
-        android:layout_alignLeft="@id/yes"
-        />
-    <ImageView
-        android:id="@+id/noicon"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:src="@drawable/dislike"
-        android:layout_below="@id/no"
-        android:layout_alignRight="@id/no"
-        />
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:id="@+id/picture"
+            tools:src="@mipmap/ic_launcher"
+            android:contentDescription="@string/content_missing_description" />
+    </FrameLayout>
 
     <TextView
         android:layout_width="wrap_content"
@@ -58,9 +26,15 @@
         tools:text="Snoo Snoo"
         android:textSize="25sp"
         android:textStyle="bold"
-        android:paddingLeft="10dp"
-        android:layout_alignParentBottom="true"
-        android:paddingBottom="32dp" />
+        android:layout_alignParentBottom="false"
+        android:layout_alignBottom="@+id/picture_container"
+        android:layout_alignLeft="@+id/picture_container"
+        android:paddingLeft="16dp"
+        android:paddingBottom="16dp"
+        android:textColor="@color/white"
+        android:shadowColor="#111"
+        android:shadowRadius="24"
+        android:singleLine="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -70,23 +44,12 @@
         android:layout_toRightOf="@id/name_text"
         android:textSize="25sp"
         android:id="@+id/age_text"
-        android:paddingLeft="10dp"
-        android:layout_alignParentBottom="true"
-        android:paddingBottom="32dp" />
-
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/picture_container"
-        android:layout_centerInParent="true">
-
-        <com.mrcornman.otp.views.CircularImageView
-            android:layout_width="128dp"
-            android:layout_height="128dp"
-            android:src="@drawable/blank"
-            android:scaleType="fitCenter"
-            android:id="@+id/picture"
-            tools:src="@mipmap/ic_launcher" />
-    </FrameLayout>
+        android:layout_alignParentBottom="false"
+        android:paddingLeft="8dp"
+        android:paddingBottom="16dp"
+        android:textColor="@color/white"
+        android:singleLine="true"
+        android:shadowColor="#111"
+        android:shadowRadius="24" />
 
 </RelativeLayout>

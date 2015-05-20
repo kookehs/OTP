@@ -15,7 +15,7 @@ import com.mrcornman.otp.fragments.MakerListFragment;
  */
 public class MainPagerAdapter extends FragmentPagerAdapter {
 
-    private final static int NUM_PAGES = 3;
+    public final static int NUM_PAGES = 3;
 
     private final static int PAGE_GAME = 0;
     private final static int PAGE_CLIENT = 1;
@@ -47,7 +47,7 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
             case PAGE_MAKER:
                 fragment = Fragment.instantiate(mContext, MakerListFragment.class.getName());
                 break;
-    }
+        }
         return fragment;
     }
 

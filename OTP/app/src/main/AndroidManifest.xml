@@ -6,6 +6,15 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <permission android:protectionLevel="signature"
+        android:name="com.mrcornman.otp.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.mrcornman.otp.permission.C2D_MESSAGE" />
 
     <application
         android:name="com.mrcornman.otp.MainApplication"
@@ -15,15 +24,18 @@
 
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
 
+        <!--Services-->
         <service
             android:name="com.mrcornman.otp.services.MessageService">
         </service>
 
+        <!--Providers-->
         <provider 
             android:authorities="com.facebook.app.FacebookContentProvider472424749579148"
             android:name="com.facebook.FacebookContentProvider"
             android:exported="true" />
 
+        <!--Activities-->
         <activity
             android:name="com.mrcornman.otp.activities.LoginActivity"
             android:screenOrientation="portrait" >
@@ -38,16 +50,57 @@
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.BaseTheme" />
         <activity 
-            android:name="com.mrcornman.otp.activities.MessagingActivity"
-            android:label="Message Activity" />
+            android:name=".activities.ClientMatchActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:parentActivityName="com.mrcornman.otp.activities.MainActivity"
+            android:label="Client Activity" />
+        <activity
+            android:name=".activities.MakerMatchActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:parentActivityName="com.mrcornman.otp.activities.MainActivity"
+            android:label="Maker Activity" />
         <activity 
             android:name="com.facebook.FacebookActivity"
             android:configChanges=
                 "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:label="@string/app_name" />
+
+        <!--Push Notifications-->
+        <service android:name="com.parse.PushService" />
+        <receiver android:name="com.parse.ParseBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.parse.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <category android:name="com.mrcornman.otp" />
+            </intent-filter>
+        </receiver>
+        <!--TODO: If subclassing ParsePushBroadcastReceiver change class name here too-->
+        <receiver android:name="com.parse.ParsePushBroadcastReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="com.parse.push.intent.RECEIVE" />
+                <action android:name="com.parse.push.intent.DELETE" />
+                <action android:name="com.parse.push.intent.OPEN" />
+            </intent-filter>
+        </receiver>
+
+        <meta-data android:name="com.parse.push.notification_icon" android:resource="@mipmap/ic_launcher"/>
     </application>
 
 </manifest>

@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.mrcornman.otp.fragments.ProfileFragment"
+    tools:context="com.mrcornman.otp.fragments.ThemeProfileFragment"
     android:id="@+id/profile_container">
 
     <FrameLayout
@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/picture_container"
         android:layout_centerHorizontal="true"
-        tools:context="com.mrcornman.otp.fragments.ProfileFragment" >
+        tools:context="com.mrcornman.otp.fragments.ThemeProfileFragment" >
 
         <ImageView
             android:layout_width="match_parent"

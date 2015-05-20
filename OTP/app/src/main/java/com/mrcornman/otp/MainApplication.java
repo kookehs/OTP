@@ -7,6 +7,7 @@ import com.mrcornman.otp.models.MatchItem;
 import com.mrcornman.otp.models.PhotoItem;
 import com.parse.Parse;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 
 /**
@@ -25,6 +26,20 @@ public class MainApplication extends Application {
         ParseObject.registerSubclass(MatchItem.class);
         ParseObject.registerSubclass(PhotoItem.class);
         Parse.initialize(getApplicationContext(), PARSE_APP_ID, PARSE_CLIENT_KEY);
+        ParseInstallation.getCurrentInstallation().saveInBackground();
+
+        /*
+        // push notifications
+        ParsePush.subscribeInBackground("", new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d("com.parse.push", "successfully subscribed to the broadcast channel.");
+                } else {
+                    Log.e("com.parse.push", "failed to subscribe for push", e);
+                }
+            }
+        });*/
 
         // facebook
         FacebookSdk.sdkInitialize(getApplicationContext());

@@ -3,7 +3,6 @@ package com.mrcornman.otp.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,16 +14,14 @@ import com.mrcornman.otp.adapters.MakerMatchAdapter;
 import com.mrcornman.otp.models.MatchItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MakerListFragment extends Fragment {
 
+    private OnMakerListInteractionListener onMakerListInteractionListener;
     private MakerMatchAdapter makerMatchAdapter;
-    private List<MatchItem> matchItems;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -50,19 +47,10 @@ public class MakerListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String matchId = view.getTag().toString();
-                DatabaseHelper.getMatchById(matchId, new GetCallback<MatchItem>() {
-                    @Override
-                    public void done(MatchItem matchItem, ParseException e) {
-                        if(matchItem != null) {
-                            String numLikesStr = matchItem.getNumLikes() + "";
-                            Log.i("MatchMakerListFragment", "Checking out - " + numLikesStr);
-                        }
-                    }
-                });
+                onMakerListInteractionListener.onRequestOpenMakerMatch(matchId);
             }
         });
 
-        matchItems = new ArrayList<>();
         makerMatchAdapter = new MakerMatchAdapter(getActivity().getApplicationContext());
         listView.setAdapter(makerMatchAdapter);
 
@@ -87,5 +75,16 @@ public class MakerListFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        try {
+            onMakerListInteractionListener = (OnMakerListInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnMakerListInteractionListener");
+        }
+    }
+
+    public interface OnMakerListInteractionListener {
+        void onRequestOpenMakerMatch(String matchId);
     }
 }

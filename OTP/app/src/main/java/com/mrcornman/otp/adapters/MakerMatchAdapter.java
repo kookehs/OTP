@@ -1,7 +1,6 @@
 package com.mrcornman.otp.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,8 +73,7 @@ public class MakerMatchAdapter extends BaseAdapter {
         MatchItem match = getItem(position);
 
         convertView.setTag(match.getObjectId());
-        countText.setText(PrettyNumbers.getPrettyNumber(match.getNumLikes()));
-        Log.i("MakerMatchAdapter", "hid");
+        countText.setText(PrettyNumbers.formatInteger(match.getNumLikes()));
 
         // fill first user
         DatabaseHelper.getUserById(match.getFirstId(), new GetCallback<ParseUser>() {
