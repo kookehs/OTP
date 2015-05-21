@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Button;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.services.MessageService;
 import com.parse.ParseFacebookUtils;
 
 /**
@@ -38,11 +37,8 @@ public class CompleteProfileActivity extends Activity {
         ParseFacebookUtils.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void onSuccessfulLogin() {
+    private void onSubmit() {
         final Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
-
         startActivity(intent);
-        startService(serviceIntent);
     }
 }

@@ -22,7 +22,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -104,8 +104,14 @@ public class ProfileBuilder {
                         // TODO: birthday we get is not exact
                         String birthdayStr = object.optString(FACEBOOK_KEY_BIRTHDAY);
                         Date birthDate = PrettyTime.getDateFromBirthdayString(birthdayStr);
-                        if(birthDate != null)
-                            user.put(PROFILE_KEY_BIRTHDATE, birthDate);
+                        if(birthDate == null) {
+                            Calendar cal = Calendar.getInstance();
+                            cal.set(cal.get(Calendar.YEAR) - 13, cal.get(Calendar.MONTH), 1);
+                            birthDate = cal.getTime();
+                        }
+
+                        user.put(PROFILE_KEY_BIRTHDATE, birthDate);
+
 
                         int i = 0;
 
@@ -218,8 +224,12 @@ public class ProfileBuilder {
                                                                     userImagesCount++;
                                                                     if(userImagesCount >= userImagesThreshold) {
                                                                         if(!userImagesFailed) {
-                                                                            // TODO
-                                                                            user.put(PROFILE_KEY_PHOTOS, Arrays.asList(photos));
+                                                                            List<PhotoItem> photoList = new ArrayList<>();
+
+                                                                            for(PhotoItem temp : photos)
+                                                                                if(temp != null) photoList.add(temp);
+
+                                                                            user.put(PROFILE_KEY_PHOTOS, photoList);
 
                                                                             // finally we have all our images and we are done building our profile
                                                                             user.saveInBackground(new SaveCallback() {
@@ -241,7 +251,20 @@ public class ProfileBuilder {
                                                             userImagesFailed = true;
                                                             userImagesCount++;
                                                             if(userImagesCount >= userImagesThreshold) {
-                                                                buildCallback.done(user, new Exception("Profile images failed to load."));
+                                                                // Attempt to salvage the situation and save with all photos we got
+                                                                List<PhotoItem> photoList = new ArrayList<>();
+
+                                                                for(PhotoItem temp : photos)
+                                                                    if(temp != null) photoList.add(temp);
+
+                                                                user.put(PROFILE_KEY_PHOTOS, photoList);
+
+                                                                user.saveInBackground(new SaveCallback() {
+                                                                    @Override
+                                                                    public void done(ParseException e) {
+                                                                        buildCallback.done(user, null);
+                                                                    }
+                                                                });
                                                             }
                                                         }
 

@@ -21,6 +21,7 @@ import com.mrcornman.otp.adapters.MainPagerAdapter;
 import com.mrcornman.otp.fragments.ClientListFragment;
 import com.mrcornman.otp.fragments.MakerListFragment;
 import com.mrcornman.otp.fragments.NavFragment;
+import com.mrcornman.otp.services.MessageService;
 
 public class MainActivity extends ActionBarActivity implements NavFragment.NavigationDrawerCallbacks, ClientListFragment.OnClientListInteractionListener, MakerListFragment.OnMakerListInteractionListener {
 
@@ -106,8 +107,13 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
             }
         };
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver,
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mReceiver,
                 new IntentFilter("com.mrcornman.otp.activities.MainActivity"));
+    }
+
+    @Override
+    public void onDestroy() {
+        getApplicationContext().stopService(new Intent(getApplicationContext(), MessageService.class));
     }
 
     @Override
