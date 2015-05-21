@@ -53,19 +53,19 @@ repositories {
 dependencies {
     apt "org.androidannotations:androidannotations:$AAVersion"
     compile "org.androidannotations:androidannotations-api:$AAVersion"
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile files('libs/sinch-android-rtc-3.6.0.jar')
+    compile files('libs/Parse-1.9.1.jar')
+    compile files('libs/ParseFacebookUtilsV4-1.9.1.jar')
+    compile files('libs/picasso-2.5.2.jar')
     compile 'com.jpardogo.materialtabstrip:library:1.0.9'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.parse.bolts:bolts-android:1.+'
     compile 'com.facebook.android:facebook-android-sdk:4.0.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:22.0.0'
+    compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'org.apache.commons:commons-lang3:3.0.+@jar'
-    compile 'com.google.android.gms:play-services:7.0.0'
+    compile 'com.google.android.gms:play-services:7.3.0'
     compile 'com.nineoldandroids:library:2.4.0@jar'
-    compile 'com.android.support:support-v4:22.0.0'
-    compile files('libs/sinch-android-rtc-3.6.0.jar')
-    compile files('libs/Parse-1.9.1.jar')
-    compile files('libs/ParseFacebookUtilsV4-1.9.1.jar')
-    compile files('libs/picasso-2.5.2.jar')
+    compile 'com.android.support:support-v4:22.1.1'
 }

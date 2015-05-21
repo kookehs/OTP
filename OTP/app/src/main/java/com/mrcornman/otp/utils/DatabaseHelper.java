@@ -1,5 +1,7 @@
 package com.mrcornman.otp.utils;
 
+import android.util.Log;
+
 import com.mrcornman.otp.models.MatchItem;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
@@ -18,15 +20,28 @@ public class DatabaseHelper {
 
     private DatabaseHelper() {}
 
-    public static void insertNewMatchByPair(String firstId, String secondId) {
-        MatchItem match = new MatchItem();
-        match.setFirstId(firstId);
-        match.setSecondId(secondId);
-        match.setNumLikes(1);
+    public static void insertMatchByPair(final String firstId, final String secondId) {
 
-        ParseRelation<ParseObject> relation = match.getRelation("followers");
-        relation.add(ParseUser.getCurrentUser());
-        match.saveInBackground();
+        Log.i("DatabaseHelper", "Attempting to match " + firstId + " : " + secondId);
+        // TODO: Possibly make it update on insert match instead of doing a costly check beforehand
+        DatabaseHelper.getMatchByPair(firstId, secondId, new GetCallback<MatchItem>() {
+            @Override
+            public void done(MatchItem matchItem, ParseException e) {
+                if (matchItem == null) {
+                    matchItem = new MatchItem();
+                    matchItem.setFirstId(firstId);
+                    matchItem.setSecondId(secondId);
+                    matchItem.setNumLikes(1);
+                } else {
+                    matchItem.setNumLikes(matchItem.getNumLikes() + 1);
+                }
+
+                ParseRelation<ParseObject> relation = matchItem.getRelation("followers");
+                relation.add(ParseUser.getCurrentUser());
+
+                matchItem.saveInBackground();
+            }
+        });
     }
 
     public static void getUserById(String id, GetCallback<ParseUser> getCallback){
@@ -53,17 +68,6 @@ public class DatabaseHelper {
         query.orderByDescending(MatchItem.MATCH_KEY_NUM_LIKES);
         query.setLimit(limit);
         query.findInBackground(findCallback);
-    }
-
-    public static void updateMatchNumLikes(String matchId, final int numLikes){
-        ParseQuery<MatchItem> query = ParseQuery.getQuery(MatchItem.class);
-        query.getInBackground(matchId, new GetCallback<MatchItem>() {
-            @Override
-            public void done(MatchItem matchItem, ParseException e) {
-                matchItem.setNumLikes(numLikes);
-                matchItem.saveInBackground();
-            }
-        });
     }
 
     public static void updateMatchNumMessages(String matchId, final int numMessages){

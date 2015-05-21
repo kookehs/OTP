@@ -38,6 +38,11 @@ public class MakerMatchAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void clearMatches() {
+        mItems.clear();
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getCount() {
         return mItems.size();

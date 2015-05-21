@@ -80,6 +80,7 @@ public class NavFragment extends Fragment {
             }
         });
 
+        // init nav profile views
         final ImageView navProfileImage = (ImageView) fragmentView.findViewById(R.id.nav_profile_image);
         final TextView navProfileNameText = (TextView) fragmentView.findViewById(R.id.name_text);
 
@@ -91,6 +92,7 @@ public class NavFragment extends Fragment {
             }
         });
 
+        // fill nav profile views
         ParseUser user = ParseUser.getCurrentUser();
 
         navProfileNameText.setText(user.getString(ProfileBuilder.PROFILE_KEY_NAME) + "'s Profile");

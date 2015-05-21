@@ -13,12 +13,10 @@ import android.widget.Toast;
 
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.adapters.UserCardAdapter;
-import com.mrcornman.otp.models.MatchItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.mrcornman.otp.views.CardStackLayout;
 import com.mrcornman.otp.views.CardView;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -33,6 +31,8 @@ public class GameFragment extends Fragment {
     private CardStackLayout mCardStackLayoutSecond;
     private UserCardAdapter mUserCardAdapterFirst;
     private UserCardAdapter mUserCardAdapterSecond;
+
+    private GameInteractionListener gameInteractionListener;
 
     private SharedPreferences sharedPreferences;
 
@@ -137,10 +137,10 @@ public class GameFragment extends Fragment {
         return view;
     }
 
-
     private void buildPotentialMatch(String firstId, String secondId) {
         potentialFirstId = firstId != null ? firstId : "";
         potentialSecondId = secondId != null ? secondId : "";
+        Log.i("DatabaseHelper", "ShamalamaDingDong " + potentialFirstId + " : " + potentialSecondId);
     }
 
     private void clearPotentialMatch() {
@@ -151,27 +151,13 @@ public class GameFragment extends Fragment {
     public void onCreateMatch() {
         if(potentialFirstId.equals("") || potentialSecondId.equals("")) return;
 
-        final String cachedFirstId = potentialFirstId;
-        final String cachedSecondId = potentialSecondId;
+        if(potentialFirstId != potentialSecondId) {
+            DatabaseHelper.insertMatchByPair(potentialFirstId, potentialSecondId);
 
-        clearPotentialMatch();
-
-        if(cachedFirstId == cachedSecondId) {
-            Log.e("Game Fragment", "User tried to match up same people.");
-            return;
+            gameInteractionListener.onCreateMatch();
         }
 
-        // TODO: Possibly make it update on insert match instead of doing a costly check beforehand
-        DatabaseHelper.getMatchByPair(cachedFirstId, cachedSecondId, new GetCallback<MatchItem>() {
-            @Override
-            public void done(MatchItem matchItem, ParseException e) {
-                if (matchItem == null) {
-                    DatabaseHelper.insertNewMatchByPair(cachedFirstId, cachedSecondId);
-                } else {
-                    DatabaseHelper.updateMatchNumLikes(matchItem.getObjectId(), matchItem.getNumLikes() + 1);
-                }
-            }
-        });
+        clearPotentialMatch();
     }
 
     private void refreshFirst() {
@@ -219,21 +205,28 @@ public class GameFragment extends Fragment {
     }
 
     public String getCurrentFirstId() {
-        CardView view = mCardStackLayoutFirst.getDraggedCard() != null ? (CardView)mCardStackLayoutFirst.getDraggedCard() : (CardView)mCardStackLayoutFirst.getTopCard();
+        CardView view = mCardStackLayoutFirst.getDraggedCard() != null ? (CardView)mCardStackLayoutFirst.getDraggedCard() : mCardStackLayoutFirst.getTopCard();
         return view != null ? view.boundUserId : null;
     }
 
     public String getCurrentSecondId() {
-        CardView view = mCardStackLayoutSecond.getDraggedCard() != null ? (CardView)mCardStackLayoutSecond.getDraggedCard() : (CardView)mCardStackLayoutSecond.getTopCard();
+        CardView view = mCardStackLayoutSecond.getDraggedCard() != null ? (CardView)mCardStackLayoutSecond.getDraggedCard() : mCardStackLayoutSecond.getTopCard();
         return view != null ? view.boundUserId : null;
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        try {
+            gameInteractionListener= (GameInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnClientListInteractionListener");
+        }
     }
 
     public interface GameInteractionListener {
-        //void onRequestOpenClientMatch(String recipientId);
+        void onCreateMatch();
     }
 }

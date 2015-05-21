@@ -17,9 +17,9 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
 
     public final static int NUM_PAGES = 3;
 
-    private final static int PAGE_GAME = 0;
-    private final static int PAGE_CLIENT = 1;
-    private final static int PAGE_MAKER = 2;
+    public final static int PAGE_GAME = 0;
+    public final static int PAGE_CLIENT = 1;
+    public final static int PAGE_MAKER = 2;
 
     private Context mContext;
 
@@ -49,6 +49,16 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
                 break;
         }
         return fragment;
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        if(object instanceof ClientListFragment)
+            ((ClientListFragment)object).refreshList();
+        else if(object instanceof MakerListFragment)
+            ((MakerListFragment)object).refreshList();
+
+        return super.getItemPosition(object);
     }
 
     @Override

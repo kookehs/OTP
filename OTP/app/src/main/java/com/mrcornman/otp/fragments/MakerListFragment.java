@@ -11,6 +11,7 @@ import android.widget.ListView;
 
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.adapters.MakerMatchAdapter;
+import com.mrcornman.otp.listeners.OnRefreshListener;
 import com.mrcornman.otp.models.MatchItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.parse.FindCallback;
@@ -18,22 +19,17 @@ import com.parse.ParseException;
 
 import java.util.List;
 
-public class MakerListFragment extends Fragment {
+public class MakerListFragment extends Fragment implements OnRefreshListener {
 
     private OnMakerListInteractionListener onMakerListInteractionListener;
     private MakerMatchAdapter makerMatchAdapter;
 
-    /**
-     * Returns a new instance of this fragment for the given section
-     * number.
-     */
     public static MakerListFragment newInstance() {
         MakerListFragment fragment = new MakerListFragment();
         return fragment;
     }
 
-    public MakerListFragment() {
-    }
+    public MakerListFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,18 +47,10 @@ public class MakerListFragment extends Fragment {
             }
         });
 
-        makerMatchAdapter = new MakerMatchAdapter(getActivity().getApplicationContext());
+        makerMatchAdapter = new MakerMatchAdapter(getActivity());
         listView.setAdapter(makerMatchAdapter);
 
-        // fill list up
-        DatabaseHelper.findTopMatches(20, new FindCallback<MatchItem>() {
-            @Override
-            public void done(List<MatchItem> list, ParseException e) {
-                for(MatchItem match : list) {
-                    makerMatchAdapter.addMatch(match);
-                }
-            }
-        });
+        refreshList();
 
         return rootView;
     }
@@ -82,6 +70,26 @@ public class MakerListFragment extends Fragment {
             throw new ClassCastException(activity.toString()
                     + " must implement OnMakerListInteractionListener");
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        refreshList();
+    }
+
+    public void refreshList() {
+        DatabaseHelper.findTopMatches(20, new FindCallback<MatchItem>() {
+            @Override
+            public void done(List<MatchItem> list, ParseException e) {
+                if(e == null) {
+                    makerMatchAdapter.clearMatches();
+
+                    for (MatchItem match : list) {
+                        makerMatchAdapter.addMatch(match);
+                    }
+                }
+            }
+        });
     }
 
     public interface OnMakerListInteractionListener {

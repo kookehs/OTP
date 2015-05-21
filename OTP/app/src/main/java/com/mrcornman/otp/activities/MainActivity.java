@@ -12,18 +12,19 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.adapters.MainPagerAdapter;
 import com.mrcornman.otp.fragments.ClientListFragment;
+import com.mrcornman.otp.fragments.GameFragment;
 import com.mrcornman.otp.fragments.MakerListFragment;
 import com.mrcornman.otp.fragments.NavFragment;
 import com.mrcornman.otp.services.MessageService;
 
-public class MainActivity extends ActionBarActivity implements NavFragment.NavigationDrawerCallbacks, ClientListFragment.OnClientListInteractionListener, MakerListFragment.OnMakerListInteractionListener {
+public class MainActivity extends ActionBarActivity implements NavFragment.NavigationDrawerCallbacks,
+        GameFragment.GameInteractionListener, ClientListFragment.OnClientListInteractionListener, MakerListFragment.OnMakerListInteractionListener {
 
     /**
      * Navigation Identifiers
@@ -52,6 +53,7 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
 
         // Set up toolbar and tabs
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.mipmap.ic_drawer);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(mTitle);
@@ -74,7 +76,6 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
 
             @Override
             public void onPageSelected(int position) {
-                Log.i("MainActivity", "Page selected");
             }
 
             @Override
@@ -114,6 +115,7 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
     @Override
     public void onDestroy() {
         getApplicationContext().stopService(new Intent(getApplicationContext(), MessageService.class));
+        super.onDestroy();
     }
 
     @Override
@@ -139,6 +141,11 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
     }
 
     // fragment interface actions
+    @Override
+    public void onCreateMatch() {
+        mPagerAdapter.notifyDataSetChanged();
+    }
+
     @Override
     public void onRequestOpenClientMatch(String otherId) {
         // TODO: Make sure the user exists when populating the list view in client list fragment so that there isn't the potential problem of the user not existing here

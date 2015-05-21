@@ -11,6 +11,7 @@ import android.widget.ListView;
 
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.adapters.ClientMatchAdapter;
+import com.mrcornman.otp.listeners.OnRefreshListener;
 import com.mrcornman.otp.models.MatchItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.parse.FindCallback;
@@ -18,7 +19,7 @@ import com.parse.ParseException;
 
 import java.util.List;
 
-public class ClientListFragment extends Fragment {
+public class ClientListFragment extends Fragment implements OnRefreshListener {
 
     private OnClientListInteractionListener onClientListInteractionListener;
 
@@ -53,18 +54,11 @@ public class ClientListFragment extends Fragment {
             }
         });
 
-        clientMatchAdapter = new ClientMatchAdapter(getActivity().getApplicationContext());
+        clientMatchAdapter = new ClientMatchAdapter(getActivity());
         listView.setAdapter(clientMatchAdapter);
 
         // fill list up
-        DatabaseHelper.findTopMatches(20, new FindCallback<MatchItem>() {
-            @Override
-            public void done(List<MatchItem> list, ParseException e) {
-                for (MatchItem match : list) {
-                    clientMatchAdapter.addMatch(match);
-                }
-            }
-        });
+        refreshList();
 
         return rootView;
     }
@@ -84,6 +78,26 @@ public class ClientListFragment extends Fragment {
             throw new ClassCastException(activity.toString()
                     + " must implement OnClientListInteractionListener");
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        refreshList();
+    }
+
+    public void refreshList() {
+        DatabaseHelper.findTopMatches(20, new FindCallback<MatchItem>() {
+            @Override
+            public void done(List<MatchItem> list, ParseException e) {
+                if(e == null) {
+                    clientMatchAdapter.clearMatches();
+
+                    for (MatchItem match : list) {
+                        clientMatchAdapter.addMatch(match);
+                    }
+                }
+            }
+        });
     }
 
     public interface OnClientListInteractionListener {
