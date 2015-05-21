@@ -38,7 +38,8 @@
                 tools:src="@mipmap/ic_launcher"
                 android:layout_gravity="center"
                 app:border_color="@color/white"
-                app:border_width="4dp" />
+                app:border_width="4dp"
+                android:src="@mipmap/picture_placeholder" />
         </FrameLayout>
 
         <TextView

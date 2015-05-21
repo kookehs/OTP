@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.fragments.MessagingFragment;
-import com.mrcornman.otp.fragments.ThemeProfileFragment;
+import com.mrcornman.otp.fragments.ThemProfileFragment;
 
 /**
  * Created by Jonathan on 5/17/2015.
@@ -43,7 +43,7 @@ public class ClientMatchPagerAdapter extends FragmentPagerAdapter {
                 fragment = MessagingFragment.newInstance(mOtherId);
                 break;
             case PAGE_PROFILE:
-                fragment = ThemeProfileFragment.newInstance(mOtherId);
+                fragment = ThemProfileFragment.newInstance(mOtherId);
                 break;
         }
         return fragment;

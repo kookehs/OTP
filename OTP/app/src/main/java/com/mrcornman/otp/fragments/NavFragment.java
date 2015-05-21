@@ -70,6 +70,8 @@ public class NavFragment extends Fragment {
                              Bundle savedInstanceState) {
         View fragmentView =  inflater.inflate(R.layout.fragment_nav, container, false);
 
+        if(getActivity() == null) return fragmentView;
+
         ListView listView = (ListView) fragmentView.findViewById(R.id.nav_list);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -94,15 +96,16 @@ public class NavFragment extends Fragment {
         navProfileNameText.setText(user.getString(ProfileBuilder.PROFILE_KEY_NAME) + "'s Profile");
 
         List<PhotoItem> photoItems = user.getList(ProfileBuilder.PROFILE_KEY_PHOTOS);
-        PhotoItem mainPhoto = photoItems.get(0);
-        mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
-            @Override
-            public void done(PhotoItem photoItem, ParseException e) {
-                PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
-                if (getActivity() != null)
+        if(photoItems != null && photoItems.size() > 0) {
+            PhotoItem mainPhoto = photoItems.get(0);
+            mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
+                @Override
+                public void done(PhotoItem photoItem, ParseException e) {
+                    PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
                     Picasso.with(getActivity().getApplicationContext()).load(mainFile.url).fit().centerCrop().into(navProfileImage);
-            }
-        });
+                }
+            });
+        }
 
         List<NavItem> navItems = new ArrayList<>();
 

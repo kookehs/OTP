@@ -14,6 +14,7 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,7 +46,7 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
 
         ParseUser currentUser = ParseUser.getCurrentUser();
-        if (currentUser != null) {
+        if (currentUser != null && currentUser.getUsername() != null) {
             onSuccessfulLogin();
             return;
         }
@@ -69,10 +70,15 @@ public class LoginActivity extends Activity {
                         } else if (user.isNew()) {
                             ProfileBuilder.buildCurrentProfile(getApplicationContext(), new ProfileBuilder.BuildProfileCallback() {
                                 @Override
-                                public void done(ParseUser user, Object err) {
+                                public void done(final ParseUser user, Object err) {
                                     if (err != null) {
                                         Log.e("LoginActivity", "Creating profile from Facebook failed: " + err.toString());
-                                        user.deleteInBackground();
+                                        ParseFacebookUtils.unlinkInBackground(user, new SaveCallback() {
+                                            @Override
+                                            public void done(ParseException e) {
+                                                user.deleteInBackground();
+                                            }
+                                        });
                                         return;
                                     }
 

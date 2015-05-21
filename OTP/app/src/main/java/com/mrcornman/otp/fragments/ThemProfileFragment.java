@@ -3,6 +3,7 @@ package com.mrcornman.otp.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class ThemeProfileFragment extends Fragment {
+public class ThemProfileFragment extends Fragment {
 
     private final static String KEY_USER_ID = "user_id";
 
@@ -35,8 +36,8 @@ public class ThemeProfileFragment extends Fragment {
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static ThemeProfileFragment newInstance(String userId) {
-        ThemeProfileFragment fragment = new ThemeProfileFragment();
+    public static ThemProfileFragment newInstance(String userId) {
+        ThemProfileFragment fragment = new ThemProfileFragment();
 
         // arguments
         Bundle arguments = new Bundle();
@@ -46,7 +47,7 @@ public class ThemeProfileFragment extends Fragment {
         return fragment;
     }
 
-    public ThemeProfileFragment() {}
+    public ThemProfileFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,21 +73,28 @@ public class ThemeProfileFragment extends Fragment {
         DatabaseHelper.getUserById(userId, new GetCallback<ParseUser>() {
             @Override
             public void done(ParseUser parseUser, ParseException e) {
+                if(e != null || parseUser == null) {
+                    Log.e(getClass().getName(), "Got a null user for a profile");
+                    return;
+                }
+
                 final ParseUser user = parseUser;
 
                 nameText.setText(user.getString(ProfileBuilder.PROFILE_KEY_NAME) + ",");
                 ageText.setText(PrettyTime.getAgeFromBirthDate(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE)) + "");
 
                 List<PhotoItem> photoItems = user.getList(ProfileBuilder.PROFILE_KEY_PHOTOS);
-                PhotoItem mainPhoto = photoItems.get(0);
-                mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
-                    @Override
-                    public void done(PhotoItem photoItem, ParseException e) {
-                        PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
-                        if (getActivity() != null)
-                            Picasso.with(getActivity().getApplicationContext()).load(mainFile.url).fit().centerCrop().into(pictureImage);
-                    }
-                });
+                if(photoItems != null && photoItems.size() > 0) {
+                    PhotoItem mainPhoto = photoItems.get(0);
+                    mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
+                        @Override
+                        public void done(PhotoItem photoItem, ParseException e) {
+                            PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
+                            if (getActivity() != null)
+                                Picasso.with(getActivity().getApplicationContext()).load(mainFile.url).fit().centerCrop().into(pictureImage);
+                        }
+                    });
+                }
             }
         });
 

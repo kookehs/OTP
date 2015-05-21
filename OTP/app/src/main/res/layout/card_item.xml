@@ -15,7 +15,7 @@
             android:layout_height="match_parent"
             android:scaleType="fitCenter"
             android:id="@+id/picture"
-            tools:src="@mipmap/ic_launcher"
+            android:src="@mipmap/picture_placeholder"
             android:contentDescription="@string/content_missing_description" />
     </FrameLayout>
 

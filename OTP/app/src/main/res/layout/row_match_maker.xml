@@ -38,7 +38,7 @@
                 android:id="@+id/thumb_image_first"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                tools:src="@mipmap/ic_launcher"
+                android:src="@mipmap/picture_placeholder"
                 android:layout_gravity="center" />
         </FrameLayout>
 
@@ -83,7 +83,7 @@
                 android:id="@+id/thumb_image_second"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                tools:src="@mipmap/ic_launcher"
+                android:src="@mipmap/picture_placeholder"
                 android:layout_gravity="center" />
         </FrameLayout>
 

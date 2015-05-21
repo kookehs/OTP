@@ -74,14 +74,16 @@ public class UserCardAdapter extends BaseAdapter {
         final ImageView pictureImage = (ImageView) cardView.findViewById(R.id.picture);
 
         List<PhotoItem> photoItems = user.getList(ProfileBuilder.PROFILE_KEY_PHOTOS);
-        PhotoItem mainPhoto = photoItems.get(0);
-        mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
-            @Override
-            public void done(PhotoItem photoItem, ParseException e) {
-                PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
-                Picasso.with(mContext).load(mainFile.url).fit().centerCrop().into(pictureImage);
-            }
-        });
+        if(photoItems != null && photoItems.size() > 0) {
+            PhotoItem mainPhoto = photoItems.get(0);
+            mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
+                @Override
+                public void done(PhotoItem photoItem, ParseException e) {
+                    PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
+                    Picasso.with(mContext.getApplicationContext()).load(mainFile.url).fit().centerCrop().into(pictureImage);
+                }
+            });
+        }
 
         return cardView;
     }

@@ -46,8 +46,8 @@
                             android:id="@+id/picture_image_first"
                             android:focusable="false"
                             android:focusableInTouchMode="false"
-                            tools:src="@mipmap/ic_launcher"
-                            android:layout_gravity="center" />
+                            android:layout_gravity="center"
+                            android:src="@mipmap/picture_placeholder" />
                     </FrameLayout>
 
                 </RelativeLayout>
@@ -74,8 +74,8 @@
                             android:id="@+id/picture_image_second"
                             android:focusable="false"
                             android:focusableInTouchMode="false"
-                            tools:src="@mipmap/ic_launcher"
-                            android:layout_gravity="center" />
+                            android:layout_gravity="center"
+                            android:src="@mipmap/picture_placeholder" />
                     </FrameLayout>
 
                 </RelativeLayout>

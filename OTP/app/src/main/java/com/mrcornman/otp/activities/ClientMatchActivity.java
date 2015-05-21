@@ -47,6 +47,10 @@ public class ClientMatchActivity extends ActionBarActivity {
         final PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabStrip.setViewPager(mViewPager);
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+
         // populate toolbar with header about recipient
         DatabaseHelper.getUserById(otherId, new GetCallback<ParseUser>() {
             @Override
@@ -56,10 +60,7 @@ public class ClientMatchActivity extends ActionBarActivity {
                     return;
                 }
 
-                ActionBar actionBar = getSupportActionBar();
-                actionBar.setTitle(parseUser.getString(ProfileBuilder.PROFILE_KEY_NAME));
-                actionBar.setDisplayHomeAsUpEnabled(true);
-                actionBar.setHomeButtonEnabled(true);
+                getSupportActionBar().setTitle(parseUser.getString(ProfileBuilder.PROFILE_KEY_NAME));
             }
         });
     }

@@ -95,15 +95,16 @@ public class MatchStatsFragment extends Fragment {
                         final ParseUser user = parseUser;
 
                         List<PhotoItem> photoItems = user.getList(ProfileBuilder.PROFILE_KEY_PHOTOS);
-                        PhotoItem mainPhoto = photoItems.get(0);
-                        mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
-                            @Override
-                            public void done(PhotoItem photoItem, ParseException e) {
-                                PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
-                                if (getActivity() != null)
+                        if(photoItems != null && photoItems.size() > 0) {
+                            PhotoItem mainPhoto = photoItems.get(0);
+                            mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
+                                @Override
+                                public void done(PhotoItem photoItem, ParseException e) {
+                                    PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
                                     Picasso.with(getActivity().getApplicationContext()).load(mainFile.url).fit().centerCrop().into(pictureImageFirst);
-                            }
-                        });
+                                }
+                            });
+                        }
                     }
                 });
 
@@ -113,15 +114,16 @@ public class MatchStatsFragment extends Fragment {
                         final ParseUser user = parseUser;
 
                         List<PhotoItem> photoItems = user.getList(ProfileBuilder.PROFILE_KEY_PHOTOS);
-                        PhotoItem mainPhoto = photoItems.get(0);
-                        mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
-                            @Override
-                            public void done(PhotoItem photoItem, ParseException e) {
-                                PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
-                                if (getActivity() != null)
+                        if(photoItems != null && photoItems.size() > 0) {
+                            PhotoItem mainPhoto = photoItems.get(0);
+                            mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
+                                @Override
+                                public void done(PhotoItem photoItem, ParseException e) {
+                                    PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
                                     Picasso.with(getActivity().getApplicationContext()).load(mainFile.url).fit().centerCrop().into(pictureImageSecond);
-                            }
-                        });
+                                }
+                            });
+                        }
                     }
                 });
 
