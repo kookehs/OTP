@@ -83,6 +83,14 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.BaseTheme"
             android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activities.ImageListActivity"
+            android:launchMode="singleTask"
+            android:label="Profile Activity"
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.BaseTheme"
+            android:windowSoftInputMode="stateHidden" />
 
         <!-- Push Notifications -->
         <service android:name="com.parse.PushService" />

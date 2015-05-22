@@ -1,15 +1,9 @@
 package com.mrcornman.otp.activities;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -18,27 +12,16 @@ import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.adapters.MainPagerAdapter;
-import com.mrcornman.otp.fragments.ClientListFragment;
-import com.mrcornman.otp.fragments.GameFragment;
-import com.mrcornman.otp.fragments.MakerListFragment;
-import com.mrcornman.otp.fragments.NavFragment;
 import com.mrcornman.otp.models.PhotoFile;
 import com.mrcornman.otp.models.PhotoItem;
-import com.mrcornman.otp.services.MessageService;
 import com.mrcornman.otp.utils.PrettyTime;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.parse.GetCallback;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
-
-import org.apache.http.ParseException;
 
 import java.util.List;
 
@@ -96,17 +79,33 @@ public class ProfileActivity extends ActionBarActivity {
                     }
                 });
             }
+
         }
 
-   /* @Override
+    @Override
     protected void onResume() {
         super.onResume();
+
         ImageView profilePic = (ImageView) findViewById(R.id.picture_image);
         profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("change", "your picture");
+                Intent ns = new Intent(ProfileActivity.this, ImageListActivity.class);
+                ns.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(ns);
             }
         });
-    }*/
+    }
+
+    public void restoreActionBar() {
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        try {
+            actionBar.setTitle(mTitle);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+        }
+        catch(Exception e){
+            Log.i("Failed________________", e+"-----------------------------------");
+        }
+    }
 }
