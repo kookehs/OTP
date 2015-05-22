@@ -1,29 +1,26 @@
 package com.mrcornman.otp.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.adapters.CardAdapter;
-import com.mrcornman.otp.models.MatchItem;
+import com.mrcornman.otp.adapters.UserCardAdapter;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.mrcornman.otp.views.CardStackLayout;
 import com.mrcornman.otp.views.CardView;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -32,13 +29,13 @@ public class GameFragment extends Fragment {
 
     private CardStackLayout mCardStackLayoutFirst;
     private CardStackLayout mCardStackLayoutSecond;
-    private CardAdapter mCardAdapterFirst;
-    private CardAdapter mCardAdapterSecond;
+    private UserCardAdapter mUserCardAdapterFirst;
+    private UserCardAdapter mUserCardAdapterSecond;
+
+    private GameInteractionListener gameInteractionListener;
 
     private SharedPreferences sharedPreferences;
 
-    private List<ParseUser> mCardUsersFirst;
-    private List<ParseUser> mCardUsersSecond;
     private String potentialFirstId = "";
     private String potentialSecondId = "";
 
@@ -64,43 +61,23 @@ public class GameFragment extends Fragment {
         mCardStackLayoutFirst = (CardStackLayout) view.findViewById(R.id.cardstack_first);
         mCardStackLayoutSecond = (CardStackLayout) view.findViewById(R.id.cardstack_second);
 
-        Button refreshButtonFirst = (Button) view.findViewById(R.id.btn_refresh_first);
-        refreshButtonFirst.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                refreshFirst();
-            }
-        });
-
-        Button refreshButtonSecond = (Button) view.findViewById(R.id.btn_refresh_second);
-        refreshButtonSecond.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                refreshSecond();
-            }
-        });
-
         mCardStackLayoutFirst.setCardStackListener(new CardStackLayout.CardStackListener() {
             @Override
-            public void onBeginProgress(View view) {
+            public void onBeginProgress() {
                 buildPotentialMatch(getCurrentFirstId(), getCurrentSecondId());
             }
 
             @Override
-            public void onUpdateProgress(boolean positif, float percent, View view) {
-                CardView item = (CardView) view;
-                item.onUpdateProgress(positif, percent, view);
+            public void onUpdateProgress(boolean positif, float percent) {
             }
 
             @Override
-            public void onCancelled(View beingDragged) {
-                CardView item = (CardView) beingDragged;
-                item.onCancelled(beingDragged);
+            public void onCancelled() {
                 clearPotentialMatch();
             }
 
             @Override
-            public void onChoiceMade(boolean choice, View beingDragged) {
+            public void onChoiceMade(boolean choice) {
                 /*
                 SingleUserView item = (SingleUserView) beingDragged;
                 item.onChoiceMade(choice, beingDragged);
@@ -113,45 +90,46 @@ public class GameFragment extends Fragment {
                 Log.d("game fragment", "updated the choice made " + String.valueOf(choice) + " " + item.userItem.getName());
                 */
                 onCreateMatch();
+
+                if(!mCardStackLayoutFirst.hasMoreItems()) {
+                    refreshFirst();
+                }
             }
         });
 
         mCardStackLayoutSecond.setCardStackListener(new CardStackLayout.CardStackListener() {
             @Override
-            public void onBeginProgress(View view) {
+            public void onBeginProgress() {
                 buildPotentialMatch(getCurrentFirstId(), getCurrentSecondId());
             }
 
             @Override
-            public void onUpdateProgress(boolean positif, float percent, View view) {
-                CardView item = (CardView) view;
-                item.onUpdateProgress(positif, percent, view);
+            public void onUpdateProgress(boolean positif, float percent) {
             }
 
             @Override
-            public void onCancelled(View beingDragged) {
-                CardView item = (CardView) beingDragged;
-                item.onCancelled(beingDragged);
+            public void onCancelled() {
                 clearPotentialMatch();
             }
 
             @Override
-            public void onChoiceMade(boolean choice, View beingDragged) {
+            public void onChoiceMade(boolean choice) {
                 onCreateMatch();
+
+                if(!mCardStackLayoutSecond.hasMoreItems()) {
+                    refreshSecond();
+                }
             }
         });
 
         // init data
         sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-        // resetStoredValues();
 
-        mCardUsersFirst = new ArrayList<>();
-        mCardAdapterFirst = new CardAdapter(getActivity().getApplicationContext(), mCardUsersFirst);
-        mCardStackLayoutFirst.setAdapter(mCardAdapterFirst);
+        mUserCardAdapterFirst = new UserCardAdapter(getActivity().getApplicationContext());
+        mCardStackLayoutFirst.setAdapter(mUserCardAdapterFirst);
 
-        mCardUsersSecond = new ArrayList<>();
-        mCardAdapterSecond = new CardAdapter(getActivity().getApplicationContext(), mCardUsersSecond);
-        mCardStackLayoutSecond.setAdapter(mCardAdapterSecond);
+        mUserCardAdapterSecond = new UserCardAdapter(getActivity().getApplicationContext());
+        mCardStackLayoutSecond.setAdapter(mUserCardAdapterSecond);
 
         refreshFirst();
         refreshSecond();
@@ -159,10 +137,10 @@ public class GameFragment extends Fragment {
         return view;
     }
 
-
     private void buildPotentialMatch(String firstId, String secondId) {
         potentialFirstId = firstId != null ? firstId : "";
         potentialSecondId = secondId != null ? secondId : "";
+        Log.i("DatabaseHelper", "ShamalamaDingDong " + potentialFirstId + " : " + potentialSecondId);
     }
 
     private void clearPotentialMatch() {
@@ -173,37 +151,16 @@ public class GameFragment extends Fragment {
     public void onCreateMatch() {
         if(potentialFirstId.equals("") || potentialSecondId.equals("")) return;
 
-        final String cachedFirstId = potentialFirstId;
-        final String cachedSecondId = potentialSecondId;
+        if(potentialFirstId != potentialSecondId) {
+            DatabaseHelper.insertMatchByPair(potentialFirstId, potentialSecondId);
 
-        // TODO: Possibly make it update on insert match instead of doing a costly check beforehand
-        DatabaseHelper.getMatchByPair(potentialFirstId, potentialSecondId, new GetCallback<MatchItem>() {
-            @Override
-            public void done(MatchItem matchItem, ParseException e) {
-                if(matchItem == null) {
-                    DatabaseHelper.insertNewMatchByPair(cachedFirstId, cachedSecondId);
-                } else {
-                    DatabaseHelper.updateMatchNumLikes(matchItem.getObjectId(), matchItem.getNumLikes() + 1);
-                }
-            }
-        });
+            gameInteractionListener.onCreateMatch();
+        }
 
         clearPotentialMatch();
     }
 
-    //fixme: figure out how to eliminate the ui lag when the database gets new products from the internet..
-    // already tried initializing the product stack inside the overridden method onViewCreated, and it didn't improve anything..
-
     private void refreshFirst() {
-        /*
-        if (startFromFirst > Integer.parseInt(maxCardsFirst)){
-            startFromFirst = 0;
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            //editor.putInt(getString(R.string.men_shoes_start_from_key), 0);
-            editor.commit();
-        }
-        */
-
         ParseQuery<ParseUser> query = ParseUser.getQuery();
 
         // exclude self
@@ -213,10 +170,8 @@ public class GameFragment extends Fragment {
             @Override
             public void done(List<ParseUser> list, ParseException e) {
                 if (e == null) {
-                    for (int i = 0; i < list.size(); i++) {
-                        mCardUsersFirst.add(list.get(i));
-                    }
-                    mCardAdapterFirst.notifyDataSetChanged();
+                    mUserCardAdapterFirst.fillUsers(list);
+
                     mCardStackLayoutFirst.refreshStack();
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(),
@@ -237,10 +192,8 @@ public class GameFragment extends Fragment {
             @Override
             public void done(List<ParseUser> list, ParseException e) {
                 if (e == null) {
-                    for (int i = 0; i < list.size(); i++) {
-                        mCardUsersSecond.add(list.get(i));
-                    }
-                    mCardAdapterSecond.notifyDataSetChanged();
+                    mUserCardAdapterSecond.fillUsers(list);
+
                     mCardStackLayoutSecond.refreshStack();
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(),
@@ -252,17 +205,28 @@ public class GameFragment extends Fragment {
     }
 
     public String getCurrentFirstId() {
-        CardView view = mCardStackLayoutFirst.getmBeingDragged() != null ? (CardView)mCardStackLayoutFirst.getmBeingDragged() : (CardView)mCardStackLayoutFirst.getTopCard();
-        return view != null ? view.mUserId : null;
+        CardView view = mCardStackLayoutFirst.getDraggedCard() != null ? (CardView)mCardStackLayoutFirst.getDraggedCard() : mCardStackLayoutFirst.getTopCard();
+        return view != null ? view.boundUserId : null;
     }
 
     public String getCurrentSecondId() {
-        CardView view = mCardStackLayoutSecond.getmBeingDragged() != null ? (CardView)mCardStackLayoutSecond.getmBeingDragged() : (CardView)mCardStackLayoutSecond.getTopCard();
-        return view != null ? view.mUserId : null;
+        CardView view = mCardStackLayoutSecond.getDraggedCard() != null ? (CardView)mCardStackLayoutSecond.getDraggedCard() : mCardStackLayoutSecond.getTopCard();
+        return view != null ? view.boundUserId : null;
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        try {
+            gameInteractionListener= (GameInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnClientListInteractionListener");
+        }
+    }
+
+    public interface GameInteractionListener {
+        void onCreateMatch();
     }
 }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.services.MessageService;
@@ -14,6 +15,7 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,8 +46,11 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        final ProgressBar loginProgress = (ProgressBar) findViewById(R.id.login_progress);
+
         ParseUser currentUser = ParseUser.getCurrentUser();
-        if (currentUser != null) {
+        if (currentUser != null && currentUser.getUsername() != null) {
+            loginProgress.setVisibility(View.VISIBLE);
             onSuccessfulLogin();
             return;
         }
@@ -67,12 +72,19 @@ public class LoginActivity extends Activity {
                         if (user == null) {
                             Log.d("LoginActivity", "The user cancelled the Facebook login.");
                         } else if (user.isNew()) {
+                            loginProgress.setVisibility(View.VISIBLE);
+
                             ProfileBuilder.buildCurrentProfile(getApplicationContext(), new ProfileBuilder.BuildProfileCallback() {
                                 @Override
-                                public void done(ParseUser user, Object err) {
+                                public void done(final ParseUser user, Object err) {
                                     if (err != null) {
                                         Log.e("LoginActivity", "Creating profile from Facebook failed: " + err.toString());
-                                        user.deleteInBackground();
+                                        ParseFacebookUtils.unlinkInBackground(user, new SaveCallback() {
+                                            @Override
+                                            public void done(ParseException e) {
+                                                user.deleteInBackground();
+                                            }
+                                        });
                                         return;
                                     }
 
@@ -80,6 +92,8 @@ public class LoginActivity extends Activity {
                                 }
                             });
                         } else {
+                            loginProgress.setVisibility(View.VISIBLE);
+
                             onSuccessfulLogin();
                         }
                     }
@@ -96,18 +110,11 @@ public class LoginActivity extends Activity {
 
     private void onSuccessfulLogin() {
         final Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
-
         startActivity(intent);
-        startService(serviceIntent);
 
-        finish();
-    }
+        final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
+        getApplicationContext().startService(serviceIntent);
 
-    @Override
-    public void onDestroy() {
-        stopService(new Intent(this, MessageService.class));
-
-        super.onDestroy();
+        //finish();
     }
 }

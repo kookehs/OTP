@@ -20,7 +20,7 @@ public class PrettyTime {
     public final static long ONE_DAY = ONE_HOUR * 24;
 
     private final static String[] birthdayFormats = {
-            "mm/dd/yyyy", "yyyy"
+            "MM/dd/yyyy", "yyyy"
     };
 
     private PrettyTime() {}

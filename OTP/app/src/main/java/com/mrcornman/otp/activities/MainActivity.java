@@ -1,9 +1,5 @@
 package com.mrcornman.otp.activities;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,38 +7,41 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
+import com.astuetz.PagerSlidingTabStrip;
 import com.mrcornman.otp.R;
+import com.mrcornman.otp.adapters.MainPagerAdapter;
 import com.mrcornman.otp.fragments.ClientListFragment;
 import com.mrcornman.otp.fragments.GameFragment;
 import com.mrcornman.otp.fragments.MakerListFragment;
-import com.mrcornman.otp.fragments.ProfileFragment;
-import com.mrcornman.otp.fragments.SettingsFragment;
-import com.mrcornman.otp.fragments.NavigationDrawerFragment;
+import com.mrcornman.otp.fragments.NavFragment;
+import com.mrcornman.otp.services.MessageService;
 
-public class MainActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks, ClientListFragment.ClientListInteractionListener {
+public class MainActivity extends ActionBarActivity implements NavFragment.NavigationDrawerCallbacks,
+        GameFragment.GameInteractionListener, ClientListFragment.OnClientListInteractionListener, MakerListFragment.OnMakerListInteractionListener {
 
     /**
      * Navigation Identifiers
      */
-    public static final int NAV_GAME = 0;
-    public static final int NAV_SETTINGS = 1;
-    public static final int NAV_PROFILE = 2;
-
+    public static final int NAV_PROFILE = 0;
+    public static final int NAV_PREFERENCES = 1;
+    public static final int NAV_SETTINGS = 2;
+    public static final int NAV_SHARE = 3;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
-    private NavigationDrawerFragment mNavigationDrawerFragment;
+    private NavFragment mNavFragment;
 
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
+    private MainPagerAdapter mPagerAdapter;
+    private ViewPager mViewPager;
+
     private CharSequence mTitle;
 
     @Override
@@ -50,142 +49,116 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
-        // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
+        // Set up toolbar and tabs
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.mipmap.ic_drawer);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(mTitle);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
 
+        mPagerAdapter = new MainPagerAdapter(this, getSupportFragmentManager());
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setOffscreenPageLimit(MainPagerAdapter.NUM_PAGES);
+
+        final PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        tabStrip.setViewPager(mViewPager);
+
+        // TODO: Use push notifications to update the list fragments not this shit
+        tabStrip.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
+
+        // Set up the drawer.
+        mNavFragment = (NavFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        mNavFragment.setUp((DrawerLayout) findViewById(R.id.drawer_layout));
+
+        // start up progress dialog until MessageService is started
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Loading");
         progressDialog.setTitle("Please wait...");
         progressDialog.show();
 
-        // listen for successful startup broadcast from MessageService
+        // init receiver for successful startup broadcast from MessageService
         BroadcastReceiver mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.i("MainActivity", "We got yo broadcast");
                 boolean success = intent.getBooleanExtra("success", false);
                 progressDialog.dismiss();
 
                 if(!success) {
                     Toast.makeText(getApplicationContext(),
-                            "There was a problem with the messaging service, please restart the app.",
+                            "There was a problem with the messaging service, please restart the app",
                             Toast.LENGTH_LONG).show();
                 }
             }
         };
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver,
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mReceiver,
                 new IntentFilter("com.mrcornman.otp.activities.MainActivity"));
     }
 
     @Override
+    public void onDestroy() {
+        getApplicationContext().stopService(new Intent(getApplicationContext(), MessageService.class));
+        super.onDestroy();
+    }
+
+    @Override
     public void onNavigationDrawerItemSelected(int position) {
-        // update the main content by replacing fragments
-        FragmentManager fragmentManager = getFragmentManager();
-        Fragment fragment = null;
 
         switch(position) {
-            case NAV_GAME:
-                fragment = GameFragment.newInstance();
+            case NAV_PROFILE:
+                // start profile activity
+                break;
+            case NAV_PREFERENCES:
+                // start prefs activity
                 break;
             case NAV_SETTINGS:
-                fragment = SettingsFragment.newInstance();
+                // start settings activity
                 break;
-            case NAV_PROFILE :
-                fragment = ProfileFragment.newInstance();
-                break;
-        }
-
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, fragment)
-                //.addToBackStack(null)
-                .commit();
-        onSectionAttached(position+1);
-        restoreActionBar();
-    }
-
-    @Override
-    public void onMenuItemClientList() {
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, ClientListFragment.newInstance(1))
-                //.addToBackStack(null)
-                .commit();
-        restoreActionBar();
-    }
-
-    @Override
-    public void onMenuItemMatchmakerList() {
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, MakerListFragment.newInstance(1))
-                        //.addToBackStack(null)
-                .commit();
-        restoreActionBar();
-    }
-
-    public void onSectionAttached(int number) {
-        switch (number) {
-            case 1:
-                mTitle = "Game";
-                break;
-            case 2:
-                mTitle = "Settings";
+            case NAV_SHARE:
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_TEXT, "Check out this great new app that lets you match two people up! http://mrcornman.com/");
+                shareIntent.setType("text/plain");
+                startActivity(Intent.createChooser(shareIntent, "Share with"));
                 break;
         }
-    }
-
-    public void restoreActionBar() {
-        ActionBar actionBar = getActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.menu_main, menu);
-            restoreActionBar();
-            return true;
-        }
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     // fragment interface actions
     @Override
-    public void onRequestOpenConversation(String recipientId) {
-        openConversation(recipientId);
+    public void onCreateMatch() {
+        mPagerAdapter.notifyDataSetChanged();
     }
 
-    // helpers
-    public void openConversation(String recipientId) {
+    @Override
+    public void onRequestOpenClientMatch(String otherId) {
         // TODO: Make sure the user exists when populating the list view in client list fragment so that there isn't the potential problem of the user not existing here
-        Intent intent = new Intent(getApplicationContext(), MessagingActivity.class);
-        intent.putExtra("recipient_id", recipientId);
+        Intent intent = new Intent(getApplicationContext(), ClientMatchActivity.class);
+        intent.putExtra("other_id", otherId);
         startActivity(intent);
-        Log.i("MainActivity", "Beginning conversation with " + recipientId);
+    }
+
+    @Override
+    public void onRequestOpenMakerMatch(String matchId) {
+        // TODO: Make sure the user exists when populating the list view in client list fragment so that there isn't the potential problem of the user not existing here
+        Intent intent = new Intent(getApplicationContext(), MakerMatchActivity.class);
+        intent.putExtra("match_id", matchId);
+        startActivity(intent);
     }
 }

@@ -1,8 +1,8 @@
 package com.mrcornman.otp.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,37 +10,27 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.activities.MainActivity;
 import com.mrcornman.otp.adapters.ClientMatchAdapter;
+import com.mrcornman.otp.listeners.OnRefreshListener;
 import com.mrcornman.otp.models.MatchItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseException;
-import com.parse.ParseUser;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ClientListFragment extends Fragment {
-    private static final String ARG_SECTION_NUMBER = "section_number";
+public class ClientListFragment extends Fragment implements OnRefreshListener {
 
-    private String sectionNumber;
-
-    private ClientListInteractionListener clientListInteractionListener;
+    private OnClientListInteractionListener onClientListInteractionListener;
 
     private ClientMatchAdapter clientMatchAdapter;
-    private List<MatchItem> matchItems;
 
     /**
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static ClientListFragment newInstance(int sectionNumber) {
+    public static ClientListFragment newInstance() {
         ClientListFragment fragment = new ClientListFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -60,31 +50,15 @@ public class ClientListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String otherId = view.getTag().toString();
-                DatabaseHelper.getUserById(otherId, new GetCallback<ParseUser>() {
-                    @Override
-                    public void done(ParseUser parseUser, ParseException e) {
-                        if(parseUser != null) {
-                            String recipientId = parseUser.getObjectId();
-                            clientListInteractionListener.onRequestOpenConversation(recipientId);
-                        }
-                    }
-                });
+                onClientListInteractionListener.onRequestOpenClientMatch(otherId);
             }
         });
 
-        matchItems = new ArrayList<>();
-        clientMatchAdapter = new ClientMatchAdapter(getActivity().getApplicationContext(), matchItems);
+        clientMatchAdapter = new ClientMatchAdapter(getActivity());
         listView.setAdapter(clientMatchAdapter);
 
         // fill list up
-        DatabaseHelper.findTopMatches(20, new FindCallback<MatchItem>() {
-            @Override
-            public void done(List<MatchItem> list, ParseException e) {
-                for(MatchItem match : list) {
-                    clientMatchAdapter.addMatch(match);
-                }
-            }
-        });
+        refreshList();
 
         return rootView;
     }
@@ -92,26 +66,41 @@ public class ClientListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null){
-            sectionNumber = getArguments().getString(ARG_SECTION_NUMBER);
-        }
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(
-                getArguments().getInt(ARG_SECTION_NUMBER));
 
         try {
-            clientListInteractionListener = (ClientListInteractionListener) activity;
+            onClientListInteractionListener = (OnClientListInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnClientListInteractionListener");
         }
     }
 
-    public interface ClientListInteractionListener {
-        void onRequestOpenConversation(String recipientId);
+    @Override
+    public void onRefresh() {
+        refreshList();
+    }
+
+    public void refreshList() {
+        DatabaseHelper.findTopMatches(20, new FindCallback<MatchItem>() {
+            @Override
+            public void done(List<MatchItem> list, ParseException e) {
+                if(e == null) {
+                    clientMatchAdapter.clearMatches();
+
+                    for (MatchItem match : list) {
+                        clientMatchAdapter.addMatch(match);
+                    }
+                }
+            }
+        });
+    }
+
+    public interface OnClientListInteractionListener {
+        void onRequestOpenClientMatch(String otherId);
     }
 }

@@ -1,5 +1,7 @@
 package com.mrcornman.otp.utils;
 
+import android.util.Log;
+
 import com.mrcornman.otp.models.MatchItem;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
@@ -9,6 +11,8 @@ import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 
+import java.util.Arrays;
+
 /**
  * Common Database Functionality
  */
@@ -16,15 +20,28 @@ public class DatabaseHelper {
 
     private DatabaseHelper() {}
 
-    public static void insertNewMatchByPair(String firstId, String secondId) {
-        MatchItem match = new MatchItem();
-        match.setFirstId(firstId);
-        match.setSecondId(secondId);
-        match.setNumLikes(1);
+    public static void insertMatchByPair(final String firstId, final String secondId) {
 
-        ParseRelation<ParseObject> relation = match.getRelation("followers");
-        relation.add(ParseUser.getCurrentUser());
-        match.saveInBackground();
+        Log.i("DatabaseHelper", "Attempting to match " + firstId + " : " + secondId);
+        // TODO: Possibly make it update on insert match instead of doing a costly check beforehand
+        DatabaseHelper.getMatchByPair(firstId, secondId, new GetCallback<MatchItem>() {
+            @Override
+            public void done(MatchItem matchItem, ParseException e) {
+                if (matchItem == null) {
+                    matchItem = new MatchItem();
+                    matchItem.setFirstId(firstId);
+                    matchItem.setSecondId(secondId);
+                    matchItem.setNumLikes(1);
+                } else {
+                    matchItem.setNumLikes(matchItem.getNumLikes() + 1);
+                }
+
+                ParseRelation<ParseObject> relation = matchItem.getRelation("followers");
+                relation.add(ParseUser.getCurrentUser());
+
+                matchItem.saveInBackground();
+            }
+        });
     }
 
     public static void getUserById(String id, GetCallback<ParseUser> getCallback){
@@ -39,8 +56,10 @@ public class DatabaseHelper {
 
     public static void getMatchByPair(String firstId, String secondId, GetCallback<MatchItem> getCallback){
         ParseQuery<MatchItem> query = ParseQuery.getQuery(MatchItem.class);
-        query.whereEqualTo(MatchItem.MATCH_KEY_FIRST_ID, firstId);
-        query.whereEqualTo(MatchItem.MATCH_KEY_SECOND_ID, secondId);
+
+        String[] userIds = { firstId, secondId };
+        query.whereContainedIn(MatchItem.MATCH_KEY_FIRST_ID, Arrays.asList(userIds));
+        query.whereContainedIn(MatchItem.MATCH_KEY_SECOND_ID, Arrays.asList(userIds));
         query.getFirstInBackground(getCallback);
     }
 
@@ -51,12 +70,12 @@ public class DatabaseHelper {
         query.findInBackground(findCallback);
     }
 
-    public static void updateMatchNumLikes(String matchId, final int numLikes){
+    public static void updateMatchNumMessages(String matchId, final int numMessages){
         ParseQuery<MatchItem> query = ParseQuery.getQuery(MatchItem.class);
         query.getInBackground(matchId, new GetCallback<MatchItem>() {
             @Override
             public void done(MatchItem matchItem, ParseException e) {
-                matchItem.setNumLikes(numLikes);
+                matchItem.setNumMessages(numMessages);
                 matchItem.saveInBackground();
             }
         });

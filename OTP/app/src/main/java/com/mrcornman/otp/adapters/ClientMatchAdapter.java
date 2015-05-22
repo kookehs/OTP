@@ -13,12 +13,14 @@ import com.mrcornman.otp.models.MatchItem;
 import com.mrcornman.otp.models.PhotoFile;
 import com.mrcornman.otp.models.PhotoItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
+import com.mrcornman.otp.utils.PrettyNumbers;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClientMatchAdapter extends BaseAdapter {
@@ -26,13 +28,18 @@ public class ClientMatchAdapter extends BaseAdapter {
     private Context mContext;
     private List<MatchItem> mItems;
 
-    public ClientMatchAdapter(Context context, List<MatchItem> matches) {
+    public ClientMatchAdapter(Context context) {
         mContext = context;
-        mItems = matches;
+        mItems = new ArrayList<>();
     }
 
     public void addMatch(MatchItem match) {
         mItems.add(match);
+        notifyDataSetChanged();
+    }
+
+    public void clearMatches() {
+        mItems.clear();
         notifyDataSetChanged();
     }
 
@@ -65,10 +72,13 @@ public class ClientMatchAdapter extends BaseAdapter {
 
         MatchItem match = getItem(position);
 
-        convertView.setTag(match.getSecondId());
-        countText.setText(match.getNumLikes() + "");
+        String currId = ParseUser.getCurrentUser().getObjectId();
+        String otherId = match.getFirstId().equals(currId) ? match.getSecondId() : match.getFirstId();
 
-        DatabaseHelper.getUserById(match.getSecondId(), new GetCallback<ParseUser>() {
+        convertView.setTag(otherId);
+        countText.setText(PrettyNumbers.formatInteger(match.getNumLikes()));
+
+        DatabaseHelper.getUserById(otherId, new GetCallback<ParseUser>() {
             @Override
             public void done(ParseUser parseUser, ParseException e) {
                 if (parseUser != null) {
@@ -80,7 +90,7 @@ public class ClientMatchAdapter extends BaseAdapter {
                         @Override
                         public void done(PhotoItem photoItem, ParseException e) {
                             PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
-                            Picasso.with(mContext).load(mainFile.url).resize(thumbImage.getWidth(), thumbImage.getHeight()).centerCrop().into(thumbImage);
+                            Picasso.with(mContext).load(mainFile.url).fit().centerCrop().into(thumbImage);
                         }
                     });
                 }
@@ -88,10 +98,5 @@ public class ClientMatchAdapter extends BaseAdapter {
         });
 
         return convertView;
-    }
-
-    @Override
-    public void notifyDataSetChanged() {
-        super.notifyDataSetChanged();
     }
 }

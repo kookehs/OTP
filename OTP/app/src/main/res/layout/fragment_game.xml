@@ -16,53 +16,24 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#ffff6651"
-                android:text="refresh"
-                android:textColor="#ffffff"
-                android:id="@+id/btn_refresh_first"
-                android:layout_weight="1"
-                android:layout_margin="100dp" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#ffff6651"
-                android:text="refresh"
-                android:textColor="#ffffff"
-                android:id="@+id/btn_refresh_second"
-                android:layout_weight="1"
-                android:layout_margin="100dp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
             <com.mrcornman.otp.views.CardStackLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
                 android:id="@+id/cardstack_first"
                 android:clipChildren="false"
                 android:clipToPadding="false"
-                android:layout_weight="1"
-                android:layout_centerHorizontal="true"
-                android:padding="8dp">
+                android:layout_weight="0.5"
+                android:layout_centerHorizontal="true">
             </com.mrcornman.otp.views.CardStackLayout>
 
             <com.mrcornman.otp.views.CardStackLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
                 android:id="@+id/cardstack_second"
                 android:clipChildren="false"
                 android:clipToPadding="false"
-                android:layout_weight="1"
-                android:layout_centerHorizontal="true"
-                android:padding="8dp">
+                android:layout_weight="0.5"
+                android:layout_centerHorizontal="true">
             </com.mrcornman.otp.views.CardStackLayout>
         </LinearLayout>
 

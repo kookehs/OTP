@@ -13,12 +13,14 @@ import com.mrcornman.otp.models.MatchItem;
 import com.mrcornman.otp.models.PhotoFile;
 import com.mrcornman.otp.models.PhotoItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
+import com.mrcornman.otp.utils.PrettyNumbers;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MakerMatchAdapter extends BaseAdapter {
@@ -26,13 +28,18 @@ public class MakerMatchAdapter extends BaseAdapter {
     private Context mContext;
     private List<MatchItem> mItems;
 
-    public MakerMatchAdapter(Context context, List<MatchItem> matches) {
+    public MakerMatchAdapter(Context context) {
         mContext = context;
-        mItems = matches;
+        mItems = new ArrayList<>();
     }
 
     public void addMatch(MatchItem match) {
         mItems.add(match);
+        notifyDataSetChanged();
+    }
+
+    public void clearMatches() {
+        mItems.clear();
         notifyDataSetChanged();
     }
 
@@ -71,7 +78,7 @@ public class MakerMatchAdapter extends BaseAdapter {
         MatchItem match = getItem(position);
 
         convertView.setTag(match.getObjectId());
-        countText.setText(match.getNumLikes() + "");
+        countText.setText(PrettyNumbers.formatInteger(match.getNumLikes()));
 
         // fill first user
         DatabaseHelper.getUserById(match.getFirstId(), new GetCallback<ParseUser>() {
@@ -106,7 +113,7 @@ public class MakerMatchAdapter extends BaseAdapter {
                         @Override
                         public void done(PhotoItem photoItem, ParseException e) {
                             PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
-                            Picasso.with(mContext).load(mainFile.url).resize(thumbImageSecond.getWidth(), thumbImageSecond.getHeight()).centerCrop().into(thumbImageSecond);
+                            Picasso.with(mContext).load(mainFile.url).fit().centerCrop().into(thumbImageSecond);
                         }
                     });
                 }

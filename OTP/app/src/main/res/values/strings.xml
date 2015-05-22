@@ -13,21 +13,17 @@
     <!--General-->
     <string name="content_missing_description">Missing</string>
 
-    <!--Nav-->
-    <string-array name="nav_drawer_items">
-        <item>Home</item>
-        <item>Settings</item>
-    </string-array>
+    <!--Main Action Bar-->
+    <string name="action_game">Game</string>
+    <string name="action_client">Matches</string>
+    <string name="action_maker">Seeds</string>
 
-    <array name="nav_drawer_icons">
-        <item>@mipmap/ic_launcher</item>
-        <item>@drawable/ic_settings</item>
-    </array>
+    <!--Client Match Action Bar-->
+    <string name="action_messaging">Messages</string>
+    <string name="action_profile">Profile</string>
 
-    <!--Action Bar-->
-    <string name="action_client_list">Matches</string>
-    <string name="action_matchmaker_list">MatchMaker</string>
-    <string name="title_activity_fbloginactivity">fbloginactivity</string>
+    <!--Maker Match Action Bar-->
+    <string name="action_stats">Stats</string>
 
     <!--Login-->
     <string name="login_disclaimer">We do not post to Facebook.</string>
