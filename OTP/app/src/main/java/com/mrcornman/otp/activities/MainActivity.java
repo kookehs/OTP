@@ -124,6 +124,8 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
         switch(position) {
             case NAV_PROFILE:
                 // start profile activity
+                Intent profile = new Intent(this, ProfileActivity.class);
+                startActivity(profile);
                 break;
             case NAV_PREFERENCES:
                 // start prefs activity
