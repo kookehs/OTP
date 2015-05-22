@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -153,67 +154,6 @@ public class ProfileImageBuilder {
                         }
 
                         /*
-                         * Name
-                         */
-                        String name = object.optString(FACEBOOK_KEY_NAME);
-                        user.put(PROFILE_KEY_NAME, name);
-
-                        /*
-                         * Gender
-                         */
-                        String gender = object.optString(FACEBOOK_KEY_GENDER);
-                        int genderId = -1;
-                        switch (gender) {
-                            case "male":
-                                genderId = 0;
-                                break;
-                            case "female":
-                                genderId = 1;
-                                break;
-                        }
-
-                        user.put(PROFILE_KEY_GENDER, genderId);
-
-                        /*
-                         * Birthday
-                         */
-                        // TODO: birthday we get is not exact
-                        String birthdayStr = object.optString(FACEBOOK_KEY_BIRTHDAY);
-                        Date birthDate = PrettyTime.getDateFromBirthdayString(birthdayStr);
-                        if(birthDate == null) {
-                            Calendar cal = Calendar.getInstance();
-                            cal.set(cal.get(Calendar.YEAR) - 13, cal.get(Calendar.MONTH), 1);
-                            birthDate = cal.getTime();
-                        }
-
-                        user.put(PROFILE_KEY_BIRTHDATE, birthDate);
-
-
-                        int i = 0;
-
-                        /*
-                         * Interested In
-                         */
-                        JSONArray interestedIn = object.optJSONArray(FACEBOOK_KEY_INTERESTED_IN);
-                        List<Integer> interestedInList = new ArrayList<>();
-                        if (interestedIn != null) {
-                            for (; i < interestedIn.length(); i++) {
-                                interestedInList.add(interestedIn.optString(i).equals("female") ? 1 : 0);
-                            }
-                        } else {
-                            // if they have specified gender then default to being interested in opposite gender
-                            // otherwise they are interested in both
-                            if(genderId != -1) {
-                                interestedInList.add(genderId == 0 ? 1 : 0);
-                            } else {
-                                interestedInList.add(0);
-                                interestedInList.add(1);
-                            }
-                        }
-
-                        user.put(PROFILE_KEY_INTERESTED_IN, interestedInList);
-
-                        /*
                          * Profile Pictures
                          */
 
@@ -224,10 +164,12 @@ public class ProfileImageBuilder {
                         JSONObject albumsObj = object.optJSONObject(FACEBOOK_KEY_ALBUMS);
                         // Fills aList, so we can fill the listView.
                         aList.clear();
+                        Log.i("stuff-----", albumsObj + "bhjshjdbfnlbflvnzxm");
+                        Log.i("stuff-----", albumsObj+" ");
+                        Log.i("stuff-----", albumsObj+"snnss");
 
                         ListElement ael = new ListElement();
 
-                        boolean skipPhotos = true;
                         if (albumsObj != null) {
 
                             // first get the list of albums
@@ -235,11 +177,22 @@ public class ProfileImageBuilder {
                             if (albumsData != null && albumsData.length() > 0) {
                                 // now find the profile album
                                 JSONObject albumObj = null;
-                                for (i = 0; i < albumsData.length(); i++) {
+                                for (int i = 0; i < albumsData.length(); i++) {
                                     albumObj = albumsData.optJSONObject(i);
-                                    ael.textLabel = albumObj.optString("type");
+                                    //ael.textLabel = albumObj.optString("type");
+                                    ael.textLabel = "fjdnfjbhdsbvzjhvbz ygshgddshvbh";
                                     aList.add(ael);
                                 }
+                                ael.textLabel = "fjdnfjbhdsbvzjhvbz ygshgddshvbh";
+                                aList.add(ael);
+                                Log.i("stuff-----", "bhjshjdbfnlbflvnzxm");
+                                Log.i("stuff-----", "bhjshjdrbfnlbflvnzxm");
+                                Log.i("stuff-----", "bhjshjrdbfnlbflvnzxm");
+                                Log.i("stuff-----", "bhjshmjdbfnlbflvnzxm");
+                                Log.i("stuff-----", "bhjshjdb fnlbflvnzxm");Log.i("stuff-----", "bhjjshjdbfnlbflvnzxm");
+                                Log.i("stuff-----", "bhjshjdbfsnlbflvnzxm");
+                                Log.i("stuff-----", "bhjshjdbfnhlbflvnzxm");
+
 
                                 aa.notifyDataSetChanged();
                             }

@@ -12,22 +12,31 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.mrcornman.otp.R;
+import com.mrcornman.otp.models.PhotoFile;
+import com.mrcornman.otp.models.PhotoItem;
+import com.mrcornman.otp.utils.PrettyTime;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.mrcornman.otp.utils.ProfileImageBuilder;
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -41,81 +50,7 @@ import java.util.Map;
  */
 public class ImageListActivity extends ActionBarActivity {
 
-    public final static int DEFAULT_NUM_PHOTOS = 2;
-
-    public final static String PROFILE_KEY_NAME = "name";
-    public final static String PROFILE_KEY_GENDER = "gender";
-    public final static String PROFILE_KEY_BIRTHDATE = "birthdate";
-    public final static String PROFILE_KEY_INTERESTED_IN = "interested_in";
-    public final static String PROFILE_KEY_PHOTOS = "photos";
-
-    private final static String FACEBOOK_KEY_NAME = "first_name";
-    private final static String FACEBOOK_KEY_GENDER = "gender";
-    private final static String FACEBOOK_KEY_BIRTHDAY = "birthday";
-    private final static String FACEBOOK_KEY_LOCATION = "location";
-    private final static String FACEBOOK_KEY_INTERESTED_IN = "interested_in";
-    private final static String FACEBOOK_KEY_ALBUMS = "albums";
-    private final static String FACEBOOK_KEY_PHOTOS = "photos";
-
     private CharSequence mTitle;
-
-    private class ListElement {
-        ListElement() {};
-
-        public String textLabel;
-    }
-
-    static private ArrayList<ListElement> aList;
-
-    private class MyAdapter extends ArrayAdapter<ListElement> {
-
-        int resource;
-        Context context;
-
-        public MyAdapter(Context _context, int _resource, List<ListElement> items) {
-            super(_context, _resource, items);
-            resource = _resource;
-            context = _context;
-            this.context = _context;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            LinearLayout newView;
-
-            ListElement w = getItem(position);
-
-            // Inflate a new view if necessary.
-            if (convertView == null) {
-                newView = new LinearLayout(getContext());
-                String inflater = Context.LAYOUT_INFLATER_SERVICE;
-                LayoutInflater vi = (LayoutInflater) getContext().getSystemService(inflater);
-                vi.inflate(resource,  newView, true);
-            } else {
-                newView = (LinearLayout) convertView;
-            }
-
-            // Fills in the view.
-            TextView tv = (TextView) newView.findViewById(R.id.itemText);
-
-            tv.setText(w.textLabel);
-
-            // Set a listener for the whole list item.
-            newView.setTag(position);
-            newView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Gets the ID of the message.
-                    int idx = ((Integer) v.getTag()).intValue();
-                    // WIll take us to the images from album chosen
-                }
-            });
-
-            return newView;
-        }
-    }
-
-    static private MyAdapter aa;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -136,11 +71,33 @@ public class ImageListActivity extends ActionBarActivity {
             }
         });
 
-        aList = new ArrayList<>();
-        aa = new MyAdapter(this, R.layout.image_elements, aList);
-        ListView myListView = (ListView) findViewById(R.id.image_view);
-        myListView.setAdapter(aa);
-        aa.notifyDataSetChanged();
+        final FrameLayout pictureContainer = (FrameLayout) findViewById(R.id.picture_container);
+        final ImageView pictureImage = (ImageView) findViewById(R.id.picture_image);
+
+        // need this to get the finalized width of the framelayout after the match_parent width is calculated
+        pictureContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int pictureWidth = pictureContainer.getWidth();
+                pictureContainer.setLayoutParams(new RelativeLayout.LayoutParams(pictureWidth, pictureWidth));
+            }
+        });
+
+        // NOTE: This is how you get the current user once they've logged in from Facebook
+        ParseUser user = ParseUser.getCurrentUser();
+
+        // and this is how you grab an image from the user profile and put it into image view
+        List<PhotoItem> photoItems = user.getList(ProfileBuilder.PROFILE_KEY_PHOTOS);
+        if(photoItems != null && photoItems.size() > 0) {
+            PhotoItem mainPhoto = photoItems.get(0);
+            mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
+                @Override
+                public void done(PhotoItem photoItem, com.parse.ParseException e) {
+                    PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
+                    Picasso.with(ImageListActivity.this.getApplicationContext()).load(mainFile.url).fit().centerCrop().into(pictureImage);
+                }
+            });
+        }
     }
 
     @Override
@@ -166,7 +123,7 @@ public class ImageListActivity extends ActionBarActivity {
 
        // ListElement ael = new ListElement();
 
-        LinearLayout root = (LinearLayout)findViewById(R.layout.image_elements);
+        LinearLayout root = (LinearLayout)findViewById(R.id.list_elements);
         ProfileImageBuilder.initialize(ImageListActivity.this, root);
         ProfileImageBuilder.buildCurrentImages(this, new ProfileImageBuilder.BuildProfileCallback() {
             @Override
