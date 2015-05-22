@@ -39,7 +39,7 @@ public class LocationHandler {
 
         if (!provider.equals("undefined")) {
             Log.d("LocationHandler", "Requesting location updates");
-            locationManager.requestLocationUpdates(provider, 0, 0, new LocationListener() {
+            locationManager.requestLocationUpdates(provider, 1000, 0, new LocationListener() {
                 private static final int MAX_METERS_GOOD = 20;
                 private static final int MAX_METERS_OK = 40;
                 private static final int MAX_METERS_WEAK = 60;
