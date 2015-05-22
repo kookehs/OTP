@@ -1,7 +1,6 @@
 package com.mrcornman.otp.utils;
 
 import android.content.Context;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -40,10 +39,7 @@ public class LocationHandler {
         if (!provider.equals("undefined")) {
             Log.d("LocationHandler", "Requesting location updates");
             locationManager.requestLocationUpdates(provider, 1000, 0, new LocationListener() {
-                private static final int MAX_METERS_GOOD = 20;
-                private static final int MAX_METERS_OK = 40;
-                private static final int MAX_METERS_WEAK = 60;
-                private static final int MAX_METERS_BAD = 100;
+                private static final int MAX_METERS = 40;
 
                 @Override
                 public void onLocationChanged(Location location) {
@@ -51,7 +47,7 @@ public class LocationHandler {
                     Log.d("LocationHandler", "Location has changed");
                     final float accuracy = location.getAccuracy();
 
-                    if (accuracy <= MAX_METERS_OK && accuracy != 0.0f) {
+                    if (accuracy <= MAX_METERS && accuracy != 0.0f) {
                         Log.d("LocationHandler", "Location is within 40 meters");
                         final double latitude = location.getLatitude();
                         final double longitude = location.getLongitude();
