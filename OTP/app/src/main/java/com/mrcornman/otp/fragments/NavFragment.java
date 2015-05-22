@@ -19,9 +19,9 @@ import android.widget.TextView;
 
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.adapters.NavAdapter;
-import com.mrcornman.otp.models.NavItem;
-import com.mrcornman.otp.models.PhotoFile;
-import com.mrcornman.otp.models.PhotoItem;
+import com.mrcornman.otp.items.NavItem;
+import com.mrcornman.otp.items.gson.PhotoFileItem;
+import com.mrcornman.otp.items.models.PhotoItem;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -103,7 +103,7 @@ public class NavFragment extends Fragment {
             mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
                 @Override
                 public void done(PhotoItem photoItem, ParseException e) {
-                    PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
+                    PhotoFileItem mainFile = photoItem.getPhotoFiles().get(0);
                     Picasso.with(getActivity().getApplicationContext()).load(mainFile.url).fit().centerCrop().into(navProfileImage);
                 }
             });

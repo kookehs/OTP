@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="Send a message"
-            android:inputType="textCapWords|textAutoCorrect"
+            android:inputType="textCapSentences|textAutoCorrect"
             android:textSize="14sp"
             android:textColor="@android:color/black"
             android:layout_marginRight="10dp"
@@ -50,7 +50,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_margin="4dp"
-            android:background="@drawable/button_send" />
+            android:background="@drawable/themed_submit_button" />
 
     </RelativeLayout>
 

@@ -8,8 +8,8 @@ import android.os.Bundle;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.mrcornman.otp.models.PhotoFile;
-import com.mrcornman.otp.models.PhotoItem;
+import com.mrcornman.otp.items.gson.PhotoFileItem;
+import com.mrcornman.otp.items.models.PhotoItem;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -191,7 +191,7 @@ public class ProfileBuilder {
                                                 // download each photo then upload to Parse
                                                 for(int i = 0; i < numPhotos; i++) {
 
-                                                    final List<PhotoFile> photoFiles = new ArrayList<PhotoFile>();
+                                                    final List<PhotoFileItem> photoFileItems = new ArrayList<PhotoFileItem>();
                                                     final int index = i;
 
                                                     targets[index] = new Target() {
@@ -211,14 +211,14 @@ public class ProfileBuilder {
                                                                         return;
                                                                     }
 
-                                                                    PhotoFile photoFile = new PhotoFile();
-                                                                    photoFile.width = mBitmap.getWidth();
-                                                                    photoFile.height = mBitmap.getHeight();
-                                                                    photoFile.url = imageFile.getUrl();
-                                                                    photoFiles.add(photoFile);
+                                                                    PhotoFileItem photoFileItem = new PhotoFileItem();
+                                                                    photoFileItem.width = mBitmap.getWidth();
+                                                                    photoFileItem.height = mBitmap.getHeight();
+                                                                    photoFileItem.url = imageFile.getUrl();
+                                                                    photoFileItems.add(photoFileItem);
 
                                                                     PhotoItem photo = new PhotoItem();
-                                                                    photo.setPhotoFiles(photoFiles);
+                                                                    photo.setPhotoFiles(photoFileItems);
                                                                     photos[index] = photo;
 
                                                                     userImagesCount++;

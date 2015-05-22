@@ -152,7 +152,7 @@ public class GameFragment extends Fragment {
         if(potentialFirstId.equals("") || potentialSecondId.equals("")) return;
 
         if(potentialFirstId != potentialSecondId) {
-            DatabaseHelper.insertMatchByPair(potentialFirstId, potentialSecondId);
+            DatabaseHelper.insertMatchByPair(ParseUser.getCurrentUser().getObjectId(), potentialFirstId, potentialSecondId);
 
             gameInteractionListener.onCreateMatch();
         }

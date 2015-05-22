@@ -1,4 +1,4 @@
-package com.mrcornman.otp.models;
+package com.mrcornman.otp.items;
 
 public class NavItem {
 

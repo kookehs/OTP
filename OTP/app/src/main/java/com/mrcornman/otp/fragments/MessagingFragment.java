@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.adapters.MessageAdapter;
-import com.mrcornman.otp.models.MatchItem;
+import com.mrcornman.otp.items.models.MatchItem;
 import com.mrcornman.otp.services.MessageService;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.parse.FindCallback;
