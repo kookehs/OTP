@@ -21,6 +21,10 @@ import com.mrcornman.otp.fragments.GameFragment;
 import com.mrcornman.otp.fragments.MakerListFragment;
 import com.mrcornman.otp.fragments.NavFragment;
 import com.mrcornman.otp.services.MessageService;
+import com.mrcornman.otp.utils.LocationHandler;
+import com.mrcornman.otp.utils.ProfileBuilder;
+import com.parse.ParseGeoPoint;
+import com.parse.ParseUser;
 
 public class MainActivity extends ActionBarActivity implements NavFragment.NavigationDrawerCallbacks,
         GameFragment.GameInteractionListener, ClientListFragment.OnClientListInteractionListener, MakerListFragment.OnMakerListInteractionListener {
@@ -106,6 +110,18 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
 
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mReceiver,
                 new IntentFilter("com.mrcornman.otp.activities.MainActivity"));
+
+        final ParseUser user = ParseUser.getCurrentUser();
+
+        LocationHandler.requestLocation(getApplicationContext(), new LocationHandler.OnLocationReceivedListener() {
+            @Override
+            public void done(ParseGeoPoint geoPoint, Exception e) {
+                if(e == null && geoPoint != null) {
+                    user.put(ProfileBuilder.PROFILE_KEY_LOCATION, geoPoint);
+                    user.saveInBackground();
+                }
+            }
+        });
     }
 
     @Override

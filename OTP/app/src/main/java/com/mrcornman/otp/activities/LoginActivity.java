@@ -9,8 +9,6 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 
 import com.mrcornman.otp.R;
-
-import com.mrcornman.otp.utils.LocationHandler;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
@@ -53,7 +51,6 @@ public class LoginActivity extends Activity {
         if (currentUser != null && currentUser.getUsername() != null) {
             loginProgress.setVisibility(View.VISIBLE);
             onSuccessfulLogin();
-            LocationHandler.updateLocation(this);
             return;
         }
 
@@ -91,14 +88,12 @@ public class LoginActivity extends Activity {
                                     }
 
                                     onSuccessfulLogin();
-                                    LocationHandler.updateLocation(context);
                                 }
                             });
                         } else {
                             loginProgress.setVisibility(View.VISIBLE);
 
                             onSuccessfulLogin();
-                            LocationHandler.updateLocation(context);
                         }
                     }
                 });

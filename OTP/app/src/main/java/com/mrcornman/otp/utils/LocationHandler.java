@@ -7,68 +7,51 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.parse.GetCallback;
-import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 /**
  * Created by Bill on 5/16/2015.
  */
 
 public class LocationHandler {
-    private static LocationManager locationManager;
 
-    public static void updateLocation(Context context) {
-        Log.d("LocationHandler", "Updating location");
+    private static LocationManager locationManager;
+    private static OnLocationReceivedListener onLocationReceivedListener;
+
+    public static void requestLocation(Context context, OnLocationReceivedListener receivedListener) {
+        onLocationReceivedListener = receivedListener;
+
         locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-        String provider = "undefined";
+
+        if(!isLocationEnabled()) {
+            onLocationReceivedListener.done(null, new Exception("Location is not enabled"));
+            return;
+        }
+
+        String provider = null;
 
         if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             provider = LocationManager.NETWORK_PROVIDER;
-            Log.d("LocationHandler", "Using network provider");
         } else if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             provider = LocationManager.GPS_PROVIDER;
-            Log.d("LocationHandler", "Using GPS provider");
-        } else {
-            Log.d("LocationHandler", "Neither provider is available");
         }
 
-        if (!provider.equals("undefined")) {
-            Log.d("LocationHandler", "Requesting location updates");
+        if (provider != null) {
             locationManager.requestLocationUpdates(provider, 1000, 0, new LocationListener() {
                 private static final int MAX_METERS = 40;
 
                 @Override
                 public void onLocationChanged(Location location) {
                     if (location.hasAccuracy() == false) return;
-                    Log.d("LocationHandler", "Location has changed");
                     final float accuracy = location.getAccuracy();
 
                     if (accuracy <= MAX_METERS && accuracy != 0.0f) {
-                        Log.d("LocationHandler", "Location is within 40 meters");
                         final double latitude = location.getLatitude();
                         final double longitude = location.getLongitude();
 
-                        ParseQuery<ParseObject> query = ParseQuery.getQuery("_User");
-                        query.whereEqualTo("username", ParseUser.getCurrentUser().getUsername());
+                        ParseGeoPoint geoPoint = new ParseGeoPoint(latitude, longitude);
+                        onLocationReceivedListener.done(geoPoint, null);
 
-                        query.getFirstInBackground(new GetCallback<ParseObject>() {
-                            @Override
-                            public void done(ParseObject parseObject, ParseException e) {
-                                if (parseObject == null) {
-                                    Log.d("LocationHandler", "Could not retrieve user");
-                                } else {
-                                    ParseGeoPoint geoPoint = new ParseGeoPoint(latitude, longitude);
-                                    parseObject.put("location", geoPoint);
-                                    parseObject.saveInBackground();
-                                    Log.d("LocationHandler", "Location has been saved");
-                                }
-                            }
-                        });
-                        Log.d("LocationHandler", "Removing listener from updates");
                         locationManager.removeUpdates(this);
                     }
                 }
@@ -89,5 +72,14 @@ public class LocationHandler {
                 }
             });
         }
+    }
+
+    public static boolean isLocationEnabled() {
+        return locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
+    public interface OnLocationReceivedListener {
+        void done(ParseGeoPoint geoPoint, Exception e);
     }
 }
