@@ -13,6 +13,7 @@ import com.mrcornman.otp.utils.ProfileBuilder;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseInstallation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -121,6 +122,13 @@ public class LoginActivity extends Activity {
         } else {
             final Intent intent = new Intent(getApplicationContext(), MissingInfoActivity.class);
             startActivity(intent);
+        }
+
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        String currUserId = installation.getString("userId");
+        if(currUserId == null || !currUserId.equals(user.getObjectId())) {
+            installation.put("userId", user.getObjectId());
+            installation.saveInBackground();
         }
 
         finish();

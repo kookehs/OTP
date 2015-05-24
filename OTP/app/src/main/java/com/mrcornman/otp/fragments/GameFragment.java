@@ -196,7 +196,7 @@ public class GameFragment extends Fragment {
         ParseQuery<ParseUser> query = ParseUser.getQuery();
 
         // exclude self
-        query.whereNotEqualTo("objectId", ParseUser.getCurrentUser().getObjectId());
+        //query.whereNotEqualTo("objectId", ParseUser.getCurrentUser().getObjectId());
         query.setLimit(20);
         query.findInBackground(new FindCallback<ParseUser>() {
             @Override
@@ -215,12 +215,12 @@ public class GameFragment extends Fragment {
     }
 
     public String getCurrentFirstId() {
-        CardView view = mCardStackLayoutFirst.getDraggedCard() != null ? (CardView)mCardStackLayoutFirst.getDraggedCard() : mCardStackLayoutFirst.getTopCard();
+        CardView view = mCardStackLayoutFirst.getTopCard();
         return view != null ? view.getTag().toString() : null;
     }
 
     public String getCurrentSecondId() {
-        CardView view = mCardStackLayoutSecond.getDraggedCard() != null ? (CardView)mCardStackLayoutSecond.getDraggedCard() : mCardStackLayoutSecond.getTopCard();
+        CardView view = mCardStackLayoutSecond.getTopCard();
         return view != null ? view.getTag().toString() : null;
     }
 

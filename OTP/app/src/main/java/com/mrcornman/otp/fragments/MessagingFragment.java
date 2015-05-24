@@ -71,6 +71,7 @@ public class MessagingFragment extends Fragment implements ServiceConnection, Me
 
         recipientId = getArguments().getString(KEY_RECIPIENT_ID);
         currentUserId = ParseUser.getCurrentUser().getObjectId();
+
         DatabaseHelper.getMatchByPair(recipientId, currentUserId, new GetCallback<MatchItem>() {
             @Override
             public void done(MatchItem matchItem, ParseException e) {
@@ -161,10 +162,7 @@ public class MessagingFragment extends Fragment implements ServiceConnection, Me
 
                         messageAdapter.addMessage(writableMessage, MessageAdapter.DIRECTION_OUTGOING);
 
-                        // TODO: Put this functionality in Cloud Code instead
                         DatabaseHelper.updateMatchNumMessages(match.getObjectId(), match.getNumMessages() + 1);
-
-                        // TODO: Send push notifications to maker + other
                     }
                 }
             }

@@ -96,7 +96,7 @@ public class CardStackLayout extends RelativeLayout {
         return draggedCard;
     }
 
-    public CardView getTopCard() { return mCards.peek(); }
+    public CardView getTopCard() { return mCards.get(mCurrentPosition); }
     private boolean isTopCard(CardView card) {
         return card == mCards.get(mCurrentPosition);
     }
@@ -228,5 +228,5 @@ public class CardStackLayout extends RelativeLayout {
         return Math.abs(cardDelta) > mMinAcceptDistance;
     }
 
-    private boolean isClickGesture() { return Math.abs(cardDelta) < mClickDistanceEpsilon; }
+    private boolean isClickGesture() { return getDraggedCard() == null && Math.abs(cardDelta) < mClickDistanceEpsilon; }
 }
