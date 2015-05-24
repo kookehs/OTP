@@ -1,19 +1,14 @@
 {
-    "applications": {
-        "_default": {
-            "link": "results"
-        }, 
-        "results": {
-            "applicationId": {
-                "appName": "Seedr", 
-                "applicationId": "LW1vmtFBXLdNp5luR1PYKojwYe8lUfm5cRZ3ZNwn", 
-                "masterKey": "WmGIABa7NXbHNdYRhazSQfJfSNx49pxadYvl7Vog"
-            }, 
-            "masterKey": {
-                "appName": "Test", 
-                "applicationId": "WWhuorV0Du00LJydroodNTqAAI8eXDftmxAS6LY9", 
-                "masterKey": "t2ScvdLGXdal5sxAfh2P3t8PsaDJH4e3bRkzziMf"
-            }
-        }
+  "global": {
+    "parseVersion": "1.4.2"
+  },
+  "applications": {
+    "_default": {
+      "link": "OTP"
+    },
+    "OTP": {
+      "applicationId": "LW1vmtFBXLdNp5luR1PYKojwYe8lUfm5cRZ3ZNwn",
+      "masterKey": "WmGIABa7NXbHNdYRhazSQfJfSNx49pxadYvl7Vog"
     }
+  }
 }
