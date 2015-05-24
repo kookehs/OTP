@@ -16,25 +16,53 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.mrcornman.otp.views.CardStackLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:id="@+id/cardstack_first"
-                android:clipChildren="false"
-                android:clipToPadding="false"
                 android:layout_weight="0.5"
-                android:layout_centerHorizontal="true">
-            </com.mrcornman.otp.views.CardStackLayout>
+                android:id="@+id/first_container">
 
-            <com.mrcornman.otp.views.CardStackLayout
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/first_progress"
+                    android:visibility="invisible"
+                    android:layout_centerInParent="true" />
+
+                <com.mrcornman.otp.views.CardStackLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/cardstack_first"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:layout_centerHorizontal="true">
+                </com.mrcornman.otp.views.CardStackLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:id="@+id/cardstack_second"
-                android:clipChildren="false"
-                android:clipToPadding="false"
-                android:layout_weight="0.5"
-                android:layout_centerHorizontal="true">
-            </com.mrcornman.otp.views.CardStackLayout>
+                android:id="@+id/second_container"
+                android:layout_weight="0.5">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/second_progress"
+                    android:visibility="invisible"
+                    android:layout_centerInParent="true" />
+
+                <com.mrcornman.otp.views.CardStackLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/cardstack_second"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:layout_centerHorizontal="true">
+                </com.mrcornman.otp.views.CardStackLayout>
+
+            </RelativeLayout>
         </LinearLayout>
 
     </RelativeLayout>

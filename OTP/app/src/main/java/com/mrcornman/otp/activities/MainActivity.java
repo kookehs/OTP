@@ -1,6 +1,5 @@
 package com.mrcornman.otp.activities;
 
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +15,7 @@ import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.adapters.MainPagerAdapter;
+import com.mrcornman.otp.adapters.pagers.MainPagerAdapter;
 import com.mrcornman.otp.fragments.ClientListFragment;
 import com.mrcornman.otp.fragments.GameFragment;
 import com.mrcornman.otp.fragments.MakerListFragment;
@@ -87,18 +86,15 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
         mNavFragment = (NavFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mNavFragment.setUp((DrawerLayout) findViewById(R.id.drawer_layout));
 
-        // start up progress dialog until MessageService is started
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Loading");
-        progressDialog.setTitle("Please wait...");
-        progressDialog.show();
+        // Start up MessageService
+        final Intent intent = new Intent(getApplicationContext(), MessageService.class);
+        startService(intent);
 
         // init receiver for successful startup broadcast from MessageService
         BroadcastReceiver mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 boolean success = intent.getBooleanExtra("success", false);
-                progressDialog.dismiss();
 
                 if(!success) {
                     Toast.makeText(getApplicationContext(),
@@ -129,7 +125,8 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
                 // start prefs activity
                 break;
             case NAV_SETTINGS:
-                // start settings activity
+                final Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                startActivity(intent);
                 break;
             case NAV_SHARE:
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);

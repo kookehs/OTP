@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.services.MessageService;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
@@ -109,12 +108,21 @@ public class LoginActivity extends Activity {
     }
 
     private void onSuccessfulLogin() {
-        final Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
+        ParseUser user = ParseUser.getCurrentUser();
 
-        final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
-        getApplicationContext().startService(serviceIntent);
+        if(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE) != null) {
+            if(!user.isNew()) {
+                final Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+            } else {
+                final Intent intent = new Intent(getApplicationContext(), CompleteProfileActivity.class);
+                startActivity(intent);
+            }
+        } else {
+            final Intent intent = new Intent(getApplicationContext(), MissingInfoActivity.class);
+            startActivity(intent);
+        }
 
-        //finish();
+        finish();
     }
 }

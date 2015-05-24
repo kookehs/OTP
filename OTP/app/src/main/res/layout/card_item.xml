@@ -2,54 +2,218 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:id="@+id/cardRoot" >
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/picture_container"
-        android:layout_centerInParent="true">
+        android:id="@+id/cardFront"
+        android:visibility="visible"
+        android:background="@color/white">
 
-        <ImageView
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitCenter"
-            android:id="@+id/picture"
-            android:src="@mipmap/picture_placeholder"
-            android:contentDescription="@string/content_missing_description" />
-    </FrameLayout>
+            android:id="@+id/picture_container"
+            android:layout_centerInParent="true">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/name_text"
-        tools:text="Snoo Snoo"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        android:layout_alignParentBottom="false"
-        android:layout_alignBottom="@+id/picture_container"
-        android:layout_alignLeft="@+id/picture_container"
-        android:paddingLeft="16dp"
-        android:paddingBottom="16dp"
-        android:textColor="@color/white"
-        android:shadowColor="#111"
-        android:shadowRadius="24"
-        android:singleLine="true" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:id="@+id/picture"
+                android:src="@mipmap/picture_placeholder"
+                android:contentDescription="@string/content_missing_description" />
+        </FrameLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="2000"
-        android:layout_alignBottom="@+id/picture_container"
-        android:layout_toRightOf="@id/name_text"
-        android:textSize="25sp"
-        android:id="@+id/age_text"
-        android:layout_alignParentBottom="false"
-        android:paddingLeft="8dp"
-        android:paddingBottom="16dp"
-        android:textColor="@color/white"
-        android:singleLine="true"
-        android:shadowColor="#111"
-        android:shadowRadius="24" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/name_text"
+            tools:text="Snoo Snoo"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:layout_alignParentBottom="false"
+            android:layout_alignBottom="@+id/picture_container"
+            android:layout_alignLeft="@+id/picture_container"
+            android:paddingLeft="16dp"
+            android:paddingBottom="16dp"
+            android:textColor="@color/white"
+            android:shadowColor="#111"
+            android:shadowRadius="24"
+            android:singleLine="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="2000"
+            android:layout_alignBottom="@+id/picture_container"
+            android:layout_toRightOf="@id/name_text"
+            android:textSize="25sp"
+            android:id="@+id/age_text"
+            android:layout_alignParentBottom="false"
+            android:paddingLeft="8dp"
+            android:paddingBottom="16dp"
+            android:textColor="@color/white"
+            android:singleLine="true"
+            android:shadowColor="#111"
+            android:shadowRadius="24" />
+
+    </RelativeLayout>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/cardBack"
+        android:background="@color/white"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:id="@+id/pictures_container">
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/picture_frame_0"
+                android:layout_centerInParent="true"
+                android:layout_weight="0.25" >
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitCenter"
+                    android:id="@+id/picture_0"
+                    android:src="@mipmap/picture_placeholder"
+                    android:contentDescription="@string/content_missing_description"
+                    android:visibility="invisible" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/picture_frame_1"
+                android:layout_centerInParent="true"
+                android:layout_weight="0.25" >
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitCenter"
+                    android:id="@+id/picture_1"
+                    android:src="@mipmap/picture_placeholder"
+                    android:visibility="invisible"
+                    android:contentDescription="@string/content_missing_description" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/picture_frame_2"
+                android:layout_centerInParent="true"
+                android:layout_weight="0.25" >
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitCenter"
+                    android:id="@+id/picture_2"
+                    android:src="@mipmap/picture_placeholder"
+                    android:visibility="invisible"
+                    android:contentDescription="@string/content_missing_description" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/picture_frame_3"
+                android:layout_centerInParent="true"
+                android:layout_weight="0.25" >
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitCenter"
+                    android:id="@+id/picture_3"
+                    android:src="@mipmap/picture_placeholder"
+                    android:visibility="invisible"
+                    android:contentDescription="@string/content_missing_description" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/blurbs_container"
+            android:layout_below="@+id/pictures_container"
+            android:showDividers="middle">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/about_container"
+                android:layout_weight="0.5"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/about_text_title"
+                    android:singleLine="true"
+                    android:layout_weight="0.5"
+                    android:text="Blurb:"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#111" />
+
+                <TextView
+                    tools:text="If you got girl problems I feel bad for you son"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/about_text_value"
+                    android:singleLine="false"
+                    android:layout_weight="0.5"
+                    android:layout_below="@+id/about_text_title"
+                    android:textColor="#111" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/want_container"
+                android:visibility="visible"
+                android:layout_weight="0.5"
+                android:paddingRight="4dp"
+                android:paddingLeft="4dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/want_text_title"
+                    android:singleLine="true"
+                    android:layout_weight="0.5"
+                    android:text="Looking for:"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#111" />
+
+                <TextView
+                    tools:text="I got 99 problems but a biznatch aint one"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/want_text_value"
+                    android:singleLine="false"
+                    android:layout_weight="0.5"
+                    android:layout_below="@+id/want_text_title"
+                    android:textColor="#111" />
+            </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>

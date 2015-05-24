@@ -12,4 +12,7 @@
     <color name="dark_gray">#ffb3b3b3</color>
     <color name="very_dark_gray">#636363</color>
     <color name="light_gray">#909090</color>
+
+    <color name="mdtp_accent_color">#333</color>
+    <color name="mdtp_accent_color_dark">#111</color>
 </resources>

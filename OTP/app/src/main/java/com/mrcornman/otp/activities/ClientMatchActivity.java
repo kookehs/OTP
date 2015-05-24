@@ -15,7 +15,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.adapters.ClientMatchPagerAdapter;
+import com.mrcornman.otp.adapters.pagers.ClientMatchPagerAdapter;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.parse.GetCallback;

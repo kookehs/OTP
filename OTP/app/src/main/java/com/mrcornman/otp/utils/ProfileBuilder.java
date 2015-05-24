@@ -22,7 +22,6 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -38,6 +37,8 @@ public class ProfileBuilder {
     public final static String PROFILE_KEY_BIRTHDATE = "birthdate";
     public final static String PROFILE_KEY_INTERESTED_IN = "interested_in";
     public final static String PROFILE_KEY_PHOTOS = "photos";
+    public final static String PROFILE_KEY_ABOUT = "about";
+    public final static String PROFILE_KEY_WANT = "want";
 
     private final static String FACEBOOK_KEY_NAME = "first_name";
     private final static String FACEBOOK_KEY_GENDER = "gender";
@@ -104,14 +105,8 @@ public class ProfileBuilder {
                         // TODO: birthday we get is not exact
                         String birthdayStr = object.optString(FACEBOOK_KEY_BIRTHDAY);
                         Date birthDate = PrettyTime.getDateFromBirthdayString(birthdayStr);
-                        if(birthDate == null) {
-                            Calendar cal = Calendar.getInstance();
-                            cal.set(cal.get(Calendar.YEAR) - 13, cal.get(Calendar.MONTH), 1);
-                            birthDate = cal.getTime();
-                        }
-
-                        user.put(PROFILE_KEY_BIRTHDATE, birthDate);
-
+                        if(birthDate != null)
+                            user.put(PROFILE_KEY_BIRTHDATE, birthDate);
 
                         int i = 0;
 

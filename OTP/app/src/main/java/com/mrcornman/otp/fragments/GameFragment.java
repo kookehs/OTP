@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.mrcornman.otp.R;
@@ -29,6 +30,8 @@ public class GameFragment extends Fragment {
 
     private CardStackLayout mCardStackLayoutFirst;
     private CardStackLayout mCardStackLayoutSecond;
+    private ProgressBar firstProgress;
+    private ProgressBar secondProgress;
     private UserCardAdapter mUserCardAdapterFirst;
     private UserCardAdapter mUserCardAdapterSecond;
 
@@ -61,6 +64,9 @@ public class GameFragment extends Fragment {
         mCardStackLayoutFirst = (CardStackLayout) view.findViewById(R.id.cardstack_first);
         mCardStackLayoutSecond = (CardStackLayout) view.findViewById(R.id.cardstack_second);
 
+        firstProgress = (ProgressBar) view.findViewById(R.id.first_progress);
+        secondProgress = (ProgressBar) view.findViewById(R.id.second_progress);
+
         mCardStackLayoutFirst.setCardStackListener(new CardStackLayout.CardStackListener() {
             @Override
             public void onBeginProgress() {
@@ -68,7 +74,7 @@ public class GameFragment extends Fragment {
             }
 
             @Override
-            public void onUpdateProgress(boolean positif, float percent) {
+            public void onUpdateProgress(float percent) {
             }
 
             @Override
@@ -77,7 +83,7 @@ public class GameFragment extends Fragment {
             }
 
             @Override
-            public void onChoiceMade(boolean choice) {
+            public void onChoiceAccepted() {
                 /*
                 SingleUserView item = (SingleUserView) beingDragged;
                 item.onChoiceMade(choice, beingDragged);
@@ -92,6 +98,7 @@ public class GameFragment extends Fragment {
                 onCreateMatch();
 
                 if(!mCardStackLayoutFirst.hasMoreItems()) {
+                    firstProgress.setVisibility(View.VISIBLE);
                     refreshFirst();
                 }
             }
@@ -104,7 +111,7 @@ public class GameFragment extends Fragment {
             }
 
             @Override
-            public void onUpdateProgress(boolean positif, float percent) {
+            public void onUpdateProgress(float percent) {
             }
 
             @Override
@@ -113,10 +120,11 @@ public class GameFragment extends Fragment {
             }
 
             @Override
-            public void onChoiceMade(boolean choice) {
+            public void onChoiceAccepted() {
                 onCreateMatch();
 
                 if(!mCardStackLayoutSecond.hasMoreItems()) {
+                    secondProgress.setVisibility(View.VISIBLE);
                     refreshSecond();
                 }
             }
@@ -133,6 +141,8 @@ public class GameFragment extends Fragment {
 
         refreshFirst();
         refreshSecond();
+        firstProgress.setVisibility(View.VISIBLE);
+        secondProgress.setVisibility(View.VISIBLE);
 
         return view;
     }
@@ -171,8 +181,8 @@ public class GameFragment extends Fragment {
             public void done(List<ParseUser> list, ParseException e) {
                 if (e == null) {
                     mUserCardAdapterFirst.fillUsers(list);
-
                     mCardStackLayoutFirst.refreshStack();
+                    firstProgress.setVisibility(View.INVISIBLE);
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(),
                             "Sorry, there was a problem loading users",
@@ -193,8 +203,8 @@ public class GameFragment extends Fragment {
             public void done(List<ParseUser> list, ParseException e) {
                 if (e == null) {
                     mUserCardAdapterSecond.fillUsers(list);
-
                     mCardStackLayoutSecond.refreshStack();
+                    secondProgress.setVisibility(View.INVISIBLE);
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(),
                             "Sorry, there was a problem loading users",
@@ -206,12 +216,12 @@ public class GameFragment extends Fragment {
 
     public String getCurrentFirstId() {
         CardView view = mCardStackLayoutFirst.getDraggedCard() != null ? (CardView)mCardStackLayoutFirst.getDraggedCard() : mCardStackLayoutFirst.getTopCard();
-        return view != null ? view.boundUserId : null;
+        return view != null ? view.getTag().toString() : null;
     }
 
     public String getCurrentSecondId() {
         CardView view = mCardStackLayoutSecond.getDraggedCard() != null ? (CardView)mCardStackLayoutSecond.getDraggedCard() : mCardStackLayoutSecond.getTopCard();
-        return view != null ? view.boundUserId : null;
+        return view != null ? view.getTag().toString() : null;
     }
 
     @Override

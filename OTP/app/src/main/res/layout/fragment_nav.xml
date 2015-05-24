@@ -63,6 +63,8 @@
         android:choiceMode="none"
         android:background="#fff"
         android:scrollbars="none"
-        android:layout_below="@+id/nav_profile_container" />
+        android:layout_below="@+id/nav_profile_container"
+        android:footerDividersEnabled="false"
+        android:headerDividersEnabled="false" />
 
 </RelativeLayout>

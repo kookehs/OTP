@@ -12,7 +12,7 @@ import android.view.MenuItem;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.adapters.MakerMatchPagerAdapter;
+import com.mrcornman.otp.adapters.pagers.MakerMatchPagerAdapter;
 import com.mrcornman.otp.items.models.MatchItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.mrcornman.otp.utils.ProfileBuilder;

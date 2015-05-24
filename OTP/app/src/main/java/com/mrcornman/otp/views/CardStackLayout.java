@@ -26,9 +26,9 @@ public class CardStackLayout extends RelativeLayout {
 
     public interface CardStackListener {
         void onBeginProgress();
-        void onUpdateProgress(boolean positif, float percent);
+        void onUpdateProgress(float percent);
         void onCancelled();
-        void onChoiceMade(boolean choice);
+        void onChoiceAccepted();
     }
 
     private CardView draggedCard;
@@ -36,7 +36,12 @@ public class CardStackLayout extends RelativeLayout {
 
     private UserCardAdapter mAdapter;
     private int mCurrentPosition;
+
+    // the minimum distance before the card swipe gesture will be accepted as a choice
     private int mMinAcceptDistance;
+
+    // the maximum distance before the card gesture will be taken as a click
+    private int mClickDistanceEpsilon;
 
     private float cardDelta;
     private float cardStartPosition;
@@ -64,6 +69,8 @@ public class CardStackLayout extends RelativeLayout {
         Resources r = getContext().getResources();
         mMinAcceptDistance = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 96, r.getDisplayMetrics());
+        mClickDistanceEpsilon = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                5, r.getDisplayMetrics());
 
         mCurrentPosition = 0;
     }
@@ -149,33 +156,36 @@ public class CardStackLayout extends RelativeLayout {
                     break;
                 case MotionEvent.ACTION_UP:
                     if (!canAcceptChoice()) {
-                        requestLayout();
-                        mCardStackListener.onCancelled();
+                        if(!isClickGesture()) {
+                            requestLayout();
+                            mCardStackListener.onCancelled();
 
-                        draggedCard = null;
-                        cardDelta = 0;
-                        cardStartPosition = 0;
+                            draggedCard = null;
+                            cardDelta = 0;
+                            cardStartPosition = 0;
 
-                        ObjectAnimator translationAnimation = ObjectAnimator.ofFloat(card, "translationY", card.getTranslationY(), 0).setDuration(100);
+                            ObjectAnimator translationAnimation = ObjectAnimator.ofFloat(card, "translationY", card.getTranslationY(), 0).setDuration(100);
 
-                        translationAnimation.addListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                requestLayout();
-                            }
-                        });
+                            translationAnimation.addListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    requestLayout();
+                                }
+                            });
 
-                        ValueAnimator.AnimatorUpdateListener onUpdate = new ValueAnimator.AnimatorUpdateListener() {
-                            @Override
-                            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                                cardDelta = card.getTranslationY();
-                            }
-                        };
-                        translationAnimation.addUpdateListener(onUpdate);
-                        translationAnimation.start();
+                            ValueAnimator.AnimatorUpdateListener onUpdate = new ValueAnimator.AnimatorUpdateListener() {
+                                @Override
+                                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                                    cardDelta = card.getTranslationY();
+                                }
+                            };
+                            translationAnimation.addUpdateListener(onUpdate);
+                            translationAnimation.start();
+                        } else {
+                            Log.i("CardStackLayout", "boom");
+                            card.flipCard();
+                        }
                     } else {
-                        final boolean finalChoice = getStackChoice();
-
                         draggedCard = null;
                         cardDelta = 0;
                         cardStartPosition = 0;
@@ -186,12 +196,11 @@ public class CardStackLayout extends RelativeLayout {
 
                         requestLayout();
 
-                        mCardStackListener.onChoiceMade(finalChoice);
+                        mCardStackListener.onChoiceAccepted();
                     }
 
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    boolean choiceBoolean = getStackChoice();
                     float progress = getStackProgress();
 
                     cardDelta = motionY - cardStartPosition;
@@ -200,7 +209,7 @@ public class CardStackLayout extends RelativeLayout {
                     draggedCard = card;
                     requestLayout();
 
-                    mCardStackListener.onUpdateProgress(choiceBoolean, progress);
+                    mCardStackListener.onUpdateProgress(progress);
 
                     break;
             }
@@ -219,9 +228,5 @@ public class CardStackLayout extends RelativeLayout {
         return Math.abs(cardDelta) > mMinAcceptDistance;
     }
 
-    private boolean getStackChoice() {
-        boolean result = cardDelta > 0;
-        //Log.i("Stack Choice", Boolean.toString(result));
-        return result;
-    }
+    private boolean isClickGesture() { return Math.abs(cardDelta) < mClickDistanceEpsilon; }
 }

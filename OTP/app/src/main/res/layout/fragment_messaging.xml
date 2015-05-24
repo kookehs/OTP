@@ -50,7 +50,9 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_margin="4dp"
-            android:background="@drawable/themed_submit_button" />
+            android:background="@drawable/themed_submit_button"
+            android:text="Send"
+            android:textColor="@color/white"/>
 
     </RelativeLayout>
 
