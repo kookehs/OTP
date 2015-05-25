@@ -10,6 +10,7 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.mrcornman.otp.models.PhotoFile;
 import com.mrcornman.otp.models.PhotoItem;
+import com.mrcornman.otp.models.AlbumItem;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -38,6 +39,7 @@ public class ProfileBuilder {
     public final static String PROFILE_KEY_BIRTHDATE = "birthdate";
     public final static String PROFILE_KEY_INTERESTED_IN = "interested_in";
     public final static String PROFILE_KEY_PHOTOS = "photos";
+    public final static String PROFILE_KEY_ALBUMS = "photos";
 
     private final static String FACEBOOK_KEY_NAME = "first_name";
     private final static String FACEBOOK_KEY_GENDER = "gender";
@@ -146,15 +148,18 @@ public class ProfileBuilder {
                         userImagesCount = 0;
 
                         JSONObject albumsObj = object.optJSONObject(FACEBOOK_KEY_ALBUMS);
+
                         boolean skipPhotos = true;
                         if (albumsObj != null) {
 
                             // first get the list of albums
                             JSONArray albumsData = albumsObj.optJSONArray("data");
-                            if (albumsData != null && albumsData.length() > 0) {
 
+
+                            if (albumsData != null && albumsData.length() > 0) {
                                 // now find the profile album
                                 JSONObject albumObj = null;
+
                                 for (i = 0; i < albumsData.length(); i++) {
                                     albumObj = albumsData.optJSONObject(i);
                                     if (albumObj.optString("type").equals("profile")) {
@@ -166,7 +171,7 @@ public class ProfileBuilder {
                                             @Override
                                             public void done(List<JSONObject> photoImages, Object err) {
                                                 if (err != null || photoImages == null) {
-                                                    buildCallback.done(user, err);
+                                                    buildCallback.done(null, err);
                                                     return;
                                                 }
 
@@ -281,7 +286,9 @@ public class ProfileBuilder {
                                         });
                                         break;
                                     }
+
                                 }
+
                             }
                         }
 

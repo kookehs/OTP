@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS" />
 
     <permission
         android:name="com.mrcornman.otp.permission.C2D_MESSAGE"
@@ -84,10 +85,19 @@
             android:theme="@style/Theme.BaseTheme"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".activities.ImageListActivity"
+            android:name=".activities.AlbumListActivity"
             android:launchMode="singleTask"
-            android:label="Profile Activity"
-            android:parentActivityName=".activities.MainActivity"
+            android:label="Album Activity"
+            android:parentActivityName=".activities.ProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.BaseTheme"
+            android:windowSoftInputMode="stateHidden" />
+
+        <activity
+            android:name=".activities.PhotoGalleryActivity"
+            android:launchMode="singleTask"
+            android:label="PhotoGalleryActivity"
+            android:parentActivityName=".activities.AlbumListActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.BaseTheme"
             android:windowSoftInputMode="stateHidden" />

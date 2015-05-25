@@ -21,6 +21,7 @@ import com.mrcornman.otp.fragments.ClientListFragment;
 import com.mrcornman.otp.fragments.GameFragment;
 import com.mrcornman.otp.fragments.MakerListFragment;
 import com.mrcornman.otp.fragments.NavFragment;
+import com.mrcornman.otp.models.AlbumItem;
 import com.mrcornman.otp.services.MessageService;
 
 public class MainActivity extends ActionBarActivity implements NavFragment.NavigationDrawerCallbacks,

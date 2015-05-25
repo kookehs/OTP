@@ -1,68 +1,141 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.mrcornman.otp.activities.ProfileActivity"
-    android:id="@+id/activity_profile">
+    android:orientation="vertical"
+    tools:context="com.mrcornman.otp.activities.ProfileActivity" >
 
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar"/>
 
-    <FrameLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <FrameLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/picture_container"
-        android:layout_gravity="bottom"
-        tools:context="com.mrcornman.otp.activities.ProfileActivity"
-        android:layout_below="@+id/toolbar"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:paddingTop="50dp">
+        android:id="@+id/scroll_container">
 
-        <ImageView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/picture_image"
-            android:contentDescription="@string/content_missing_description" />
-
-    </FrameLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/header_container"
-        android:layout_below="@+id/picture_container"
-        android:padding="16dp">
-
-        <TextView
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Name"
-            android:id="@+id/name_text"
-            android:layout_gravity="bottom"
-            android:singleLine="true"
-            android:layout_centerVertical="true" />
+            android:orientation="vertical"
+            android:id="@+id/profile_container">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Age"
-            android:id="@+id/age_text"
-            android:layout_gravity="bottom"
-            android:singleLine="true"
-            android:layout_toRightOf="@+id/name_text"
-            android:paddingLeft="8dp"
-            android:layout_centerVertical="true" />
-    </RelativeLayout>
-</RelativeLayout>
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="*"
+                android:id="@+id/tableLayout">
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/picture_frame_0"
+                        tools:context="com.mrcornman.otp.activities.ProfileActivity"
+                        android:layout_column="0">
+
+                        <com.mrcornman.otp.views.SquareImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/picture_image_0"
+                            android:contentDescription="@string/content_missing_description"
+                            android:src="@drawable/com_facebook_profile_picture_blank_portrait"
+                            android:layout_gravity="center_horizontal|bottom" />
+
+                    </FrameLayout>
+
+                    <FrameLayout
+                        tools:context="com.mrcornman.otp.activities.ProfileActivity"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/picture_frame_1"
+                        android:layout_column="0">
+
+                        <com.mrcornman.otp.views.SquareImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/picture_image_1"
+                            android:contentDescription="@string/content_missing_description"
+                            android:src="@drawable/com_facebook_profile_picture_blank_portrait" />
+                    </FrameLayout>
+
+                    </TableRow>
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                    <FrameLayout
+                        tools:context="com.mrcornman.otp.activities.ProfileActivity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/picture_frame_2"
+                        android:layout_column="0">
+
+                        <com.mrcornman.otp.views.SquareImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/picture_image_2"
+                            android:contentDescription="@string/content_missing_description"
+                            android:src="@drawable/com_facebook_profile_picture_blank_portrait"/>
+                    </FrameLayout>
+
+                    <FrameLayout
+                        tools:context="com.mrcornman.otp.activities.ProfileActivity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/picture_frame_3"
+                        android:layout_column="0" >
+
+                        <com.mrcornman.otp.views.SquareImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/picture_image_3"
+                            android:contentDescription="@string/content_missing_description"
+                            android:src="@drawable/com_facebook_profile_picture_blank_portrait"/>
+                    </FrameLayout>
+                </TableRow>
+            </TableLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/header_container"
+                android:layout_below="@+id/picture_container"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Name"
+                    android:id="@+id/name_text"
+                    android:layout_gravity="bottom"
+                    android:singleLine="true"
+                    android:layout_centerVertical="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Age"
+                    android:id="@+id/age_text"
+                    android:layout_gravity="bottom"
+                    android:singleLine="true"
+                    android:layout_toRightOf="@+id/name_text"
+                    android:paddingLeft="8dp"
+                    android:layout_centerVertical="true" />
+
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>
