@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +14,19 @@ import android.widget.Toast;
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.adapters.UserCardAdapter;
 import com.mrcornman.otp.utils.DatabaseHelper;
+import com.mrcornman.otp.utils.ProfileBuilder;
 import com.mrcornman.otp.views.CardStackLayout;
 import com.mrcornman.otp.views.CardView;
-import com.parse.FindCallback;
+import com.parse.FunctionCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
-import com.parse.ParseQuery;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class GameFragment extends Fragment {
@@ -35,7 +39,7 @@ public class GameFragment extends Fragment {
     private UserCardAdapter mUserCardAdapterFirst;
     private UserCardAdapter mUserCardAdapterSecond;
 
-    private GameInteractionListener gameInteractionListener;
+    private OnGameInteractionListener onGameInteractionListener;
 
     private SharedPreferences sharedPreferences;
 
@@ -70,7 +74,9 @@ public class GameFragment extends Fragment {
         mCardStackLayoutFirst.setCardStackListener(new CardStackLayout.CardStackListener() {
             @Override
             public void onBeginProgress() {
-                buildPotentialMatch(getCurrentFirstId(), getCurrentSecondId());
+                ParseUser first = getCurrentFirst();
+                ParseUser second = getCurrentSecond();
+                buildPotentialMatch(first != null ? first.getObjectId() : null, second != null ? second.getObjectId() : null);
             }
 
             @Override
@@ -107,7 +113,9 @@ public class GameFragment extends Fragment {
         mCardStackLayoutSecond.setCardStackListener(new CardStackLayout.CardStackListener() {
             @Override
             public void onBeginProgress() {
-                buildPotentialMatch(getCurrentFirstId(), getCurrentSecondId());
+                ParseUser first = getCurrentFirst();
+                ParseUser second = getCurrentSecond();
+                buildPotentialMatch(first != null ? first.getObjectId() : null, second != null ? second.getObjectId() : null);
             }
 
             @Override
@@ -139,18 +147,34 @@ public class GameFragment extends Fragment {
         mUserCardAdapterSecond = new UserCardAdapter(getActivity().getApplicationContext());
         mCardStackLayoutSecond.setAdapter(mUserCardAdapterSecond);
 
-        refreshFirst();
-        refreshSecond();
+        refreshFirst(new RefreshCallback() {
+            @Override
+            public void done() {
+                refreshSecond();
+            }
+        });
+
         firstProgress.setVisibility(View.VISIBLE);
         secondProgress.setVisibility(View.VISIBLE);
 
         return view;
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        try {
+            onGameInteractionListener = (OnGameInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnClientListInteractionListener");
+        }
+    }
+
     private void buildPotentialMatch(String firstId, String secondId) {
         potentialFirstId = firstId != null ? firstId : "";
         potentialSecondId = secondId != null ? secondId : "";
-        Log.i("DatabaseHelper", "ShamalamaDingDong " + potentialFirstId + " : " + potentialSecondId);
     }
 
     private void clearPotentialMatch() {
@@ -158,31 +182,36 @@ public class GameFragment extends Fragment {
         potentialSecondId = "";
     }
 
-    public void onCreateMatch() {
+    private void onCreateMatch() {
         if(potentialFirstId.equals("") || potentialSecondId.equals("")) return;
 
         if(potentialFirstId != potentialSecondId) {
             DatabaseHelper.insertMatchByPair(ParseUser.getCurrentUser().getObjectId(), potentialFirstId, potentialSecondId);
 
-            gameInteractionListener.onCreateMatch();
+            onGameInteractionListener.onCreateMatch();
         }
 
         clearPotentialMatch();
     }
 
     private void refreshFirst() {
-        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        refreshFirst(null);
+    }
 
-        // exclude self
-        //query.whereNotEqualTo("objectId", ParseUser.getCurrentUser().getObjectId());
-        query.setLimit(20);
-        query.findInBackground(new FindCallback<ParseUser>() {
+    private void refreshFirst(final RefreshCallback callback) {
+        ParseUser user = ParseUser.getCurrentUser();
+        ParseGeoPoint location = user.getParseGeoPoint(ProfileBuilder.PROFILE_KEY_LOCATION);
+        List<String> excludedIds = getSecondIds();
+        excludedIds.add(user.getObjectId());
+
+        findPotentialUsers(getCurrentSecond(), excludedIds, location, new FunctionCallback<List<ParseUser>>() {
             @Override
-            public void done(List<ParseUser> list, ParseException e) {
+            public void done(List<ParseUser> parseUsers, ParseException e) {
                 if (e == null) {
-                    mUserCardAdapterFirst.fillUsers(list);
+                    mUserCardAdapterFirst.setUsers(parseUsers);
                     mCardStackLayoutFirst.refreshStack();
                     firstProgress.setVisibility(View.INVISIBLE);
+                    if (callback != null) callback.done();
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(),
                             "Sorry, there was a problem loading users",
@@ -193,50 +222,76 @@ public class GameFragment extends Fragment {
     }
 
     private void refreshSecond() {
-        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        refreshSecond(null);
+    }
 
-        // exclude self
-        //query.whereNotEqualTo("objectId", ParseUser.getCurrentUser().getObjectId());
-        query.setLimit(20);
-        query.findInBackground(new FindCallback<ParseUser>() {
+    private void refreshSecond(final RefreshCallback callback) {
+        ParseUser user = ParseUser.getCurrentUser();
+        ParseGeoPoint location = user.getParseGeoPoint(ProfileBuilder.PROFILE_KEY_LOCATION);
+        List<String> excludedIds = getFirstIds();
+        excludedIds.add(user.getObjectId());
+
+        findPotentialUsers(getCurrentFirst(), excludedIds, location, new FunctionCallback<List<ParseUser>>() {
             @Override
-            public void done(List<ParseUser> list, ParseException e) {
+            public void done(List<ParseUser> parseUsers, ParseException e) {
                 if (e == null) {
-                    mUserCardAdapterSecond.fillUsers(list);
+                    mUserCardAdapterSecond.setUsers(parseUsers);
                     mCardStackLayoutSecond.refreshStack();
                     secondProgress.setVisibility(View.INVISIBLE);
+                    if(callback != null) callback.done();
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(),
-                            "Sorry, there was a problem loading users",
+                            e.toString(),
                             Toast.LENGTH_LONG).show();
                 }
             }
         });
     }
 
-    public String getCurrentFirstId() {
+    private void findPotentialUsers(ParseUser otherUser, List<String> excludedIds, ParseGeoPoint location, FunctionCallback<List<ParseUser>> callback) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("otherUser", otherUser);
+        params.put("excludedIds", excludedIds);
+        params.put("location", location);
+        params.put("searchDistance", 50 + "");
+        params.put("limit", 20 + "");
+
+        ParseCloud.callFunctionInBackground("findPotentialUsers", params, callback);
+    }
+
+    public ParseUser getCurrentFirst() {
         CardView view = mCardStackLayoutFirst.getTopCard();
-        return view != null ? view.getTag().toString() : null;
+        return view != null ? view.boundUser : null;
     }
 
-    public String getCurrentSecondId() {
+    public ParseUser getCurrentSecond() {
         CardView view = mCardStackLayoutSecond.getTopCard();
-        return view != null ? view.getTag().toString() : null;
+        return view != null ? view.boundUser : null;
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        try {
-            gameInteractionListener= (GameInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnClientListInteractionListener");
+    public List<String> getFirstIds() {
+        List<ParseUser> users = mUserCardAdapterFirst.getUsers();
+        List<String> result = new ArrayList<>();
+        for(ParseUser user : users) {
+            result.add(user.getObjectId());
         }
+        return result;
     }
 
-    public interface GameInteractionListener {
+    public List<String> getSecondIds() {
+        List<ParseUser> users = mUserCardAdapterSecond.getUsers();
+        List<String> result = new ArrayList<>();
+        for(ParseUser user : users) {
+            result.add(user.getObjectId());
+        }
+        return result;
+    }
+
+    public interface OnGameInteractionListener {
         void onCreateMatch();
+    }
+
+    private interface RefreshCallback {
+        void done();
     }
 }

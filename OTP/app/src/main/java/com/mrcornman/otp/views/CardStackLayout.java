@@ -96,9 +96,9 @@ public class CardStackLayout extends RelativeLayout {
         return draggedCard;
     }
 
-    public CardView getTopCard() { return mCards.get(mCurrentPosition); }
+    public CardView getTopCard() { return mCards.size() > 0 ? mCards.get(mCurrentPosition) : null; }
     private boolean isTopCard(CardView card) {
-        return card == mCards.get(mCurrentPosition);
+        return mCards.size() > 0 ? card == mCards.get(mCurrentPosition) : false;
     }
 
     public void setCardStackListener(CardStackListener mCardStackListener) {
@@ -228,5 +228,5 @@ public class CardStackLayout extends RelativeLayout {
         return Math.abs(cardDelta) > mMinAcceptDistance;
     }
 
-    private boolean isClickGesture() { return getDraggedCard() == null && Math.abs(cardDelta) < mClickDistanceEpsilon; }
+    private boolean isClickGesture() { return Math.abs(cardDelta) < mClickDistanceEpsilon; }
 }

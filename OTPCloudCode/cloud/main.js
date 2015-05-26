@@ -1,27 +1,26 @@
-Parse.Cloud.define("getNear", function(request, response) {
-    var userQuery = new Parse.Query(Parse.User);
-    userQuery.equalTo("username", request.params.username);
+Parse.Cloud.define("findPotentialUsers", function(request, response) {
+  var otherUser = request.params.otherUser;
+  var excludedIds = request.params.excludedIds;
+  var limit = request.params.limit;
+  var location = request.params.location;
+  var searchDistance = request.params.searchDistance;
+  
+  if(!limit || !location || !searchDistance)
+    response.error("findPotentialUsers: Incorrect params given");
+    
+  var locationQuery = new Parse.Query(Parse.User);
+  locationQuery.limit(limit);
+  locationQuery.notContainedIn("objectId", excludedIds);
+  locationQuery.withinMiles("location", location, searchDistance);
 
-    userQuery.first({
-        success: function(user) {
-            var locationQuery = new Parse.Query(Parse.User);
-            locationQuery.limit(10);
-            locationQuery.notEqualTo("username", request.params.username);
-            locationQuery.withinMiles("location", user.get("location"), 50);
-
-            locationQuery.find({
-                success: function(results) {
-                    response.success(results)
-                },
-                error: function(error) {
-                    response.error("Found no user(s) within range");
-                }
-            });
-        },
-        error: function(error) {
-            response.error("Unable to retrieve nearby user(s)");
-        }
-    });
+  locationQuery.find({
+      success: function(results) {
+          response.success(results)
+      },
+      error: function(err) {
+          response.error("Found no user(s) within range: " + err);
+      }
+  });
 });
 
 Parse.Cloud.afterSave("ParseMessage", function(request) {
@@ -55,6 +54,11 @@ Parse.Cloud.afterSave("ParseMessage", function(request) {
       console.log(err);
     }
   });
+});
+
+Parse.Cloud.afterDelete(Parse.User, function(request) {
+  query = new Parse.Query("Match");
+  //query.equalTo("first_id", 
 });
 
 function getMatchByPair(firstId, secondId, options) {

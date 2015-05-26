@@ -33,9 +33,11 @@ public class UserCardAdapter extends BaseAdapter {
         mItems = new ArrayList<>();
     }
 
-    public void fillUsers(List<ParseUser> users) {
+    public void setUsers(List<ParseUser> users) {
         mItems = users;
     }
+
+    public List<ParseUser> getUsers() { return mItems; }
 
     @Override
     public int getCount() {
@@ -62,7 +64,7 @@ public class UserCardAdapter extends BaseAdapter {
         }
 
         final ParseUser user = getItem(position);
-        cardView.setTag(user.getObjectId());
+        cardView.bind(user);
 
         // init views
 
@@ -106,7 +108,7 @@ public class UserCardAdapter extends BaseAdapter {
         aboutText.setText(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT));
         wantText.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT));
 
-        if(photoItems != null && photoItems.size() > 0) {
+        if(photoItems != null && photoItems.size() == ProfileBuilder.MAX_NUM_PHOTOS) {
             for(int i = 0; i < Math.min(pictureImagesBack.length, photoItems.size()); i++) {
                 final int index = i;
                 PhotoItem photo = photoItems.get(i);

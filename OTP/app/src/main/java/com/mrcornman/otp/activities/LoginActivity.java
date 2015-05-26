@@ -9,10 +9,12 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 
 import com.mrcornman.otp.R;
+import com.mrcornman.otp.utils.LocationHandler;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseInstallation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -109,7 +111,17 @@ public class LoginActivity extends Activity {
     }
 
     private void onSuccessfulLogin() {
-        ParseUser user = ParseUser.getCurrentUser();
+        final ParseUser user = ParseUser.getCurrentUser();
+
+        LocationHandler.requestLocation(getApplicationContext(), new LocationHandler.OnLocationReceivedListener() {
+            @Override
+            public void done(ParseGeoPoint geoPoint, Exception e) {
+                if (e == null && geoPoint != null) {
+                    user.put(ProfileBuilder.PROFILE_KEY_LOCATION, geoPoint);
+                    user.saveInBackground();
+                }
+            }
+        });
 
         if(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE) != null) {
             if(!user.isNew()) {

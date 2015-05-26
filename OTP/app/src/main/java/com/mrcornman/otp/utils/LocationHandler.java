@@ -18,6 +18,25 @@ public class LocationHandler {
     private static LocationManager locationManager;
     private static OnLocationReceivedListener onLocationReceivedListener;
 
+    /**
+     * Assumes Location is enabled.
+     * @param context
+     * @return
+     */
+    public static Location getQuickLocation(Context context) {
+        locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+
+        String provider = null;
+
+        if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            provider = LocationManager.NETWORK_PROVIDER;
+        } else if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            provider = LocationManager.GPS_PROVIDER;
+        }
+
+        return locationManager.getLastKnownLocation(provider);
+    }
+
     public static void requestLocation(Context context, OnLocationReceivedListener receivedListener) {
         onLocationReceivedListener = receivedListener;
 
