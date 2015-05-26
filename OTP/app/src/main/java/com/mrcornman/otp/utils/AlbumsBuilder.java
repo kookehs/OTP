@@ -8,10 +8,6 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.mrcornman.otp.models.AlbumItem;
 import com.mrcornman.otp.models.PhotoFile;
-import com.mrcornman.otp.models.PhotoItem;
-import com.parse.ParseException;
-import com.parse.SaveCallback;
-import com.squareup.picasso.Target;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,11 +21,6 @@ import java.util.List;
 public class AlbumsBuilder {
 
     public final static int DEFAULT_NUM_ALBUMS = 25;
-
-    public final static String PROFILE_KEY_ALBUMS = "album";
-
-    private final static String FACEBOOK_KEY_ALBUMS = "albums";
-    private final static String FACEBOOK_KEY_PHOTOS = "photos";
 
     private static boolean albumsFailed = false;
     private static int albumsCount = 0;
@@ -65,65 +56,144 @@ public class AlbumsBuilder {
 
                         int i = 0;
 
-                    /*
-                     * Albums
-                     */
-                    JSONObject albumsObj = object.optJSONObject(FACEBOOK_KEY_ALBUMS);
+                        /*
+                         * Albums
+                         */
 
-                    if (albumsObj != null) {
+                        albumsThreshold = 1;
 
-                        // first get the list of albums
-                        JSONArray albumsData = albumsObj.optJSONArray("data");
+                        // first get photos of me
+                        final AlbumItem meAlbum = new AlbumItem();
+                        meAlbum.albumId = "";
+                        meAlbum.name = "My Photos";
 
-                        if (albumsData != null && albumsData.length() > 0) {
-                            // now find the profile album
-                            JSONObject albumObj = null;
+                        ProfileBuilder.getMePhotosInfo(accessToken, new ProfileBuilder.GetMePhotosInfoCallback() {
+                            @Override
+                            public void done(JSONObject firstPhotoImageObj, int numPhotos, Object err) {
+                                if (err != null || firstPhotoImageObj == null || numPhotos < 0) {
+                                    buildCallback.done(null, err);
+                                    return;
+                                }
 
-                            albumsThreshold = albumsData.length();
+                                if (numPhotos > 0) {
 
-                            for (i = 0; i < albumsThreshold; i++) {
-                                albumObj = albumsData.optJSONObject(i);
-                                final AlbumItem albumItem = new AlbumItem();
+                                    PhotoFile coverPhoto = new PhotoFile();
+                                    coverPhoto.height = firstPhotoImageObj.optInt("height");
+                                    coverPhoto.width = firstPhotoImageObj.optInt("width");
+                                    coverPhoto.url = firstPhotoImageObj.optString("source");
+                                    meAlbum.coverPhotoFile = coverPhoto;
+                                    meAlbum.count = numPhotos;
 
-                                albumItem.albumId = albumObj.optString("id");
-                                albumItem.name = albumObj.optString("name");
-                                albumItem.count = albumObj.optInt("count");
-                                final String coverPhotoId = albumObj.optString("cover_photo");
+                                    albumItems.add(0, meAlbum);
+                                    albumsCount++;
 
-                                // fetch all the photo images from the profile album
-                                fetchCoverPhoto(accessToken, coverPhotoId, new PhotoCallback() {
-                                    @Override
-                                    public void done(JSONObject photoImageObj, Object err) {
-                                        if (err != null || photoImageObj == null) {
-                                            buildCallback.done(null, err);
-                                            return;
-                                        }
-
-                                        PhotoFile coverPhoto = new PhotoFile();
-                                        coverPhoto.height = photoImageObj.optInt("height");
-                                        coverPhoto.width = photoImageObj.optInt("width");
-                                        coverPhoto.url = photoImageObj.optString("source");
-                                        albumItem.coverPhotoFile = coverPhoto;
-
-                                        albumItems.add(albumItem);
-                                        albumsCount++;
-
-                                        if(albumsCount >= albumsThreshold) {
-                                            findAlbumsCallback.done(albumItems, null);
-                                        }
+                                    if (albumsCount >= albumsThreshold) {
+                                        findAlbumsCallback.done(albumItems, null);
                                     }
-                                });
+                                } else {
+                                    albumsCount++;
+
+                                    if (albumsCount >= albumsThreshold) {
+                                        findAlbumsCallback.done(albumItems, null);
+                                    }
+                                }
+                            }
+                        });
+
+                        // now get the other albums
+                        JSONObject albumsObj = object.optJSONObject(ProfileBuilder.FACEBOOK_KEY_ALBUMS);
+
+                        if (albumsObj != null) {
+
+                            // first get the list of albums
+                            JSONArray albumsData = albumsObj.optJSONArray("data");
+
+                            if (albumsData != null && albumsData.length() > 0) {
+                                // now find the profile album
+                                JSONObject albumObj = null;
+
+                                albumsThreshold += albumsData.length();
+
+                                for (i = 0; i < albumsData.length(); i++) {
+                                    albumObj = albumsData.optJSONObject(i);
+                                    final AlbumItem albumItem = new AlbumItem();
+
+                                    albumItem.albumId = albumObj.optString("id");
+                                    albumItem.name = albumObj.optString("name");
+                                    albumItem.count = albumObj.optInt("count");
+                                    final String coverPhotoId = albumObj.optString("cover_photo");
+
+                                    // fetch all the photo images from the profile album
+                                    fetchCoverPhoto(accessToken, coverPhotoId, new PhotoCallback() {
+                                        @Override
+                                        public void done(JSONObject photoImageObj, Object err) {
+                                            if (err != null || photoImageObj == null) {
+                                                buildCallback.done(null, err);
+                                                return;
+                                            }
+
+                                            PhotoFile coverPhoto = new PhotoFile();
+                                            coverPhoto.height = photoImageObj.optInt("height");
+                                            coverPhoto.width = photoImageObj.optInt("width");
+                                            coverPhoto.url = photoImageObj.optString("source");
+                                            albumItem.coverPhotoFile = coverPhoto;
+
+                                            albumItems.add(albumItem);
+                                            albumsCount++;
+
+                                            if(albumsCount >= albumsThreshold) {
+                                                findAlbumsCallback.done(albumItems, null);
+                                            }
+                                        }
+                                    });
+                                }
                             }
                         }
-                    }
                 }
             });
 
         Bundle parameters = new Bundle();
-        String fieldParamsStr = FACEBOOK_KEY_ALBUMS;
+        String fieldParamsStr = ProfileBuilder.FACEBOOK_KEY_ALBUMS;
         parameters.putString("fields", fieldParamsStr);
         meRequest.setParameters(parameters);
         meRequest.executeAsync();
+    }
+
+    public static void findCurrentPhotos(FindPhotosCallback callback) {
+
+        final FindPhotosCallback mCallback = callback;
+
+        ProfileBuilder.fetchPhotosFromAlbum(AccessToken.getCurrentAccessToken(), "", new ProfileBuilder.FetchPhotosCallback() {
+            @Override
+            public void done(List<JSONObject> photoImageObjs, Object err) {
+                if (err != null || photoImageObjs == null) {
+                    mCallback.done(null, err);
+                    return;
+                }
+
+                final List<PhotoFile> photoFiles = new ArrayList<PhotoFile>();
+
+                if (photoImageObjs.size() == 0) {
+                    mCallback.done(null, null);
+                }
+
+                JSONObject photoImageObj = null;
+
+                // download each photo then upload to Parse
+                for (int i = 0; i < photoImageObjs.size(); i++) {
+                    photoImageObj = photoImageObjs.get(i);
+
+                    PhotoFile photoFile = new PhotoFile();
+                    photoFile.height = photoImageObj.optInt("height");
+                    photoFile.width = photoImageObj.optInt("width");
+                    photoFile.url = photoImageObj.optString("source");
+
+                    photoFiles.add(photoFile);
+                }
+
+                mCallback.done(photoFiles, null);
+            }
+        });
     }
 
     public static void findCurrentPhotosFromAlbum(String albumId, FindPhotosCallback callback) {
@@ -132,23 +202,23 @@ public class AlbumsBuilder {
 
         ProfileBuilder.fetchPhotosFromAlbum(AccessToken.getCurrentAccessToken(), albumId, new ProfileBuilder.FetchPhotosCallback() {
             @Override
-            public void done(List<JSONObject> photoImages, Object err) {
-                if (err != null || photoImages == null) {
+            public void done(List<JSONObject> photoImageObjs, Object err) {
+                if (err != null || photoImageObjs == null) {
                     mCallback.done(null, err);
                     return;
                 }
 
                 final List<PhotoFile> photoFiles = new ArrayList<PhotoFile>();
 
-                if(photoImages.size() == 0) {
+                if(photoImageObjs.size() == 0) {
                     mCallback.done(null, null);
                 }
 
                 JSONObject photoImageObj = null;
 
                 // download each photo then upload to Parse
-                for(int i = 0; i < photoImages.size(); i++) {
-                    photoImageObj = photoImages.get(i);
+                for(int i = 0; i < photoImageObjs.size(); i++) {
+                    photoImageObj = photoImageObjs.get(i);
 
                     PhotoFile photoFile = new PhotoFile();
                     photoFile.height = photoImageObj.optInt("height");

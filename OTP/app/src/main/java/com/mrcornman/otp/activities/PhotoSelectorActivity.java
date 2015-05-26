@@ -1,27 +1,40 @@
 package com.mrcornman.otp.activities;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.fragments.EditProfileFragment;
+import com.mrcornman.otp.fragments.AlbumListFragment;
+import com.mrcornman.otp.fragments.PhotoGalleryFragment;
 
 
-public class ProfileActivity extends ActionBarActivity implements FragmentManager.OnBackStackChangedListener, EditProfileFragment.OnEditProfileInteractionListener {
+public class PhotoSelectorActivity extends ActionBarActivity implements FragmentManager.OnBackStackChangedListener,
+        AlbumListFragment.OnAlbumListInteractionListener, PhotoGalleryFragment.OnPhotoGalleryInteractionListener {
 
-    private final static int PAGE_EDIT_PROFILE = 0;
+    private final static int PAGE_ALBUMS = 0;
+    private final static int PAGE_PHOTO_GALLERY = 1;
 
     private CharSequence mTitle;
 
     private int currPageIndex = 0;
+    private int slotIndex;
+    private String albumId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_photo_selector);
+
+        Log.i("PhotoSelectorActivity", "hey");
+
+        Intent intent = getIntent();
+        slotIndex = intent.getIntExtra("slot_index", -1);
 
         // Set up toolbar and tabs
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -33,7 +46,7 @@ public class ProfileActivity extends ActionBarActivity implements FragmentManage
 
         getSupportFragmentManager().addOnBackStackChangedListener(this);
 
-        initPage(PAGE_EDIT_PROFILE);
+        initPage(PAGE_ALBUMS);
     }
 
     @Override
@@ -56,7 +69,18 @@ public class ProfileActivity extends ActionBarActivity implements FragmentManage
     // fragment interaction overrides
 
     @Override
-    public void onRequestPhotoSelect(int slotIndex) {
+    public void onRequestPhoto(String url) {
+        Intent intent = new Intent();
+        intent.putExtra("photo_url", url);
+        intent.putExtra("slot_index", slotIndex);
+        setResult(Activity.RESULT_OK, intent);
+        finish();
+    }
+
+    @Override
+    public void onRequestPhotoGallery(String chosenAlbumId) {
+        albumId = chosenAlbumId;
+        initPage(PAGE_PHOTO_GALLERY);
     }
 
     private void initPage(int newPageIndex) {
@@ -67,10 +91,16 @@ public class ProfileActivity extends ActionBarActivity implements FragmentManage
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         switch (currPageIndex) {
-            case PAGE_EDIT_PROFILE:
-                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, EditProfileFragment.newInstance())
-                        .addToBackStack("EditProfile")
+            case PAGE_ALBUMS:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, AlbumListFragment.newInstance())
+                        .addToBackStack("Albums")
+                        .commit();
+                break;
+            case PAGE_PHOTO_GALLERY:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, PhotoGalleryFragment.newInstance(albumId))
+                        .addToBackStack("Photos")
                         .commit();
                 break;
         }
@@ -78,8 +108,11 @@ public class ProfileActivity extends ActionBarActivity implements FragmentManage
 
     private void updateTitle() {
         switch(currPageIndex) {
-            case PAGE_EDIT_PROFILE:
-                mTitle = "Profile";
+            case PAGE_ALBUMS:
+                mTitle = "Albums";
+                break;
+            case PAGE_PHOTO_GALLERY:
+                mTitle = "Photos";
                 break;
         }
 

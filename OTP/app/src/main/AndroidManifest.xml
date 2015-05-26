@@ -78,26 +78,17 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
             android:name=".activities.ProfileActivity"
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
             android:label="Profile Activity"
             android:parentActivityName=".activities.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.BaseTheme"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".activities.AlbumListActivity"
-            android:launchMode="singleTask"
-            android:label="Album Activity"
+            android:name=".activities.PhotoSelectorActivity"
+            android:launchMode="singleTop"
+            android:label="Photo Selector Activity"
             android:parentActivityName=".activities.ProfileActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.BaseTheme"
-            android:windowSoftInputMode="stateHidden" />
-
-        <activity
-            android:name=".activities.PhotoGalleryActivity"
-            android:launchMode="singleTask"
-            android:label="PhotoGalleryActivity"
-            android:parentActivityName=".activities.AlbumListActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.BaseTheme"
             android:windowSoftInputMode="stateHidden" />

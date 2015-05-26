@@ -3,16 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.mrcornman.otp.activities.AlbumListActivity"
-    android:id="@+id/activity_image_list">
-
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/toolbar"/>
+    tools:context="com.mrcornman.otp.fragments.AlbumListFragment">
 
     <ListView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:id="@+id/image_view" />
+        android:id="@+id/image_view_albums" />
 
 </LinearLayout>

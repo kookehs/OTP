@@ -25,6 +25,9 @@
     <!--Maker Match Action Bar-->
     <string name="action_stats">Stats</string>
 
+    <!--Album Action Bar-->
+    <string name="action_album">Albums</string>
+
     <!--Login-->
     <string name="login_disclaimer">We do not post to Facebook.</string>
 
