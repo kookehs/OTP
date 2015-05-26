@@ -38,6 +38,7 @@ public class ProfileBuilder {
     public final static String PROFILE_KEY_GENDER = "gender";
     public final static String PROFILE_KEY_BIRTHDATE = "birthdate";
     public final static String PROFILE_KEY_INTERESTED_IN = "interested_in";
+    public final static String PROFILE_KEY_ABOUT_ME = "about_me";
     public final static String PROFILE_KEY_PHOTOS = "photos";
     public final static String PROFILE_KEY_ALBUMS = "photos";
 

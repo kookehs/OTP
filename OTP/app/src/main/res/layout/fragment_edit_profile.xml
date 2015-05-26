@@ -162,7 +162,10 @@
                 android:layout_gravity="bottom"
                 android:inputType="text"
                 android:hint="About Me"
-                android:maxLength="140"/>
+                android:maxLength="140"
+                android:imeActionId="@+id/EditorInfo.IME_ACTION_DONE"
+                android:singleLine="true"
+                android:imeOptions="actionDone"/>
 
             <EditText
                 android:id="@+id/editText_interested_in"

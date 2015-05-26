@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -129,30 +130,34 @@ public class EditProfileFragment extends Fragment {
         nameText.setText(user.getString(ProfileBuilder.PROFILE_KEY_NAME));
         ageText.setText(PrettyTime.getAgeFromBirthDate(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE)) + "");
 
-
-
+        //set the text the user wants
         final EditText aboutMe = (EditText) rootview.findViewById(R.id.editText_about_me);
-        aboutMe.setOnClickListener(new View.OnClickListener() {
+        if(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT_ME) != null) aboutMe.setText(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT_ME));
+        aboutMe.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public void onClick(View v) {
-                ParseUser user = ParseUser.getCurrentUser();
-                try {
-                    Log.d("EditProfileFragment", user.get("about_me").toString());
-                }
-                catch(Exception e){
-                    ///hgvbns
-                }
-                String aboutMeText = aboutMe.getText().toString();
-                user.put("about_me", aboutMeText);
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    String aboutMeText = aboutMe.getText().toString();
+                    aboutMe.clearFocus();
+                    user.put("about_me", aboutMeText);
+                    return true;
             }
         });
-        EditText interestedIn = (EditText) rootview.findViewById(R.id.editText_interested_in);
-        interestedIn.setOnClickListener(new View.OnClickListener() {
+        final EditText interestedIn = (EditText) rootview.findViewById(R.id.editText_interested_in);
+        if(user.getString(ProfileBuilder.PROFILE_KEY_INTERESTED_IN) != null) interestedIn.setText(user.getString(ProfileBuilder.PROFILE_KEY_INTERESTED_IN));
+        interestedIn.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public void onClick(View v) {
-                ParseUser user = ParseUser.getCurrentUser();
-                String interestInText = aboutMe.getText().toString();
-                user.put("interested_in", interestInText);
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    String interestedInText = interestedIn.getText().toString();
+                    Log.d("EditProfileFragment", interestedInText.length()+"");
+                    user.put("interested_in", interestedInText);
+
+                    //hide keyboard
+                    /*InputMethodManager in = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                    in.hideSoftInputFromWindow(interestedIn
+                                    .getApplicationWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);*/
+                    return true;
             }
         });
 
