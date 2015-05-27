@@ -132,7 +132,7 @@ public class EditProfileFragment extends Fragment {
 
         //set the text the user wants
         final EditText aboutMe = (EditText) rootview.findViewById(R.id.editText_about_me);
-        if(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT_ME) != null) aboutMe.setText(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT_ME));
+        if(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT) != null) aboutMe.setText(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT));
         aboutMe.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -143,13 +143,13 @@ public class EditProfileFragment extends Fragment {
             }
         });
         final EditText interestedIn = (EditText) rootview.findViewById(R.id.editText_interested_in);
-        if(user.getString(ProfileBuilder.PROFILE_KEY_INTERESTED_IN) != null) interestedIn.setText(user.getString(ProfileBuilder.PROFILE_KEY_INTERESTED_IN));
+        if(user.getString(ProfileBuilder.PROFILE_KEY_WANT) != null) interestedIn.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT));
         interestedIn.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                     String interestedInText = interestedIn.getText().toString();
                     Log.d("EditProfileFragment", interestedInText.length()+"");
-                    user.put("interested_in", interestedInText);
+                    user.put("want", interestedInText);
 
                     //hide keyboard
                     /*InputMethodManager in = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);

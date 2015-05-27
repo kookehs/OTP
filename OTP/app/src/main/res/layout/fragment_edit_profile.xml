@@ -157,7 +157,7 @@
 
             <EditText
                 android:id="@+id/editText_about_me"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:inputType="text"
@@ -169,7 +169,7 @@
 
             <EditText
                 android:id="@+id/editText_interested_in"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="50dp"
                 android:inputType="text"
