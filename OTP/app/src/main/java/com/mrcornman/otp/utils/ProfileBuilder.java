@@ -38,10 +38,10 @@ public class ProfileBuilder {
     public final static String PROFILE_KEY_GENDER = "gender";
     public final static String PROFILE_KEY_BIRTHDATE = "birthdate";
     public final static String PROFILE_KEY_INTERESTED_IN = "interested_in";
-    public final static String PROFILE_KEY_WANT = "interested_in";
+    public final static String PROFILE_KEY_WANT = "want";
     public final static String PROFILE_KEY_ABOUT = "about_me";
     public final static String PROFILE_KEY_PHOTOS = "photos";
-    public final static String PROFILE_KEY_ALBUMS = "photos";
+    public final static String PROFILE_KEY_ALBUMS = "albums";
 
     private final static String FACEBOOK_KEY_NAME = "first_name";
     private final static String FACEBOOK_KEY_GENDER = "gender";

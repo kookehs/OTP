@@ -142,14 +142,13 @@ public class EditProfileFragment extends Fragment {
                     return true;
             }
         });
-        final EditText interestedIn = (EditText) rootview.findViewById(R.id.editText_interested_in);
-        if(user.getString(ProfileBuilder.PROFILE_KEY_WANT) != null) interestedIn.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT));
-        interestedIn.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        final EditText want = (EditText) rootview.findViewById(R.id.editText_want);
+        if(user.getString(ProfileBuilder.PROFILE_KEY_WANT) != null) want.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT));
+        want.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    String interestedInText = interestedIn.getText().toString();
-                    Log.d("EditProfileFragment", interestedInText.length()+"");
-                    user.put("want", interestedInText);
+                    String wantText = want.getText().toString();
+                    user.put("want", wantText);
 
                     //hide keyboard
                     /*InputMethodManager in = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);

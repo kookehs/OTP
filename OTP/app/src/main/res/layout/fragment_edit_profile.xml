@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -153,29 +153,74 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:id="@+id/editText_container">
 
-            <EditText
-                android:id="@+id/editText_about_me"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:inputType="text"
-                android:hint="About Me"
-                android:maxLength="140"
-                android:imeActionId="@+id/EditorInfo.IME_ACTION_DONE"
-                android:singleLine="true"
-                android:imeOptions="actionDone"/>
+                android:id="@+id/about_me_container"
+                android:layout_below="@+id/age_text"
+                android:padding="16dp">
 
-            <EditText
-                android:id="@+id/editText_interested_in"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="About Me"
+                    android:id="@+id/about_me__text"
+                    android:layout_gravity="bottom"
+                    android:singleLine="true"
+                    android:layout_centerVertical="true" />
+
+                <EditText
+                    android:id="@+id/editText_about_me"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_gravity="bottom"
+                    android:inputType="text"
+                    android:hint="About Me"
+                    android:maxLength="140"
+                    android:imeActionId="@+id/EditorInfo.IME_ACTION_DONE"
+                    android:singleLine="false"
+                    android:imeOptions="actionDone"
+                    android:layout_toRightOf="@+id/about_me__text"
+                    android:paddingLeft="8dp"
+                    android:layout_centerVertical="true"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="50dp"
-                android:inputType="text"
-                android:hint="Interested in"
-                android:maxLength="140"
-                android:password="false" />
+                android:id="@+id/interested_in_container"
+                android:layout_below="@+id/about_me_container"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Interested In"
+                    android:id="@+id/want_text"
+                    android:layout_gravity="bottom"
+                    android:singleLine="true"
+                    android:layout_centerVertical="true" />
+
+                <EditText
+                    android:id="@+id/editText_want"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:inputType="text"
+                    android:hint="Interested in"
+                    android:maxLength="140"
+                    android:layout_toRightOf="@+id/want_text"
+                    android:paddingLeft="8dp"
+                    android:layout_centerVertical="true"/>
+
+            </RelativeLayout>
 
 
         </LinearLayout>
