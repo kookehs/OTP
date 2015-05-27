@@ -4,8 +4,10 @@
     <style name="Theme.BaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@color/white</item>
 
-        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/very_dark_gray</item>
+
+        <item name="actionBarSize">@dimen/action_bar_default_height</item>
     </style>
 
     <!--Toolbar-->
@@ -22,6 +24,8 @@
 
     <style name="TextAppearance.Widget.Toolbar.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <!--Any text styling can be done here-->
+        <item name="android:color">@color/primary_text</item>
+        <item name="android:textColor">@color/primary_text</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">@dimen/toolbar_title_text_size</item>
     </style>

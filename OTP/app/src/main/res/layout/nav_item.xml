@@ -36,7 +36,8 @@
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 tools:src="@mipmap/ic_launcher"
-                android:layout_gravity="center" />
+                android:layout_gravity="center"
+                android:tint="@color/primary" />
         </FrameLayout>
 
         <TextView

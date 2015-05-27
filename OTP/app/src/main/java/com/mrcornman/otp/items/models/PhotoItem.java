@@ -3,7 +3,7 @@ package com.mrcornman.otp.items.models;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.mrcornman.otp.items.gson.PhotoFileItem;
+import com.mrcornman.otp.items.gson.PhotoFile;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
@@ -20,32 +20,32 @@ public class PhotoItem extends ParseObject {
     // key identifiers
     public static final String PHOTO_KEY_FILES = "files";
 
-    public List<PhotoFileItem> getPhotoFiles() {
-        List<PhotoFileItem> photoFileItems = new ArrayList<>();
+    public List<PhotoFile> getPhotoFiles() {
+        List<PhotoFile> photoFiles = new ArrayList<>();
         try {
             JSONArray photoFilesData = getJSONArray(PHOTO_KEY_FILES);
             JSONObject photoFileObj = null;
             Gson gson = new Gson();
             for (int i = 0; i < photoFilesData.length(); i++) {
                 photoFileObj = photoFilesData.getJSONObject(i);
-                PhotoFileItem photoFileItem = gson.fromJson(photoFileObj.toString(), PhotoFileItem.class);
-                photoFileItems.add(photoFileItem);
+                PhotoFile photoFile = gson.fromJson(photoFileObj.toString(), PhotoFile.class);
+                photoFiles.add(photoFile);
             }
         } catch(JSONException e) {
             Log.e("PhotoItem", "Error getting files from a photo item.");
             return null;
         }
 
-        return photoFileItems;
+        return photoFiles;
     }
 
-    public void setPhotoFiles(List<PhotoFileItem> photoFileItems) {
+    public void setPhotoFiles(List<PhotoFile> photoFiles) {
 
         JSONArray photoFilesData = new JSONArray();
         Gson gson = new Gson();
         String photoFileObjStr = null;
-        for(int i = 0; i < photoFileItems.size(); i++) {
-            photoFileObjStr = gson.toJson(photoFileItems.get(i));
+        for(int i = 0; i < photoFiles.size(); i++) {
+            photoFileObjStr = gson.toJson(photoFiles.get(i));
 
             try {
                 photoFilesData.put(new JSONObject(photoFileObjStr));

@@ -4,7 +4,12 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.astuetz.PagerSlidingTabStrip;
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.fragments.ClientListFragment;
 import com.mrcornman.otp.fragments.GameFragment;
@@ -13,7 +18,7 @@ import com.mrcornman.otp.fragments.MakerListFragment;
 /**
  * Created by Jonathan on 5/17/2015.
  */
-public class MainPagerAdapter extends FragmentPagerAdapter {
+public class MainPagerAdapter extends FragmentPagerAdapter implements PagerSlidingTabStrip.CustomTabProvider {
 
     public final static int NUM_PAGES = 3;
 
@@ -77,5 +82,27 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
         }
 
         return result;
+    }
+
+    @Override
+    public View getCustomTabView(ViewGroup parent, int position) {
+
+        View tabView = LayoutInflater.from(mContext).inflate(R.layout.tab_item, parent, false);
+
+        ImageView tabIconImage = (ImageView) tabView.findViewById(R.id.icon_image);
+
+        switch(position) {
+            case PAGE_GAME:
+                tabIconImage.setImageResource(R.mipmap.ic_action_maker);
+                break;
+            case PAGE_CLIENT:
+                tabIconImage.setImageResource(R.mipmap.ic_action_client);
+                break;
+            case PAGE_MAKER:
+                tabIconImage.setImageResource(R.mipmap.ic_action_maker);
+                break;
+        }
+
+        return tabView;
     }
 }

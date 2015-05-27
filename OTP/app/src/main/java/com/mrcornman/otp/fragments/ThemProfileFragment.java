@@ -14,7 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.items.gson.PhotoFileItem;
+import com.mrcornman.otp.items.gson.PhotoFile;
 import com.mrcornman.otp.items.models.PhotoItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.mrcornman.otp.utils.PrettyTime;
@@ -23,6 +23,8 @@ import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -84,12 +86,12 @@ public class ThemProfileFragment extends Fragment {
                 ageText.setText(PrettyTime.getAgeFromBirthDate(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE)) + "");
 
                 List<PhotoItem> photoItems = user.getList(ProfileBuilder.PROFILE_KEY_PHOTOS);
-                if(photoItems != null && photoItems.size() > 0) {
+                if(photoItems != null && photoItems.size() > 0 && photoItems.get(0) != null && photoItems.get(0) != JSONObject.NULL) {
                     PhotoItem mainPhoto = photoItems.get(0);
                     mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
                         @Override
                         public void done(PhotoItem photoItem, ParseException e) {
-                            PhotoFileItem mainFile = photoItem.getPhotoFiles().get(0);
+                            PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
                             if (getActivity() != null)
                                 Picasso.with(getActivity().getApplicationContext()).load(mainFile.url).fit().centerCrop().into(pictureImage);
                         }

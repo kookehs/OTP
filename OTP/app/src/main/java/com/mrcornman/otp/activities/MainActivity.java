@@ -20,6 +20,7 @@ import com.mrcornman.otp.fragments.ClientListFragment;
 import com.mrcornman.otp.fragments.GameFragment;
 import com.mrcornman.otp.fragments.MakerListFragment;
 import com.mrcornman.otp.fragments.NavFragment;
+import com.mrcornman.otp.models.AlbumItem;
 import com.mrcornman.otp.services.MessageService;
 
 public class MainActivity extends ActionBarActivity implements NavFragment.NavigationDrawerCallbacks,
@@ -120,6 +121,8 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
         switch(position) {
             case NAV_PROFILE:
                 // start profile activity
+                Intent profile = new Intent(this, ProfileActivity.class);
+                startActivity(profile);
                 break;
             case NAV_PREFERENCES:
                 // start prefs activity

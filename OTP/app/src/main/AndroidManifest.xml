@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS" />
 
     <permission
         android:name="com.mrcornman.otp.permission.C2D_MESSAGE"
@@ -93,6 +94,22 @@
             android:label="Facebook"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity
+            android:name=".activities.ProfileActivity"
+            android:launchMode="singleTop"
+            android:label="Profile Activity"
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.BaseTheme"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activities.PhotoSelectorActivity"
+            android:launchMode="singleTop"
+            android:label="Photo Selector Activity"
+            android:parentActivityName=".activities.ProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.BaseTheme"
+            android:windowSoftInputMode="stateHidden" />
 
         <!-- Push Notifications -->
         <service android:name="com.parse.PushService" />
