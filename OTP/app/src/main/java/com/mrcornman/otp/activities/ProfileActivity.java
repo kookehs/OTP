@@ -2,6 +2,7 @@ package com.mrcornman.otp.activities;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -25,7 +26,7 @@ public class ProfileActivity extends ActionBarActivity implements FragmentManage
 
         // Set up toolbar and tabs
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_ab_back_holo_light_am);
+        toolbar.setNavigationIcon(R.mipmap.ic_nav_up);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -38,6 +39,9 @@ public class ProfileActivity extends ActionBarActivity implements FragmentManage
 
     @Override
     public void onBackStackChanged() {
+        int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
+        if(backStackCount == 0)
+            NavUtils.navigateUpFromSameTask(this);
     }
 
     @Override

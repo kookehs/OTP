@@ -4,9 +4,15 @@
     <style name="Theme.BaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@color/white</item>
 
+        <!--General Styles-->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/very_dark_gray</item>
 
+        <!--Text Styles-->
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:editTextColor">@color/very_dark_gray</item>
+
+        <!--Action Bar Styles-->
         <item name="actionBarSize">@dimen/action_bar_default_height</item>
     </style>
 
@@ -15,7 +21,7 @@
 
     <style name="ToolBarStyle.Base" parent="">
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
-        <item name="theme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="theme">@style/ThemeOverlay.AppCompat.Dark</item>
     </style>
 
     <style name="ToolBarStyle.Main" parent="ToolBarStyle">

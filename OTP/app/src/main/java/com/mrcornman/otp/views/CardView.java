@@ -6,7 +6,6 @@ import android.widget.RelativeLayout;
 
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.animations.FlipAnimation;
-import com.parse.ParseUser;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
@@ -23,14 +22,8 @@ public class CardView extends RelativeLayout {
     @ViewById
     public View cardBack;
 
-    public ParseUser boundUser;
-
     public CardView(Context context) {
         super(context);
-    }
-
-    public void bind(ParseUser user) {
-        boundUser = user;
     }
 
     @Override

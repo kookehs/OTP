@@ -74,9 +74,7 @@ public class GameFragment extends Fragment {
         mCardStackLayoutFirst.setCardStackListener(new CardStackLayout.CardStackListener() {
             @Override
             public void onBeginProgress() {
-                ParseUser first = getCurrentFirst();
-                ParseUser second = getCurrentSecond();
-                buildPotentialMatch(first != null ? first.getObjectId() : null, second != null ? second.getObjectId() : null);
+                buildPotentialMatch(getCurrentFirstId(), getCurrentSecondId());
             }
 
             @Override
@@ -113,9 +111,7 @@ public class GameFragment extends Fragment {
         mCardStackLayoutSecond.setCardStackListener(new CardStackLayout.CardStackListener() {
             @Override
             public void onBeginProgress() {
-                ParseUser first = getCurrentFirst();
-                ParseUser second = getCurrentSecond();
-                buildPotentialMatch(first != null ? first.getObjectId() : null, second != null ? second.getObjectId() : null);
+                buildPotentialMatch(getCurrentFirstId(), getCurrentSecondId());
             }
 
             @Override
@@ -198,25 +194,30 @@ public class GameFragment extends Fragment {
         refreshFirst(null);
     }
 
-    private void refreshFirst(final RefreshCallback callback) {
+    private void refreshFirst(RefreshCallback callback) {
+        final RefreshCallback mCallback = callback;
+
         ParseUser user = ParseUser.getCurrentUser();
         ParseGeoPoint location = user.getParseGeoPoint(ProfileBuilder.PROFILE_KEY_LOCATION);
         List<String> excludedIds = getSecondIds();
         excludedIds.add(user.getObjectId());
 
-        findPotentialUsers(getCurrentSecond(), excludedIds, location, new FunctionCallback<List<ParseUser>>() {
+        findPotentialUsers(getCurrentSecondId(), excludedIds, location, new FunctionCallback<List<ParseUser>>() {
             @Override
             public void done(List<ParseUser> parseUsers, ParseException e) {
                 if (e == null) {
-                    mUserCardAdapterFirst.setUsers(parseUsers);
-                    mCardStackLayoutFirst.refreshStack();
-                    firstProgress.setVisibility(View.INVISIBLE);
-                    if (callback != null) callback.done();
+                    if(parseUsers != null && parseUsers.size() > 0) {
+                        mUserCardAdapterFirst.setUsers(parseUsers);
+                        mCardStackLayoutFirst.refreshStack();
+                        if (mCallback != null) mCallback.done();
+                    } else {
+                        Toast.makeText(getActivity(), "No users detected in the immediate area.", Toast.LENGTH_LONG).show();
+                    }
                 } else {
-                    Toast.makeText(getActivity().getApplicationContext(),
-                            "Sorry, there was a problem loading users",
-                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Sorry, there was a problem loading users: " + e.toString(), Toast.LENGTH_LONG).show();
                 }
+
+                firstProgress.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -225,32 +226,37 @@ public class GameFragment extends Fragment {
         refreshSecond(null);
     }
 
-    private void refreshSecond(final RefreshCallback callback) {
+    private void refreshSecond(RefreshCallback callback) {
+        final RefreshCallback mCallback = callback;
+
         ParseUser user = ParseUser.getCurrentUser();
         ParseGeoPoint location = user.getParseGeoPoint(ProfileBuilder.PROFILE_KEY_LOCATION);
         List<String> excludedIds = getFirstIds();
         excludedIds.add(user.getObjectId());
 
-        findPotentialUsers(getCurrentFirst(), excludedIds, location, new FunctionCallback<List<ParseUser>>() {
+        findPotentialUsers(getCurrentFirstId(), excludedIds, location, new FunctionCallback<List<ParseUser>>() {
             @Override
             public void done(List<ParseUser> parseUsers, ParseException e) {
                 if (e == null) {
-                    mUserCardAdapterSecond.setUsers(parseUsers);
-                    mCardStackLayoutSecond.refreshStack();
-                    secondProgress.setVisibility(View.INVISIBLE);
-                    if(callback != null) callback.done();
+                    if(parseUsers != null && parseUsers.size() > 0) {
+                        mUserCardAdapterSecond.setUsers(parseUsers);
+                        mCardStackLayoutSecond.refreshStack();
+                        if (mCallback != null) mCallback.done();
+                    } else {
+                        Toast.makeText(getActivity(), "We're out of users to show you for now. Try again soon!", Toast.LENGTH_LONG).show();
+                    }
                 } else {
-                    Toast.makeText(getActivity().getApplicationContext(),
-                            e.toString(),
-                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Sorry, there was a problem loading users: " + e.toString(), Toast.LENGTH_LONG).show();
                 }
+
+                secondProgress.setVisibility(View.INVISIBLE);
             }
         });
     }
 
-    private void findPotentialUsers(ParseUser otherUser, List<String> excludedIds, ParseGeoPoint location, FunctionCallback<List<ParseUser>> callback) {
+    private void findPotentialUsers(String otherId, List<String> excludedIds, ParseGeoPoint location, FunctionCallback<List<ParseUser>> callback) {
         Map<String, Object> params = new HashMap<>();
-        params.put("otherUser", otherUser);
+        params.put("otherId", otherId);
         params.put("excludedIds", excludedIds);
         params.put("location", location);
         params.put("searchDistance", 50 + "");
@@ -259,14 +265,14 @@ public class GameFragment extends Fragment {
         ParseCloud.callFunctionInBackground("findPotentialUsers", params, callback);
     }
 
-    public ParseUser getCurrentFirst() {
+    public String getCurrentFirstId() {
         CardView view = mCardStackLayoutFirst.getTopCard();
-        return view != null ? view.boundUser : null;
+        return view != null ? view.getTag().toString() : null;
     }
 
-    public ParseUser getCurrentSecond() {
+    public String getCurrentSecondId() {
         CardView view = mCardStackLayoutSecond.getTopCard();
-        return view != null ? view.boundUser : null;
+        return view != null ? view.getTag().toString() : null;
     }
 
     public List<String> getFirstIds() {

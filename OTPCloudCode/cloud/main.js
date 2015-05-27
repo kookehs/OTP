@@ -1,5 +1,5 @@
 Parse.Cloud.define("findPotentialUsers", function(request, response) {
-  var otherUser = request.params.otherUser;
+  var otherId = request.params.otherId;
   var excludedIds = request.params.excludedIds;
   var limit = request.params.limit;
   var location = request.params.location;
@@ -7,20 +7,37 @@ Parse.Cloud.define("findPotentialUsers", function(request, response) {
   
   if(!limit || !location || !searchDistance)
     response.error("findPotentialUsers: Incorrect params given");
-    
-  var locationQuery = new Parse.Query(Parse.User);
-  locationQuery.limit(limit);
-  locationQuery.notContainedIn("objectId", excludedIds);
-  locationQuery.withinMiles("location", location, searchDistance);
+   
+  var otherCallback = function(origin) {
+    var query = new Parse.Query(Parse.User);
+      query.limit(limit);
+      query.notContainedIn("objectId", excludedIds);
+      query.withinMiles("location", origin, searchDistance);
 
-  locationQuery.find({
-      success: function(results) {
-          response.success(results)
+      query.find({
+          success: function(results) {
+            console.log("hay baby " + response);
+            response.success(results);
+          },
+          error: function(err) {
+            response.error("Found no user(s) within range: " + err);
+          }
+      });
+  }
+  
+  if(otherId) {
+    var otherQuery = new Parse.Query(Parse.User);
+    otherQuery.get(otherId, {
+      success: function(user) {
+        otherCallback(user.get("location"));
       },
-      error: function(err) {
-          response.error("Found no user(s) within range: " + err);
+      error: function(user, err) {
+        response.error("There was a problem getting the other user");
       }
-  });
+    });
+  } else {
+    otherCallback(location);
+  }
 });
 
 Parse.Cloud.afterSave("ParseMessage", function(request) {

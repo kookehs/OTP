@@ -123,7 +123,7 @@ public class EditProfileFragment extends Fragment {
         ageText.setText(PrettyTime.getAgeFromBirthDate(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE)) + "");
 
         // fill edit texts
-        final EditText aboutEditText = (EditText) rootview.findViewById(R.id.editText_about_me);
+        final EditText aboutEditText = (EditText) rootview.findViewById(R.id.about_edit_text);
         if(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT) != null) aboutEditText.setText(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT));
         aboutEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -134,7 +134,7 @@ public class EditProfileFragment extends Fragment {
                 return true;
             }
         });
-        final EditText wantEditText = (EditText) rootview.findViewById(R.id.editText_interested_in);
+        final EditText wantEditText = (EditText) rootview.findViewById(R.id.want_edit_text);
         if(user.getString(ProfileBuilder.PROFILE_KEY_WANT) != null) wantEditText.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT));
         wantEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override

@@ -37,6 +37,7 @@ public class ClientMatchActivity extends ActionBarActivity {
 
         // Set up toolbar and tabs
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.mipmap.ic_nav_up);
         setSupportActionBar(toolbar);
 
         mPagerAdapter = new ClientMatchPagerAdapter(this, getSupportFragmentManager(), otherId);

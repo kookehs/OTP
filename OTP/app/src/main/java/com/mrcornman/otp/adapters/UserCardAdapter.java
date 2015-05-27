@@ -66,7 +66,7 @@ public class UserCardAdapter extends BaseAdapter {
         }
 
         final ParseUser user = getItem(position);
-        cardView.bind(user);
+        cardView.setTag(user.getObjectId());
 
         // init views
 
