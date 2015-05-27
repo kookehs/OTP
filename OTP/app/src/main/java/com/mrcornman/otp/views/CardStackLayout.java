@@ -182,7 +182,6 @@ public class CardStackLayout extends RelativeLayout {
                             translationAnimation.addUpdateListener(onUpdate);
                             translationAnimation.start();
                         } else {
-                            Log.i("CardStackLayout", "boom");
                             card.flipCard();
                         }
                     } else {

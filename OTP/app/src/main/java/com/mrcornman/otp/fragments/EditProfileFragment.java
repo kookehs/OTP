@@ -52,6 +52,8 @@ public class EditProfileFragment extends Fragment {
 
     private ParseUser user;
 
+    private Target target;
+
     public static EditProfileFragment newInstance() {
         EditProfileFragment fragment = new EditProfileFragment();
         return fragment;
@@ -120,34 +122,33 @@ public class EditProfileFragment extends Fragment {
         nameText.setText(user.getString(ProfileBuilder.PROFILE_KEY_NAME));
         ageText.setText(PrettyTime.getAgeFromBirthDate(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE)) + "");
 
-        //set the text the user wants
-        final EditText aboutMe = (EditText) rootview.findViewById(R.id.editText_about_me);
-        if(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT) != null) aboutMe.setText(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT));
-        aboutMe.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        // fill edit texts
+        final EditText aboutEditText = (EditText) rootview.findViewById(R.id.editText_about_me);
+        if(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT) != null) aboutEditText.setText(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT));
+        aboutEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    String aboutMeText = aboutMe.getText().toString();
-                    aboutMe.clearFocus();
-                    user.put("about_me", aboutMeText);
-                    return true;
+                String editAboutStr = aboutEditText.getText().toString();
+                aboutEditText.clearFocus();
+                user.put(ProfileBuilder.PROFILE_KEY_ABOUT, editAboutStr);
+                return true;
             }
         });
-        final EditText interestedIn = (EditText) rootview.findViewById(R.id.editText_interested_in);
-        if(user.getString(ProfileBuilder.PROFILE_KEY_WANT) != null) interestedIn.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT));
-        interestedIn.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        final EditText wantEditText = (EditText) rootview.findViewById(R.id.editText_interested_in);
+        if(user.getString(ProfileBuilder.PROFILE_KEY_WANT) != null) wantEditText.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT));
+        wantEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    String interestedInText = interestedIn.getText().toString();
-                    Log.d("EditProfileFragment", interestedInText.length()+"");
-                    user.put("interested_in", interestedInText);
+                String editWantStr = wantEditText.getText().toString();
+                user.put(ProfileBuilder.PROFILE_KEY_WANT, editWantStr);
 
-                    //hide keyboard
+                //hide keyboard
                     /*InputMethodManager in = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 
                     in.hideSoftInputFromWindow(interestedIn
                                     .getApplicationWindowToken(),
                             InputMethodManager.HIDE_NOT_ALWAYS);*/
-                    return true;
+                return true;
             }
         });
 
@@ -187,17 +188,13 @@ public class EditProfileFragment extends Fragment {
             return;
         }
 
-
-        final ProgressBar pBar = pictureProgressBars[index];
-        pBar.setVisibility(View.VISIBLE);
+        final ProgressBar pictureProgress = pictureProgressBars[index];
+        pictureProgress.setVisibility(View.VISIBLE);
 
         final int mIndex = index;
         final String mUrl = url;
 
-        final List<PhotoFile> photoFiles = new ArrayList<PhotoFile>();
-
-        final Target target = new Target(){
-
+        target = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                 final Bitmap mBitmap = bitmap;
@@ -205,11 +202,14 @@ public class EditProfileFragment extends Fragment {
                 mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                 final byte[] imageBytes = stream.toByteArray();
 
+                final List<PhotoFile> photoFiles = new ArrayList<PhotoFile>();
+
                 final ParseFile imageFile = new ParseFile("prof_" + mIndex + ".jpg", imageBytes);
                 imageFile.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
                         if (e != null) {
+                            Log.e("EditProfileFragment", "There was a problem editing a picture: " + e.toString());
                             return;
                         }
 
@@ -236,7 +236,7 @@ public class EditProfileFragment extends Fragment {
                                 PhotoFile photoFile = photo.getPhotoFiles().get(0);
                                 if (getActivity() != null) {
                                     Picasso.with(getActivity()).load(photoFile.url).fit().centerCrop().into(pictureImages[mIndex]);
-                                    pBar.setVisibility(View.INVISIBLE);
+                                    pictureProgress.setVisibility(View.INVISIBLE);
                                 }
                             }
                         });

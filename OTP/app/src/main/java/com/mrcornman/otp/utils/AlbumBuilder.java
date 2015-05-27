@@ -78,7 +78,6 @@ public class AlbumBuilder {
                                 }
 
                                 if (numPhotos > 0) {
-
                                     PhotoFile coverPhoto = new PhotoFile();
                                     coverPhoto.height = firstPhotoImageObj.optInt("height");
                                     coverPhoto.width = firstPhotoImageObj.optInt("width");
@@ -88,13 +87,12 @@ public class AlbumBuilder {
 
                                     albumItems.add(0, meAlbum);
                                     albumsCount++;
-
+                                    Log.i("AlbumBuilder", "Got a new album (" + meAlbum.name + ") " + albumsCount + " / " + albumsThreshold);
                                     if (albumsCount >= albumsThreshold) {
                                         findAlbumsCallback.done(albumItems, null);
                                     }
                                 } else {
                                     albumsCount++;
-
                                     if (albumsCount >= albumsThreshold) {
                                         findAlbumsCallback.done(albumItems, null);
                                     }
@@ -120,7 +118,13 @@ public class AlbumBuilder {
                                     albumObj = albumsData.optJSONObject(i);
                                     int count = albumObj.optInt("count");
 
-                                    if(count == 0) continue;
+                                    if(count == 0) {
+                                        albumsCount++;
+                                        if (albumsCount >= albumsThreshold) {
+                                            findAlbumsCallback.done(albumItems, null);
+                                        }
+                                        continue;
+                                    }
 
                                     final AlbumItem albumItem = new AlbumItem();
 
@@ -147,8 +151,7 @@ public class AlbumBuilder {
 
                                             albumItems.add(albumItem);
                                             albumsCount++;
-
-                                            if(albumsCount >= albumsThreshold) {
+                                            if (albumsCount >= albumsThreshold) {
                                                 findAlbumsCallback.done(albumItems, null);
                                             }
                                         }
