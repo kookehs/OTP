@@ -1,9 +1,9 @@
-package com.mrcornman.otp.items.models;
+package com.mrcornman.otp.models.models;
 
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.mrcornman.otp.items.gson.PhotoFile;
+import com.mrcornman.otp.models.gson.PhotoFile;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 

@@ -166,7 +166,8 @@
                 android:hint="What should people know about you?"
                 android:inputType="textCapSentences|textAutoCorrect"
                 android:textSize="14sp"
-                android:textColor="@android:color/black"
+                android:ems="10"
+                android:textColor="@color/edit_text"
                 android:layout_marginRight="10dp"
                 android:background="@android:color/white"/>
 
@@ -177,7 +178,8 @@
                 android:hint="What are you looking for?"
                 android:inputType="textCapSentences|textAutoCorrect"
                 android:textSize="14sp"
-                android:textColor="@android:color/black"
+                android:ems="10"
+                android:textColor="@color/edit_text"
                 android:layout_marginRight="10dp"
                 android:background="@android:color/white"/>
 

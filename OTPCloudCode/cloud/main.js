@@ -10,19 +10,18 @@ Parse.Cloud.define("findPotentialUsers", function(request, response) {
    
   var otherCallback = function(origin) {
     var query = new Parse.Query(Parse.User);
-      query.limit(limit);
-      query.notContainedIn("objectId", excludedIds);
-      query.withinMiles("location", origin, searchDistance);
+    query.limit(limit);
+    query.notContainedIn("objectId", excludedIds);
+    query.withinMiles("location", origin, searchDistance);
 
-      query.find({
-          success: function(results) {
-            console.log("hay baby " + response);
-            response.success(results);
-          },
-          error: function(err) {
-            response.error("Found no user(s) within range: " + err);
-          }
-      });
+    query.find({
+      success: function(results) {
+        response.success(results);
+      },
+      error: function(err) {
+        response.error("Found no user(s) within range: " + err);
+      }
+    });
   }
   
   if(otherId) {
@@ -40,11 +39,90 @@ Parse.Cloud.define("findPotentialUsers", function(request, response) {
   }
 });
 
+Parse.Cloud.define("findClientMatches", function(request, response) {
+  var clientId = request.params.clientId;
+  var limit = request.params.limit;
+  
+  if(!clientId || !limit)
+    response.error("findClientMatches: Incorrect params given");
+    
+  var firstQuery = new Parse.Query("Match");
+  firstQuery.equalTo("first_id", clientId);
+  var secondQuery = new Parse.Query("Match");
+  secondQuery.equalTo("second_id", clientId);
+   
+  var query = new Parse.Query.or(firstQuery, secondQuery);
+  query.limit(limit);
+  query.descending("num_likes");
+
+  query.find({
+    success: function(results) {
+      response.success(results);
+    },
+    error: function(err) {
+      response.error("Problem finding client matches: " + err);
+    }
+  });
+});
+
+Parse.Cloud.define("findMakerMatches", function(request, response) {
+  var makerId = request.params.makerId;
+  var limit = request.params.limit;
+  
+  if(!makerId || !limit)
+    response.error("findMakerMatches: Incorrect params given");
+   
+  var query = new Parse.Query("Match");
+  query.limit(limit);
+  query.descending("num_likes");
+  query.equalTo("followers", makerId);
+
+  query.find({
+    success: function(results) {
+      response.success(results);
+    },
+    error: function(err) {
+      response.error("Problem finding matches: " + err);
+    }
+  });
+});
+
+Parse.Cloud.afterSave("Match", function(request) {
+  var firstId = request.object.get("first_id");
+  var secondId = request.object.get("second_id");
+  var followers = request.object.relation("followers");
+  if(!firstId || !secondId || !followers) {
+    console.log("Problem with Match afterSave!");
+    return;
+  }
+  console.log(followers);
+  
+  // send push notifications to followers of the match
+  var followerQuery = followers.query();
+  Parse.Push.send({
+    where: followerQuery,
+    data: {
+      title: "Match Activity",
+      alert: "Someone just liked your match!"
+    }
+  }, {
+    success: function() {
+      console.log("Match push for: " + firstId + " / " + secondId);
+    },
+    error: function(err) {
+      console.log(err);
+    }
+  });
+});
+
 Parse.Cloud.afterSave("ParseMessage", function(request) {
   var senderId = request.object.get("senderId");
   var recipientId = request.object.get("recipientId");
   var messageText = request.object.get("messageText");
-  if(!senderId || !recipientId || !messageText) return;
+  if(!senderId || !recipientId || !messageText) {
+    console.log("Problem with Match afterSave!");
+    return;
+  }
   
   // get the sender name, then send a push notification to recipient titled with the name
   var senderQuery = new Parse.Query(Parse.User);

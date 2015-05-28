@@ -19,8 +19,8 @@ import android.widget.Toast;
 
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.activities.PhotoSelectorActivity;
-import com.mrcornman.otp.items.gson.PhotoFile;
-import com.mrcornman.otp.items.models.PhotoItem;
+import com.mrcornman.otp.models.gson.PhotoFile;
+import com.mrcornman.otp.models.models.PhotoItem;
 import com.mrcornman.otp.utils.PrettyTime;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.parse.GetCallback;

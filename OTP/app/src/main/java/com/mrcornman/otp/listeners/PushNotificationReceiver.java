@@ -8,7 +8,7 @@ import android.net.Uri;
 
 import com.google.gson.Gson;
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.items.gson.PushData;
+import com.mrcornman.otp.models.gson.PushData;
 import com.parse.ParseAnalytics;
 import com.parse.ParsePushBroadcastReceiver;
 

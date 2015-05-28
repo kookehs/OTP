@@ -11,8 +11,8 @@
 
         <!--
         <include
-            android:id="@+id/toolbar"
-            layout="@layout/toolbar" />
+            android:id="@+id/toolbar_generic"
+            layout="@layout/toolbar_generic" />
 
         <com.astuetz.PagerSlidingTabStrip
             android:id="@+id/tabs"

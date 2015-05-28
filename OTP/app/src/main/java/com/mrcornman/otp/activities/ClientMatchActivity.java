@@ -35,7 +35,7 @@ public class ClientMatchActivity extends ActionBarActivity {
         Intent intent = getIntent();
         String otherId = intent.getStringExtra("other_id");
 
-        // Set up toolbar and tabs
+        // Set up toolbar_generic and tabs
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.mipmap.ic_nav_up);
         setSupportActionBar(toolbar);
@@ -52,7 +52,7 @@ public class ClientMatchActivity extends ActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
 
-        // populate toolbar with header about recipient
+        // populate toolbar_generic with header about recipient
         DatabaseHelper.getUserById(otherId, new GetCallback<ParseUser>() {
             @Override
             public void done(ParseUser parseUser, ParseException e) {

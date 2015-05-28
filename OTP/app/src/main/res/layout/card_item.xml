@@ -23,7 +23,6 @@
                 android:layout_height="match_parent"
                 android:scaleType="fitCenter"
                 android:id="@+id/picture"
-                android:src="@mipmap/picture_placeholder"
                 android:contentDescription="@string/content_missing_description" />
         </FrameLayout>
 
@@ -80,7 +79,6 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:id="@+id/picture_frame_0"
-                android:layout_centerInParent="true"
                 android:layout_weight="0.25" >
 
                 <ImageView
@@ -88,7 +86,6 @@
                     android:layout_height="match_parent"
                     android:scaleType="fitCenter"
                     android:id="@+id/picture_0"
-                    android:src="@mipmap/picture_placeholder"
                     android:contentDescription="@string/content_missing_description"
                     android:visibility="invisible" />
             </FrameLayout>
@@ -97,7 +94,6 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:id="@+id/picture_frame_1"
-                android:layout_centerInParent="true"
                 android:layout_weight="0.25" >
 
                 <ImageView
@@ -105,7 +101,6 @@
                     android:layout_height="match_parent"
                     android:scaleType="fitCenter"
                     android:id="@+id/picture_1"
-                    android:src="@mipmap/picture_placeholder"
                     android:visibility="invisible"
                     android:contentDescription="@string/content_missing_description" />
             </FrameLayout>
@@ -114,7 +109,6 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:id="@+id/picture_frame_2"
-                android:layout_centerInParent="true"
                 android:layout_weight="0.25" >
 
                 <ImageView
@@ -122,7 +116,6 @@
                     android:layout_height="match_parent"
                     android:scaleType="fitCenter"
                     android:id="@+id/picture_2"
-                    android:src="@mipmap/picture_placeholder"
                     android:visibility="invisible"
                     android:contentDescription="@string/content_missing_description" />
             </FrameLayout>
@@ -131,7 +124,6 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:id="@+id/picture_frame_3"
-                android:layout_centerInParent="true"
                 android:layout_weight="0.25" >
 
                 <ImageView
@@ -139,7 +131,6 @@
                     android:layout_height="match_parent"
                     android:scaleType="fitCenter"
                     android:id="@+id/picture_3"
-                    android:src="@mipmap/picture_placeholder"
                     android:visibility="invisible"
                     android:contentDescription="@string/content_missing_description" />
             </FrameLayout>

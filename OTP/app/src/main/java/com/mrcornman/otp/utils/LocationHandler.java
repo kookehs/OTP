@@ -15,6 +15,8 @@ import com.parse.ParseGeoPoint;
 
 public class LocationHandler {
 
+    private static final int MAX_METERS = 40;
+
     private static LocationManager locationManager;
     private static OnLocationReceivedListener onLocationReceivedListener;
 
@@ -23,7 +25,7 @@ public class LocationHandler {
      * @param context
      * @return
      */
-    public static Location getQuickLocation(Context context) {
+    public static ParseGeoPoint getQuickLocation(Context context) {
         locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
 
         String provider = null;
@@ -34,7 +36,18 @@ public class LocationHandler {
             provider = LocationManager.GPS_PROVIDER;
         }
 
-        return locationManager.getLastKnownLocation(provider);
+        Location location = locationManager.getLastKnownLocation(provider);
+        if (!location.hasAccuracy()) return null;
+        final float accuracy = location.getAccuracy();
+
+        if (accuracy <= MAX_METERS && accuracy != 0.0f) {
+            final double latitude = location.getLatitude();
+            final double longitude = location.getLongitude();
+
+            return new ParseGeoPoint(latitude, longitude);
+        }
+
+        return null;
     }
 
     public static void requestLocation(Context context, OnLocationReceivedListener receivedListener) {
@@ -57,7 +70,6 @@ public class LocationHandler {
 
         if (provider != null) {
             locationManager.requestLocationUpdates(provider, 1000, 0, new LocationListener() {
-                private static final int MAX_METERS = 40;
 
                 @Override
                 public void onLocationChanged(Location location) {

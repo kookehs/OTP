@@ -1,6 +1,6 @@
 package com.mrcornman.otp.models;
 
-import com.mrcornman.otp.items.gson.PhotoFile;
+import com.mrcornman.otp.models.gson.PhotoFile;
 
 /**
  * Created by Alisa on 5/14/2015.

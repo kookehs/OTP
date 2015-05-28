@@ -113,6 +113,13 @@ public class LoginActivity extends Activity {
     private void onSuccessfulLogin() {
         final ParseUser user = ParseUser.getCurrentUser();
 
+        ParseGeoPoint quickLocation = LocationHandler.getQuickLocation(getApplicationContext());
+
+        if (quickLocation != null) {
+            user.put(ProfileBuilder.PROFILE_KEY_LOCATION, quickLocation);
+            user.saveInBackground();
+        }
+
         LocationHandler.requestLocation(getApplicationContext(), new LocationHandler.OnLocationReceivedListener() {
             @Override
             public void done(ParseGeoPoint geoPoint, Exception e) {

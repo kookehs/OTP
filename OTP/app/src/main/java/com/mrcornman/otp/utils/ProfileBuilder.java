@@ -8,8 +8,8 @@ import android.os.Bundle;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.mrcornman.otp.items.gson.PhotoFile;
-import com.mrcornman.otp.items.models.PhotoItem;
+import com.mrcornman.otp.models.gson.PhotoFile;
+import com.mrcornman.otp.models.models.PhotoItem;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -41,6 +41,7 @@ public class ProfileBuilder {
     public final static String PROFILE_KEY_PHOTOS = "photos";
     public final static String PROFILE_KEY_ABOUT = "about";
     public final static String PROFILE_KEY_WANT = "want";
+    public final static String PROFILE_KEY_SCORE = "score";
 
     private final static String FACEBOOK_KEY_NAME = "first_name";
     private final static String FACEBOOK_KEY_GENDER = "gender";
@@ -79,6 +80,9 @@ public class ProfileBuilder {
                             buildCallback.done(null, response.getError());
                             return;
                         }
+
+                        // init non-facebook vars
+                        user.put(PROFILE_KEY_SCORE, 0);
 
                         /*
                          * Name

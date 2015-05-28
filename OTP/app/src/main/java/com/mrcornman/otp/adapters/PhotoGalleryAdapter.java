@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.items.gson.PhotoFile;
+import com.mrcornman.otp.models.gson.PhotoFile;
 import com.mrcornman.otp.views.SquareImageView;
 import com.squareup.picasso.Picasso;
 

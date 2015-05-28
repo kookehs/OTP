@@ -96,9 +96,9 @@ public class CardStackLayout extends RelativeLayout {
         return draggedCard;
     }
 
-    public CardView getTopCard() { return mCards.size() > 0 ? mCards.get(mCurrentPosition) : null; }
+    public CardView getTopCard() { return mCards.size() > mCurrentPosition ? mCards.get(mCurrentPosition) : null; }
     private boolean isTopCard(CardView card) {
-        return mCards.size() > 0 ? card == mCards.get(mCurrentPosition) : false;
+        return mCards.size() > mCurrentPosition && card == mCards.get(mCurrentPosition);
     }
 
     public void setCardStackListener(CardStackListener mCardStackListener) {

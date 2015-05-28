@@ -14,8 +14,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.items.gson.PhotoFile;
-import com.mrcornman.otp.items.models.PhotoItem;
+import com.mrcornman.otp.models.gson.PhotoFile;
+import com.mrcornman.otp.models.models.PhotoItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.mrcornman.otp.utils.PrettyTime;
 import com.mrcornman.otp.utils.ProfileBuilder;

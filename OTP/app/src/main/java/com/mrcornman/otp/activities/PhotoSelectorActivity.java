@@ -34,7 +34,7 @@ public class PhotoSelectorActivity extends ActionBarActivity implements Fragment
         Intent intent = getIntent();
         slotIndex = intent.getIntExtra("slot_index", -1);
 
-        // Set up toolbar and tabs
+        // Set up toolbar_generic and tabs
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.mipmap.ic_nav_up);
         setSupportActionBar(toolbar);
@@ -52,6 +52,10 @@ public class PhotoSelectorActivity extends ActionBarActivity implements Fragment
         int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
         if(backStackCount == 0)
             NavUtils.navigateUpFromSameTask(this);
+        else {
+            currPageIndex = backStackCount - 1;
+            updateTitle();
+        }
     }
 
     @Override

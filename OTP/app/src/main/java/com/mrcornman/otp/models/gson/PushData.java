@@ -1,4 +1,4 @@
-package com.mrcornman.otp.items.gson;
+package com.mrcornman.otp.models.gson;
 
 import com.google.gson.annotations.SerializedName;
 

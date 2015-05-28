@@ -7,7 +7,7 @@ import android.util.Log;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.mrcornman.otp.items.gson.PhotoFile;
+import com.mrcornman.otp.models.gson.PhotoFile;
 import com.mrcornman.otp.models.AlbumItem;
 
 import org.json.JSONArray;

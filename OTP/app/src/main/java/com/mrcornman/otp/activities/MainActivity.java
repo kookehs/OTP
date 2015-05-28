@@ -11,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
@@ -20,8 +21,9 @@ import com.mrcornman.otp.fragments.ClientListFragment;
 import com.mrcornman.otp.fragments.GameFragment;
 import com.mrcornman.otp.fragments.MakerListFragment;
 import com.mrcornman.otp.fragments.NavFragment;
-import com.mrcornman.otp.models.AlbumItem;
 import com.mrcornman.otp.services.MessageService;
+import com.mrcornman.otp.utils.ProfileBuilder;
+import com.parse.ParseUser;
 
 public class MainActivity extends ActionBarActivity implements NavFragment.NavigationDrawerCallbacks,
         GameFragment.OnGameInteractionListener, ClientListFragment.OnClientListInteractionListener, MakerListFragment.OnMakerListInteractionListener {
@@ -42,6 +44,8 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
     private MainPagerAdapter mPagerAdapter;
     private ViewPager mViewPager;
 
+    private TextView scoreText;
+
     private CharSequence mTitle;
 
     @Override
@@ -51,12 +55,14 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
 
         mTitle = getTitle();
 
-        // Set up toolbar and tabs
+        // Set up toolbar_generic and tabs
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.mipmap.ic_drawer);
+        scoreText = (TextView) findViewById(R.id.score_text);
+        scoreText.setText(ParseUser.getCurrentUser().getInt(ProfileBuilder.PROFILE_KEY_SCORE) + "");
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(mTitle);
+        actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
 

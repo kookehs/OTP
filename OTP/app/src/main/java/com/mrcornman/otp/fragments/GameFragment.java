@@ -18,15 +18,12 @@ import com.mrcornman.otp.utils.ProfileBuilder;
 import com.mrcornman.otp.views.CardStackLayout;
 import com.mrcornman.otp.views.CardView;
 import com.parse.FunctionCallback;
-import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class GameFragment extends Fragment {
@@ -88,22 +85,10 @@ public class GameFragment extends Fragment {
 
             @Override
             public void onChoiceAccepted() {
-                /*
-                SingleUserView item = (SingleUserView) beingDragged;
-                item.onChoiceMade(choice, beingDragged);
-                //todo: handle what to do after the choice is made.
-                if (choice) {
-                    db.updateNumLikes(item.userItem, db.VALUE_LIKED);
-                } else {
-                    db.updateNumLikes(item.userItem, db.VALUE_DISLIKED);
-                }
-                Log.d("game fragment", "updated the choice made " + String.valueOf(choice) + " " + item.userItem.getName());
-                */
                 onCreateMatch();
 
                 if(!mCardStackLayoutFirst.hasMoreItems()) {
-                    firstProgress.setVisibility(View.VISIBLE);
-                    refreshFirst();
+                    refreshFirstStack();
                 }
             }
         });
@@ -128,8 +113,7 @@ public class GameFragment extends Fragment {
                 onCreateMatch();
 
                 if(!mCardStackLayoutSecond.hasMoreItems()) {
-                    secondProgress.setVisibility(View.VISIBLE);
-                    refreshSecond();
+                    refreshSecondStack();
                 }
             }
         });
@@ -143,15 +127,7 @@ public class GameFragment extends Fragment {
         mUserCardAdapterSecond = new UserCardAdapter(getActivity().getApplicationContext());
         mCardStackLayoutSecond.setAdapter(mUserCardAdapterSecond);
 
-        refreshFirst(new RefreshCallback() {
-            @Override
-            public void done() {
-                refreshSecond();
-            }
-        });
-
-        firstProgress.setVisibility(View.VISIBLE);
-        secondProgress.setVisibility(View.VISIBLE);
+        initStacks();
 
         return view;
     }
@@ -164,7 +140,7 @@ public class GameFragment extends Fragment {
             onGameInteractionListener = (OnGameInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnClientListInteractionListener");
+                    + " must implement OnGameInteractionListener");
         }
     }
 
@@ -181,37 +157,70 @@ public class GameFragment extends Fragment {
     private void onCreateMatch() {
         if(potentialFirstId.equals("") || potentialSecondId.equals("")) return;
 
-        if(potentialFirstId != potentialSecondId) {
+        if(!potentialFirstId.equals(potentialSecondId)) {
             DatabaseHelper.insertMatchByPair(ParseUser.getCurrentUser().getObjectId(), potentialFirstId, potentialSecondId);
-
             onGameInteractionListener.onCreateMatch();
         }
 
         clearPotentialMatch();
     }
 
-    private void refreshFirst() {
-        refreshFirst(null);
+    private void initStacks() {
+        firstProgress.setVisibility(View.VISIBLE);
+        secondProgress.setVisibility(View.VISIBLE);
+
+        ParseUser user = ParseUser.getCurrentUser();
+        ParseGeoPoint location = user.getParseGeoPoint(ProfileBuilder.PROFILE_KEY_LOCATION);
+        List<String> excludedIds = new ArrayList<>();
+        excludedIds.add(user.getObjectId());
+
+        DatabaseHelper.findPotentialUsers(null, excludedIds, location, 10, 50, new FunctionCallback<List<ParseUser>>() {
+            @Override
+            public void done(List<ParseUser> parseUsers, ParseException e) {
+                if (e == null) {
+                    // must be at last 2 parse users for a potential match
+                    // we split the list in half and give each stack an equal share of users
+                    if (parseUsers != null && parseUsers.size() > 1) {
+                        int listSize = parseUsers.size();
+                        int halfSize = listSize / 2;
+
+                        List<ParseUser> firstList = parseUsers.subList(0, halfSize);
+                        mUserCardAdapterFirst.setUsers(firstList);
+                        mCardStackLayoutFirst.refreshStack();
+
+                        List<ParseUser> secondList = parseUsers.subList(halfSize, listSize);
+                        mUserCardAdapterSecond.setUsers(secondList);
+                        mCardStackLayoutSecond.refreshStack();
+                    } else {
+                        Toast.makeText(getActivity(), "We're out of users to show you for now. Try again soon!", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Toast.makeText(getActivity(), "Sorry, there was a problem loading users: " + e.toString(), Toast.LENGTH_LONG).show();
+                }
+
+                firstProgress.setVisibility(View.INVISIBLE);
+                secondProgress.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 
-    private void refreshFirst(RefreshCallback callback) {
-        final RefreshCallback mCallback = callback;
+    private void refreshFirstStack() {
+        firstProgress.setVisibility(View.VISIBLE);
 
         ParseUser user = ParseUser.getCurrentUser();
         ParseGeoPoint location = user.getParseGeoPoint(ProfileBuilder.PROFILE_KEY_LOCATION);
         List<String> excludedIds = getSecondIds();
         excludedIds.add(user.getObjectId());
 
-        findPotentialUsers(getCurrentSecondId(), excludedIds, location, new FunctionCallback<List<ParseUser>>() {
+        DatabaseHelper.findPotentialUsers(getCurrentSecondId(), excludedIds, location, 10, 50, new FunctionCallback<List<ParseUser>>() {
             @Override
             public void done(List<ParseUser> parseUsers, ParseException e) {
                 if (e == null) {
-                    if(parseUsers != null && parseUsers.size() > 0) {
+                    if (parseUsers != null && parseUsers.size() > 0) {
                         mUserCardAdapterFirst.setUsers(parseUsers);
                         mCardStackLayoutFirst.refreshStack();
-                        if (mCallback != null) mCallback.done();
                     } else {
-                        Toast.makeText(getActivity(), "No users detected in the immediate area.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "We're out of users to show you for now. Try again soon!", Toast.LENGTH_LONG).show();
                     }
                 } else {
                     Toast.makeText(getActivity(), "Sorry, there was a problem loading users: " + e.toString(), Toast.LENGTH_LONG).show();
@@ -222,26 +231,21 @@ public class GameFragment extends Fragment {
         });
     }
 
-    private void refreshSecond() {
-        refreshSecond(null);
-    }
-
-    private void refreshSecond(RefreshCallback callback) {
-        final RefreshCallback mCallback = callback;
+    private void refreshSecondStack() {
+        secondProgress.setVisibility(View.VISIBLE);
 
         ParseUser user = ParseUser.getCurrentUser();
         ParseGeoPoint location = user.getParseGeoPoint(ProfileBuilder.PROFILE_KEY_LOCATION);
         List<String> excludedIds = getFirstIds();
         excludedIds.add(user.getObjectId());
 
-        findPotentialUsers(getCurrentFirstId(), excludedIds, location, new FunctionCallback<List<ParseUser>>() {
+        DatabaseHelper.findPotentialUsers(getCurrentFirstId(), excludedIds, location, 10, 50, new FunctionCallback<List<ParseUser>>() {
             @Override
             public void done(List<ParseUser> parseUsers, ParseException e) {
                 if (e == null) {
-                    if(parseUsers != null && parseUsers.size() > 0) {
+                    if (parseUsers != null && parseUsers.size() > 0) {
                         mUserCardAdapterSecond.setUsers(parseUsers);
                         mCardStackLayoutSecond.refreshStack();
-                        if (mCallback != null) mCallback.done();
                     } else {
                         Toast.makeText(getActivity(), "We're out of users to show you for now. Try again soon!", Toast.LENGTH_LONG).show();
                     }
@@ -252,17 +256,6 @@ public class GameFragment extends Fragment {
                 secondProgress.setVisibility(View.INVISIBLE);
             }
         });
-    }
-
-    private void findPotentialUsers(String otherId, List<String> excludedIds, ParseGeoPoint location, FunctionCallback<List<ParseUser>> callback) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("otherId", otherId);
-        params.put("excludedIds", excludedIds);
-        params.put("location", location);
-        params.put("searchDistance", 50 + "");
-        params.put("limit", 20 + "");
-
-        ParseCloud.callFunctionInBackground("findPotentialUsers", params, callback);
     }
 
     public String getCurrentFirstId() {
@@ -295,9 +288,5 @@ public class GameFragment extends Fragment {
 
     public interface OnGameInteractionListener {
         void onCreateMatch();
-    }
-
-    private interface RefreshCallback {
-        void done();
     }
 }

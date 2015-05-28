@@ -19,9 +19,9 @@ import android.widget.TextView;
 
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.adapters.NavAdapter;
-import com.mrcornman.otp.items.NavItem;
-import com.mrcornman.otp.items.gson.PhotoFile;
-import com.mrcornman.otp.items.models.PhotoItem;
+import com.mrcornman.otp.models.NavItem;
+import com.mrcornman.otp.models.gson.PhotoFile;
+import com.mrcornman.otp.models.models.PhotoItem;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.parse.GetCallback;
 import com.parse.ParseException;

@@ -9,10 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.adapters.PhotoGalleryAdapter;
-import com.mrcornman.otp.items.gson.PhotoFile;
+import com.mrcornman.otp.models.gson.PhotoFile;
 import com.mrcornman.otp.utils.AlbumBuilder;
 
 import java.util.List;
@@ -44,13 +45,13 @@ public class PhotoGalleryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View rootview = inflater.inflate(R.layout.fragment_photo_gallery, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_photo_gallery, container, false);
 
-        if(getArguments() == null) return rootview;
+        if(getArguments() == null) return rootView;
 
         String albumId = getArguments().getString(KEY_ALBUM_ID);
 
-        GridView gridView = (GridView) rootview.findViewById(R.id.grid_view);
+        GridView gridView = (GridView) rootView.findViewById(R.id.grid_view);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -63,6 +64,9 @@ public class PhotoGalleryFragment extends Fragment {
         aa = new PhotoGalleryAdapter(getActivity());
         gridView.setAdapter(aa);
 
+        final ProgressBar photoGalleryProgress = (ProgressBar) rootView.findViewById(R.id.photo_gallery_progress);
+        photoGalleryProgress.setVisibility(View.VISIBLE);
+
         AlbumBuilder.findCurrentPhotosFromAlbum(albumId, new AlbumBuilder.FindPhotosCallback() {
             @Override
             public void done(List<PhotoFile> photoFiles, Object err) {
@@ -72,10 +76,11 @@ public class PhotoGalleryFragment extends Fragment {
                 }
 
                 aa.setPhotoFileItems(photoFiles);
+                photoGalleryProgress.setVisibility(View.INVISIBLE);
             }
         });
 
-        return rootview;
+        return rootView;
     }
 
     @Override

@@ -23,6 +23,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/complete_profile_want_title"
                 android:id="@+id/complete_profile_title"
+                android:textColor="@color/very_dark_gray"
                 android:textAlignment="center"
                 android:singleLine="true"
                 android:layout_gravity="center"
@@ -36,6 +37,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/complete_profile_want_sub"
                 android:id="@+id/complete_profile_sub"
+                android:textColor="@color/very_dark_gray"
                 android:textAlignment="center"
                 android:singleLine="false"
                 android:layout_gravity="center"
@@ -56,6 +58,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="textCapSentences|textMultiLine"
                 android:ems="10"
+                android:textColor="@color/edit_text"
                 android:id="@+id/want_text_value"
                 android:hint="Write about what you&apos;re looking for" />
         </FrameLayout>
