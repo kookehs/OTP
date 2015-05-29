@@ -114,7 +114,7 @@
         </receiver>
         <!-- TODO: If subclassing ParsePushBroadcastReceiver change class name here too -->
         <receiver
-            android:name="com.parse.ParsePushBroadcastReceiver"
+            android:name="com.mrcornman.otp.listeners.PushNotificationReceiver"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.parse.push.intent.RECEIVE" />

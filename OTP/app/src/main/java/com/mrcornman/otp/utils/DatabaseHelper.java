@@ -2,7 +2,7 @@ package com.mrcornman.otp.utils;
 
 import android.util.Log;
 
-import com.mrcornman.otp.models.MatchItem;
+import com.mrcornman.otp.items.models.MatchItem;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -20,7 +20,7 @@ public class DatabaseHelper {
 
     private DatabaseHelper() {}
 
-    public static void insertMatchByPair(final String firstId, final String secondId) {
+    public static void insertMatchByPair(final String makerId, final String firstId, final String secondId) {
 
         Log.i("DatabaseHelper", "Attempting to match " + firstId + " : " + secondId);
         // TODO: Possibly make it update on insert match instead of doing a costly check beforehand
@@ -29,6 +29,7 @@ public class DatabaseHelper {
             public void done(MatchItem matchItem, ParseException e) {
                 if (matchItem == null) {
                     matchItem = new MatchItem();
+                    matchItem.setMakerId(makerId);
                     matchItem.setFirstId(firstId);
                     matchItem.setSecondId(secondId);
                     matchItem.setNumLikes(1);

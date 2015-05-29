@@ -14,8 +14,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.models.PhotoFile;
-import com.mrcornman.otp.models.PhotoItem;
+import com.mrcornman.otp.items.gson.PhotoFileItem;
+import com.mrcornman.otp.items.models.PhotoItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.mrcornman.otp.utils.PrettyTime;
 import com.mrcornman.otp.utils.ProfileBuilder;
@@ -89,7 +89,7 @@ public class ThemProfileFragment extends Fragment {
                     mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
                         @Override
                         public void done(PhotoItem photoItem, ParseException e) {
-                            PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
+                            PhotoFileItem mainFile = photoItem.getPhotoFiles().get(0);
                             if (getActivity() != null)
                                 Picasso.with(getActivity().getApplicationContext()).load(mainFile.url).fit().centerCrop().into(pictureImage);
                         }

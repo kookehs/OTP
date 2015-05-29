@@ -12,7 +12,7 @@ import android.widget.ListView;
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.adapters.MakerMatchAdapter;
 import com.mrcornman.otp.listeners.OnRefreshListener;
-import com.mrcornman.otp.models.MatchItem;
+import com.mrcornman.otp.items.models.MatchItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.parse.FindCallback;
 import com.parse.ParseException;
