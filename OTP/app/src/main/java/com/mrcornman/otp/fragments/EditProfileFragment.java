@@ -1,16 +1,17 @@
 package com.mrcornman.otp.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -19,8 +20,8 @@ import android.widget.Toast;
 
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.activities.PhotoSelectorActivity;
-import com.mrcornman.otp.models.PhotoFile;
-import com.mrcornman.otp.models.PhotoItem;
+import com.mrcornman.otp.items.gson.PhotoFile;
+import com.mrcornman.otp.items.models.PhotoItem;
 import com.mrcornman.otp.utils.PrettyTime;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.parse.GetCallback;
@@ -53,19 +54,7 @@ public class EditProfileFragment extends Fragment {
     private ParseUser user;
 
     public static EditProfileFragment newInstance() {
-        return newInstance(-1, null);
-    }
-
-    public static EditProfileFragment newInstance(int index, String url) {
         EditProfileFragment fragment = new EditProfileFragment();
-
-        if(index >= 0) {
-            Bundle arguments = new Bundle();
-            arguments.putInt(KEY_INDEX, index);
-            arguments.putString(KEY_URL, url);
-            fragment.setArguments(arguments);
-        }
-
         return fragment;
     }
 
@@ -73,7 +62,7 @@ public class EditProfileFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View rootview = inflater.inflate(R.layout.fragment_edit_profile, container, false);
 
@@ -122,6 +111,8 @@ public class EditProfileFragment extends Fragment {
                     });
                 }
             }
+        } else {
+            Toast.makeText(getActivity(), "Your account has become corrupted. Please contact us for assistance.", Toast.LENGTH_LONG).show();
         }
 
         TextView nameText = (TextView) rootview.findViewById(R.id.name_text);
@@ -133,30 +124,38 @@ public class EditProfileFragment extends Fragment {
         //set the text the user wants
         final EditText aboutMe = (EditText) rootview.findViewById(R.id.editText_about_me);
         if(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT) != null) aboutMe.setText(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT));
-        aboutMe.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        aboutMe.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
                     String aboutMeText = aboutMe.getText().toString();
-                    aboutMe.clearFocus();
-                    user.put("about_me", aboutMeText);
-                    return true;
-            }
-        });
-        final EditText want = (EditText) rootview.findViewById(R.id.editText_want);
-        if(user.getString(ProfileBuilder.PROFILE_KEY_WANT) != null) want.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT));
-        want.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    String wantText = want.getText().toString();
-                    user.put("want", wantText);
+                    user.put(ProfileBuilder.PROFILE_KEY_ABOUT, aboutMeText);
 
                     //hide keyboard
-                    /*InputMethodManager in = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager in = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                    in.hideSoftInputFromWindow(aboutMe
+                                    .getApplicationWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+            }
+        });
+        final EditText interestedIn = (EditText) rootview.findViewById(R.id.editText_want);
+        if(user.getString(ProfileBuilder.PROFILE_KEY_WANT) != null) interestedIn.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT));
+        interestedIn.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    String interestedInText = interestedIn.getText().toString();
+                    user.put(ProfileBuilder.PROFILE_KEY_WANT, interestedInText);
+
+                    //hide keyboard
+                    InputMethodManager in = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
                     in.hideSoftInputFromWindow(interestedIn
                                     .getApplicationWindowToken(),
-                            InputMethodManager.HIDE_NOT_ALWAYS);*/
-                    return true;
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                }
             }
         });
 
@@ -164,7 +163,7 @@ public class EditProfileFragment extends Fragment {
     }
 
     @Override
-     public void onAttach(Activity activity) {
+    public void onAttach(Activity activity) {
         super.onAttach(activity);
 
         try {
