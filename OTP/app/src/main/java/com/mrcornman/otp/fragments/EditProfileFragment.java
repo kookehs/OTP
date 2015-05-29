@@ -121,7 +121,7 @@ public class EditProfileFragment extends Fragment {
         ageText.setText(PrettyTime.getAgeFromBirthDate(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE)) + "");
 
         //set the text the user wants
-        final EditText aboutMe = (EditText) rootview.findViewById(R.id.editText_about_me);
+        final EditText aboutMe = (EditText) rootview.findViewById(R.id.about_edit_text);
         if(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT) != null) aboutMe.setText(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT));
         aboutMe.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -139,7 +139,7 @@ public class EditProfileFragment extends Fragment {
                 }
             }
         });
-        final EditText interestedIn = (EditText) rootview.findViewById(R.id.editText_want);
+        final EditText interestedIn = (EditText) rootview.findViewById(R.id.want_edit_text);
         if(user.getString(ProfileBuilder.PROFILE_KEY_WANT) != null) interestedIn.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT));
         interestedIn.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override

@@ -17,8 +17,8 @@
             android:id="@+id/tableLayout">
 
             <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -27,8 +27,8 @@
                     android:layout_column="0">
 
                     <com.mrcornman.otp.views.SquareImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:id="@+id/picture_image_0"
                         android:contentDescription="@string/content_missing_description"
                         android:src="@drawable/com_facebook_profile_picture_blank_portrait"
@@ -51,8 +51,8 @@
                     android:layout_column="1">
 
                     <com.mrcornman.otp.views.SquareImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:id="@+id/picture_image_1"
                         android:contentDescription="@string/content_missing_description"
                         android:src="@drawable/com_facebook_profile_picture_blank_portrait" />
@@ -69,8 +69,8 @@
             </TableRow>
 
             <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -79,8 +79,8 @@
                     android:layout_column="0">
 
                     <com.mrcornman.otp.views.SquareImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:id="@+id/picture_image_2"
                         android:contentDescription="@string/content_missing_description"
                         android:src="@drawable/com_facebook_profile_picture_blank_portrait"/>
@@ -102,8 +102,8 @@
                     android:layout_column="1" >
 
                     <com.mrcornman.otp.views.SquareImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:id="@+id/picture_image_3"
                         android:contentDescription="@string/content_missing_description"
                         android:src="@drawable/com_facebook_profile_picture_blank_portrait"/>
@@ -154,48 +154,62 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:id="@+id/editText_container">
+            android:id="@+id/editText_container"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Ability"
                 android:id="@+id/about_me__text"
                 android:layout_gravity="bottom"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:paddingTop="40dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:paddingLeft="8dp"
+                android:layout_centerVertical="true" />
 
             <EditText
-                android:id="@+id/editText_about_me"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:layout_gravity="bottom"
-                android:inputType="text"
-                android:hint="t"
+                android:id="@+id/about_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="What should people know about you?"
+                android:inputType="textCapSentences|textAutoCorrect"
+                android:textSize="14sp"
+                android:ems="10"
+                android:textColor="@color/edit_text"
+                android:layout_marginRight="10dp"
+                android:paddingLeft="8dp"
                 android:maxLength="140"
-                android:imeActionId="@+id/EditorInfo.IME_ACTION_DONE"
-                android:singleLine="false"
-                android:imeOptions="actionDone"/>
+                android:background="@android:color/white"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Interested In"
                 android:id="@+id/want_text"
                 android:layout_gravity="bottom"
                 android:singleLine="true"
-                android:paddingTop="40dp" />
+                android:paddingTop="40dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:paddingLeft="8dp"
+                android:layout_centerVertical="true"/>
 
             <EditText
-                android:id="@+id/editText_want"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:inputType="text"
-                android:hint="y"
-                android:maxLength="140"/>
+                android:id="@+id/want_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="What are you looking for?"
+                android:inputType="textCapSentences|textAutoCorrect"
+                android:textSize="14sp"
+                android:maxLength="140"
+                android:singleLine="false"
+                android:ems="10"
+                android:textColor="@color/edit_text"
+                android:layout_marginRight="10dp"
+                android:paddingLeft="8dp"
+                android:background="@android:color/white"/>
 
         </LinearLayout>
 
