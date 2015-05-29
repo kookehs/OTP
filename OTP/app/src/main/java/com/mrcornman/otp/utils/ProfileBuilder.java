@@ -51,6 +51,8 @@ public class ProfileBuilder {
     public final static String FACEBOOK_KEY_ALBUMS = "albums";
     public final static String FACEBOOK_KEY_PHOTOS = "photos";
 
+    private final static int REQUEST_MAX_NUM_PHOTOS = 100;
+
     private static Target[] targets;
 
     private static boolean userImagesFailed = false;
@@ -365,7 +367,7 @@ public class ProfileBuilder {
                 });
 
         Bundle parameters = new Bundle();
-        String fieldParamsStr = FACEBOOK_KEY_PHOTOS;
+        String fieldParamsStr = FACEBOOK_KEY_PHOTOS + ".limit(" + REQUEST_MAX_NUM_PHOTOS + ")";
         parameters.putString("fields", fieldParamsStr);
         meRequest.setParameters(parameters);
         meRequest.executeAsync();
@@ -410,6 +412,9 @@ public class ProfileBuilder {
             }
         });
 
+        Bundle parameters = new Bundle();
+        parameters.putInt("limit", REQUEST_MAX_NUM_PHOTOS);
+        photoRequest.setParameters(parameters);
         photoRequest.executeAsync();
     }
 

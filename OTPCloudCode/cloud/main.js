@@ -99,17 +99,31 @@ Parse.Cloud.afterSave("Match", function(request) {
   
   // send push notifications to followers of the match
   var followerQuery = followers.query();
-  Parse.Push.send({
-    where: followerQuery,
-    data: {
-      title: "Match Activity",
-      alert: "Someone just liked your match!"
-    }
-  }, {
-    success: function() {
-      console.log("Match push for: " + firstId + " / " + secondId);
+  followerQuery.find({
+    success: function(results) {
+      var resultIds = [];
+      var resultId = "";
+      for(var i = 0, il = results.length; i < il; i++) {
+        resultIds.push(results[i].id);
+      }
+      var pushQuery = new Parse.Query(Parse.Installation);
+      pushQuery.containedIn('userId', resultIds);
+      Parse.Push.send({
+        where: pushQuery,
+        data: {
+          title: "More likes!",
+          alert: "Someone just liked your seed!"
+        }
+      }, {
+        success: function() {
+          console.log("Match push to " + resultIds.length + " makers: " + resultIds);
+        },
+        error: function(err) {
+          console.log(err);
+        }
+      });
     },
-    error: function(err) {
+    error : function(err) {
       console.log(err);
     }
   });
