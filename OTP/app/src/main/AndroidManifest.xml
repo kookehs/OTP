@@ -76,14 +76,14 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activities.ClientMatchActivity"
-            android:label="Client Match"
+            android:label="Seed"
             android:launchMode="singleTask"
             android:parentActivityName=".activities.MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activities.MakerMatchActivity"
-            android:label="Maker Match"
+            android:label="Seed Stats"
             android:launchMode="singleTask"
             android:parentActivityName=".activities.MainActivity"
             android:screenOrientation="portrait"
@@ -97,7 +97,7 @@
         <activity
             android:name=".activities.ProfileActivity"
             android:launchMode="singleTop"
-            android:label="Profile Activity"
+            android:label="Profile"
             android:parentActivityName=".activities.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.BaseTheme"
@@ -105,11 +105,27 @@
         <activity
             android:name=".activities.PhotoSelectorActivity"
             android:launchMode="singleTop"
-            android:label="Photo Selector Activity"
+            android:label="Photo Selector"
             android:parentActivityName=".activities.ProfileActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.BaseTheme"
             android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:launchMode="singleTop"
+            android:label="Settings"
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.BaseTheme" >
+        </activity>
+        <activity
+            android:name=".activities.UserPrefsActivity"
+            android:launchMode="singleTop"
+            android:label="User Prefs"
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.BaseTheme" >
+        </activity>
 
         <!-- Push Notifications -->
         <service android:name="com.parse.PushService" />
@@ -144,11 +160,6 @@
         <meta-data
             android:name="com.parse.push.notification_icon"
             android:resource="@mipmap/ic_launcher" />
-
-        <activity
-            android:name=".activities.SettingsActivity"
-            android:label="@string/title_activity_settings" >
-        </activity>
     </application>
 
 </manifest>

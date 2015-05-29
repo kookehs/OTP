@@ -15,8 +15,8 @@
 
     <!--Main Action Bar-->
     <string name="action_game">Game</string>
-    <string name="action_client">Matches</string>
-    <string name="action_maker">Seeds</string>
+    <string name="action_client">Seeds</string>
+    <string name="action_maker">Sprouts</string>
 
     <!--Client Match Action Bar-->
     <string name="action_messaging">Messages</string>
@@ -51,5 +51,20 @@
 
     <string name="complete_profile_want_title">Tell us about what you want.</string>
     <string name="complete_profile_want_sub">Now that you\'ve hopefully explored a bit about yourself, let\'s turn the tables around. Tell us about what you\'re looking for. It\'s okay if your description isn\'t spectacular, just give people something to work with. After this you\'re done!</string>
+
+    <!--Settings-->
+    <string name="settings_notifications_section_title">Notifications</string>
+    <string name="settings_notifications_messages_checkbox_title">Messaged</string>
+    <string name="settings_notifications_new_match_checkbox_title">Newly Seeded</string>
+    <string name="settings_notifications_match_liked_checkbox_title">Seed Liked</string>
+
+    <string name="settings_distance_units_section_title">Distance Units</string>
+
+    <string name="settings_misc_section_title">Misc</string>
+    <string name="settings_misc_item_title_sex">Check us out!</string>
+
+    <!--User Prefs-->
+    <string name="user_prefs_age_range">Age Range</string>
+    <string name="user_prefs_search_distance">Search Distance</string>
 
 </resources>
