@@ -11,11 +11,12 @@ import android.widget.ListView;
 
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.adapters.ClientMatchAdapter;
+import com.mrcornman.otp.models.models.MatchItem;
 import com.mrcornman.otp.listeners.OnRefreshListener;
-import com.mrcornman.otp.items.models.MatchItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
-import com.parse.FindCallback;
+import com.parse.FunctionCallback;
 import com.parse.ParseException;
+import com.parse.ParseUser;
 
 import java.util.List;
 
@@ -86,13 +87,13 @@ public class ClientListFragment extends Fragment implements OnRefreshListener {
     }
 
     public void refreshList() {
-        DatabaseHelper.findTopMatches(20, new FindCallback<MatchItem>() {
+        DatabaseHelper.findClientMatches(ParseUser.getCurrentUser().getObjectId(), 20, new FunctionCallback<List<MatchItem>>() {
             @Override
-            public void done(List<MatchItem> list, ParseException e) {
+            public void done(List<MatchItem> matchItems, ParseException e) {
                 if(e == null) {
                     clientMatchAdapter.clearMatches();
 
-                    for (MatchItem match : list) {
+                    for (MatchItem match : matchItems) {
                         clientMatchAdapter.addMatch(match);
                     }
                 }

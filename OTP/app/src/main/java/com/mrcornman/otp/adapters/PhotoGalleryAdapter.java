@@ -5,12 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.models.AlbumItem;
-import com.mrcornman.otp.models.PhotoFile;
+import com.mrcornman.otp.models.gson.PhotoFile;
 import com.mrcornman.otp.views.SquareImageView;
 import com.squareup.picasso.Picasso;
 

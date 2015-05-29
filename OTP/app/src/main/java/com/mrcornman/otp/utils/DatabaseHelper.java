@@ -2,16 +2,21 @@ package com.mrcornman.otp.utils;
 
 import android.util.Log;
 
-import com.mrcornman.otp.items.models.MatchItem;
+import com.mrcornman.otp.models.models.MatchItem;
 import com.parse.FindCallback;
+import com.parse.FunctionCallback;
 import com.parse.GetCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
-import com.parse.ParseObject;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Common Database Functionality
@@ -20,24 +25,26 @@ public class DatabaseHelper {
 
     private DatabaseHelper() {}
 
-    public static void insertMatchByPair(final String makerId, final String firstId, final String secondId) {
-
-        Log.i("DatabaseHelper", "Attempting to match " + firstId + " : " + secondId);
+    public static void insertMatchByPair(String makerId, String firstId, String secondId) {
+        final String mMakerId = makerId;
+        final String mFirstId = firstId;
+        final String mSecondId = secondId;
+        Log.i("DatabaseHelper", "Attempting to match " + mFirstId + " : " + mSecondId);
         // TODO: Possibly make it update on insert match instead of doing a costly check beforehand
         DatabaseHelper.getMatchByPair(firstId, secondId, new GetCallback<MatchItem>() {
             @Override
             public void done(MatchItem matchItem, ParseException e) {
                 if (matchItem == null) {
                     matchItem = new MatchItem();
-                    matchItem.setMakerId(makerId);
-                    matchItem.setFirstId(firstId);
-                    matchItem.setSecondId(secondId);
+                    matchItem.setFirstId(mFirstId);
+                    matchItem.setSecondId(mSecondId);
                     matchItem.setNumLikes(1);
+                    matchItem.setNumMessages(0);
                 } else {
-                    matchItem.setNumLikes(matchItem.getNumLikes() + 1);
+                    matchItem.incrNumLikes();
                 }
 
-                ParseRelation<ParseObject> relation = matchItem.getRelation("followers");
+                ParseRelation<ParseUser> relation = matchItem.getRelation(MatchItem.MATCH_KEY_FOLLOWERS);
                 relation.add(ParseUser.getCurrentUser());
 
                 matchItem.saveInBackground();
@@ -69,6 +76,51 @@ public class DatabaseHelper {
         query.orderByDescending(MatchItem.MATCH_KEY_NUM_LIKES);
         query.setLimit(limit);
         query.findInBackground(findCallback);
+    }
+
+    /**
+     * Find a maker user's matches. Sorts in descending order based on number of likes.
+     * @param limit The limit for number of matches to find.
+     * @param callback Callback when the matches are found.
+     */
+    public static void findMakerMatches(String makerId, int limit, FunctionCallback<List<MatchItem>> callback) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("makerId", makerId);
+        params.put("limit", limit + "");
+
+        ParseCloud.callFunctionInBackground("findMakerMatches", params, callback);
+    }
+
+    /**
+     * Find a client user's matches. Sorts in descending order based on number of likes.
+     * @param limit The limit for number of matches to find.
+     * @param callback Callback when the matches are found.
+     */
+    public static void findClientMatches(String clientId, int limit, FunctionCallback<List<MatchItem>> callback) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("clientId", clientId);
+        params.put("limit", limit + "");
+
+        ParseCloud.callFunctionInBackground("findClientMatches", params, callback);
+    }
+
+    /**
+     * Recommend potential users using matching recommendation algorithm.
+     * @param otherId The other user to recommend based off of.
+     * @param excludedIds List of user ids to exclude from recommendations.
+     * @param location The location to base off of. If the other user is supplied this location will be
+     *                 ignored and the other user's location will be used.
+     * @param callback Callback when the users are found.
+     */
+    public static void findPotentialUsers(String otherId, List<String> excludedIds, ParseGeoPoint location, int limit, int searchDistance, FunctionCallback<List<ParseUser>> callback) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("otherId", otherId);
+        params.put("excludedIds", excludedIds);
+        params.put("location", location);
+        params.put("searchDistance", searchDistance + "");
+        params.put("limit", limit + "");
+
+        ParseCloud.callFunctionInBackground("findPotentialUsers", params, callback);
     }
 
     public static void updateMatchNumMessages(String matchId, final int numMessages){

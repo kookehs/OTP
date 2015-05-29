@@ -18,7 +18,7 @@
             android:id="@+id/nav_profile_listener_backdrop"
             android:focusable="false"
             android:contentDescription="@string/content_missing_description"
-            android:src="#111" />
+            android:src="@color/primary" />
 
         <FrameLayout
             android:layout_width="wrap_content"
@@ -63,6 +63,8 @@
         android:choiceMode="none"
         android:background="#fff"
         android:scrollbars="none"
-        android:layout_below="@+id/nav_profile_container" />
+        android:layout_below="@+id/nav_profile_container"
+        android:footerDividersEnabled="false"
+        android:headerDividersEnabled="false" />
 
 </RelativeLayout>

@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.items.NavItem;
+import com.mrcornman.otp.models.NavItem;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

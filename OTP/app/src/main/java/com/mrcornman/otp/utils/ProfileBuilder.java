@@ -8,8 +8,8 @@ import android.os.Bundle;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.mrcornman.otp.items.gson.PhotoFileItem;
-import com.mrcornman.otp.items.models.PhotoItem;
+import com.mrcornman.otp.models.gson.PhotoFile;
+import com.mrcornman.otp.models.models.PhotoItem;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -22,7 +22,6 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -38,10 +37,18 @@ public class ProfileBuilder {
     public final static String PROFILE_KEY_GENDER = "gender";
     public final static String PROFILE_KEY_BIRTHDATE = "birthdate";
     public final static String PROFILE_KEY_INTERESTED_IN = "interested_in";
+<<<<<<< HEAD
     public final static String PROFILE_KEY_WANT = "want";
     public final static String PROFILE_KEY_ABOUT = "about_me";
     public final static String PROFILE_KEY_PHOTOS = "photos";
     public final static String PROFILE_KEY_ALBUMS = "albums";
+=======
+    public final static String PROFILE_KEY_LOCATION = "location";
+    public final static String PROFILE_KEY_PHOTOS = "photos";
+    public final static String PROFILE_KEY_ABOUT = "about";
+    public final static String PROFILE_KEY_WANT = "want";
+    public final static String PROFILE_KEY_SCORE = "score";
+>>>>>>> 10cd9dfbd28373278b3e3bdb5f6763e7b04ae69d
 
     private final static String FACEBOOK_KEY_NAME = "first_name";
     private final static String FACEBOOK_KEY_GENDER = "gender";
@@ -51,6 +58,8 @@ public class ProfileBuilder {
     public final static String FACEBOOK_KEY_ALBUMS = "albums";
     public final static String FACEBOOK_KEY_PHOTOS = "photos";
 
+    private final static int REQUEST_MAX_NUM_PHOTOS = 100;
+
     private static Target[] targets;
 
     private static boolean userImagesFailed = false;
@@ -59,7 +68,8 @@ public class ProfileBuilder {
 
     /**
      * Builds the current user's profile and saves it to the database.
-     * @param context The context of the method.
+     *
+     * @param context              The context of the method.
      * @param buildProfileCallback To execute once the profile is built or there is an error.
      */
     public static void buildCurrentProfile(Context context, ProfileBuilder.BuildProfileCallback buildProfileCallback) {
@@ -79,6 +89,9 @@ public class ProfileBuilder {
                             buildCallback.done(null, response.getError());
                             return;
                         }
+
+                        // init non-facebook vars
+                        user.put(PROFILE_KEY_SCORE, 0);
 
                         /*
                          * Name
@@ -108,14 +121,8 @@ public class ProfileBuilder {
                         // TODO: birthday we get is not exact
                         String birthdayStr = object.optString(FACEBOOK_KEY_BIRTHDAY);
                         Date birthDate = PrettyTime.getDateFromBirthdayString(birthdayStr);
-                        if(birthDate == null) {
-                            Calendar cal = Calendar.getInstance();
-                            cal.set(cal.get(Calendar.YEAR) - 13, cal.get(Calendar.MONTH), 1);
-                            birthDate = cal.getTime();
-                        }
-
-                        user.put(PROFILE_KEY_BIRTHDATE, birthDate);
-
+                        if (birthDate != null)
+                            user.put(PROFILE_KEY_BIRTHDATE, birthDate);
 
                         int i = 0;
 
@@ -131,7 +138,7 @@ public class ProfileBuilder {
                         } else {
                             // if they have specified gender then default to being interested in opposite gender
                             // otherwise they are interested in both
-                            if(genderId != -1) {
+                            if (genderId != -1) {
                                 interestedInList.add(genderId == 0 ? 1 : 0);
                             } else {
                                 interestedInList.add(0);
@@ -148,6 +155,7 @@ public class ProfileBuilder {
                         // first reset the book keeping for loaded user images
                         userImagesFailed = false;
                         userImagesCount = 0;
+                        userImagesThreshold = 0;
 
                         JSONObject albumsObj = object.optJSONObject(FACEBOOK_KEY_ALBUMS);
 
@@ -169,7 +177,7 @@ public class ProfileBuilder {
                                         skipPhotos = false;
 
                                         // fetch all the photo images from the profile album
-                                        fetchPhotosFromAlbum(accessToken, albumObj.optString("id"), new FetchPhotosCallback() {
+                                        fetchPhotoImageObjsFromAlbum(accessToken, albumObj.optString("id"), new FetchPhotosCallback() {
                                             @Override
                                             public void done(List<JSONObject> photoImageObjs, Object err) {
                                                 if (err != null || photoImageObjs == null) {
@@ -180,10 +188,10 @@ public class ProfileBuilder {
                                                 // get some of the profile photo images and use them as our default pics
                                                 JSONObject photoImageObj = null;
 
-                                                int numPhotos = Math.min(DEFAULT_NUM_PHOTOS, photoImageObjs.size());
+                                                userImagesThreshold = Math.min(DEFAULT_NUM_PHOTOS, photoImageObjs.size());
                                                 final PhotoItem[] photos = new PhotoItem[MAX_NUM_PHOTOS];
 
-                                                if(numPhotos == 0) {
+                                                if (userImagesThreshold == 0) {
                                                     user.saveInBackground(new SaveCallback() {
                                                         @Override
                                                         public void done(ParseException e) {
@@ -193,12 +201,12 @@ public class ProfileBuilder {
                                                     return;
                                                 }
 
-                                                targets = new Target[numPhotos];
+                                                targets = new Target[userImagesThreshold];
 
                                                 // download each photo then upload to Parse
-                                                for(int i = 0; i < numPhotos; i++) {
+                                                for (int i = 0; i < userImagesThreshold; i++) {
 
-                                                    final List<PhotoFileItem> photoFileItems = new ArrayList<PhotoFileItem>();
+                                                    final List<PhotoFile> photoFiles = new ArrayList<>();
                                                     final int index = i;
 
                                                     targets[index] = new Target() {
@@ -213,30 +221,29 @@ public class ProfileBuilder {
                                                             imageFile.saveInBackground(new SaveCallback() {
                                                                 @Override
                                                                 public void done(ParseException e) {
-                                                                    if(e != null) {
+                                                                    if (e != null) {
                                                                         buildCallback.done(null, e);
                                                                         return;
                                                                     }
 
-                                                                    PhotoFileItem photoFileItem = new PhotoFileItem();
-                                                                    photoFileItem.width = mBitmap.getWidth();
-                                                                    photoFileItem.height = mBitmap.getHeight();
-                                                                    photoFileItem.url = imageFile.getUrl();
-                                                                    photoFileItems.add(photoFileItem);
+                                                                    PhotoFile photoFile = new PhotoFile();
+                                                                    photoFile.width = mBitmap.getWidth();
+                                                                    photoFile.height = mBitmap.getHeight();
+                                                                    photoFile.url = imageFile.getUrl();
+                                                                    photoFiles.add(photoFile);
 
                                                                     PhotoItem photo = new PhotoItem();
-                                                                    photo.setPhotoFiles(photoFileItems);
+                                                                    photo.setPhotoFiles(photoFiles);
                                                                     photos[index] = photo;
 
                                                                     userImagesCount++;
-                                                                    if(userImagesCount >= userImagesThreshold) {
-                                                                        if(!userImagesFailed) {
+                                                                    if (userImagesCount >= userImagesThreshold) {
+                                                                        if (!userImagesFailed) {
 
                                                                             List<Object> photoList = new ArrayList<Object>();
-                                                                            for(int i = 0; i < photos.length; i++) {
+                                                                            for (int i = 0; i < photos.length; i++) {
                                                                                 photoList.add(photos[i] != null ? photos[i] : JSONObject.NULL);
                                                                             }
-
                                                                             user.put(PROFILE_KEY_PHOTOS, photoList);
 
                                                                             // finally we have all our images and we are done building our profile
@@ -258,11 +265,11 @@ public class ProfileBuilder {
                                                         public void onBitmapFailed(Drawable errorDrawable) {
                                                             userImagesFailed = true;
                                                             userImagesCount++;
-                                                            if(userImagesCount >= userImagesThreshold) {
+                                                            if (userImagesCount >= ProfileBuilder.userImagesThreshold) {
                                                                 // Attempt to salvage the situation and save with all photos we got
 
                                                                 List<Object> photoList = new ArrayList<Object>();
-                                                                for(int i = 0; i < photos.length; i++) {
+                                                                for (int i = 0; i < photos.length; i++) {
                                                                     photoList.add(photos[i] != null ? photos[i] : JSONObject.NULL);
                                                                 }
 
@@ -283,7 +290,8 @@ public class ProfileBuilder {
                                                     };
 
                                                     photoImageObj = photoImageObjs.get(i);
-                                                    if(photoImageObj != null && photoImageObj.optString("source") != null)
+
+                                                    if (photoImageObj != null && photoImageObj.optString("source") != null)
                                                         Picasso.with(mContext).load(photoImageObj.optString("source")).into(targets[i]);
                                                 }
                                             }
@@ -296,7 +304,7 @@ public class ProfileBuilder {
                             }
                         }
 
-                        if(skipPhotos) {
+                        if (skipPhotos) {
                             user.saveInBackground(new SaveCallback() {
                                 @Override
                                 public void done(ParseException e) {
@@ -310,11 +318,11 @@ public class ProfileBuilder {
         Bundle parameters = new Bundle();
         String fieldParamsStr =
                 FACEBOOK_KEY_NAME + "," +
-                FACEBOOK_KEY_GENDER + "," +
-                FACEBOOK_KEY_BIRTHDAY + "," +
-                FACEBOOK_KEY_LOCATION + "," +
-                FACEBOOK_KEY_INTERESTED_IN + "," +
-                FACEBOOK_KEY_ALBUMS;
+                        FACEBOOK_KEY_GENDER + "," +
+                        FACEBOOK_KEY_BIRTHDAY + "," +
+                        FACEBOOK_KEY_LOCATION + "," +
+                        FACEBOOK_KEY_INTERESTED_IN + "," +
+                        FACEBOOK_KEY_ALBUMS;
         parameters.putString("fields", fieldParamsStr);
         meRequest.setParameters(parameters);
         meRequest.executeAsync();
@@ -322,7 +330,8 @@ public class ProfileBuilder {
 
     /**
      * Gets information about the user's default photos.
-     * @param accessToken The current user access token.
+     *
+     * @param accessToken             The current user access token.
      * @param getMePhotosInfoCallback Callback
      */
     public static void getMePhotosInfo(AccessToken accessToken, GetMePhotosInfoCallback getMePhotosInfoCallback) {
@@ -364,63 +373,67 @@ public class ProfileBuilder {
                     }
                 });
 
-                Bundle parameters = new Bundle();
-                String fieldParamsStr = FACEBOOK_KEY_PHOTOS;
-                parameters.putString("fields", fieldParamsStr);
-                meRequest.setParameters(parameters);
-                meRequest.executeAsync();
-            }
+        Bundle parameters = new Bundle();
+        String fieldParamsStr = FACEBOOK_KEY_PHOTOS + ".limit(" + REQUEST_MAX_NUM_PHOTOS + ")";
+        parameters.putString("fields", fieldParamsStr);
+        meRequest.setParameters(parameters);
+        meRequest.executeAsync();
+    }
 
-            /**
-             * Fetches photos from a user's album.
-             * @param accessToken The access token for the user.
-             * @param albumId The album id. If the album id is not defined then the default photos are fetched.
-             * @param fetchPhotosCallback The callback for when the photos are fetched.
-             */
-            public static void fetchPhotosFromAlbum(AccessToken accessToken, String albumId, FetchPhotosCallback fetchPhotosCallback) {
-                final FetchPhotosCallback photosCallback = fetchPhotosCallback;
+    /**
+     * Fetches photos from a user's album.
+     *
+     * @param accessToken         The access token for the user.
+     * @param albumId             The album id. If the album id is not defined then the default photos are fetched.
+     * @param fetchPhotosCallback The callback for when the photos are fetched.
+     */
+    public static void fetchPhotoImageObjsFromAlbum(AccessToken accessToken, String albumId, FetchPhotosCallback fetchPhotosCallback) {
+        final FetchPhotosCallback photosCallback = fetchPhotosCallback;
 
-                GraphRequest photoRequest = GraphRequest.newGraphPathRequest(accessToken, (albumId.length() > 0 ? albumId + "/" : accessToken.getUserId() + "/") + FACEBOOK_KEY_PHOTOS, new GraphRequest.Callback() {
-                    @Override
-                    public void onCompleted(GraphResponse response) {
-                        if (response.getError() != null || response.getJSONObject() == null) {
-                            photosCallback.done(null, response.getError());
+        GraphRequest photoRequest = GraphRequest.newGraphPathRequest(accessToken, (albumId.length() > 0 ? albumId + "/" : accessToken.getUserId() + "/") + FACEBOOK_KEY_PHOTOS, new GraphRequest.Callback() {
+            @Override
+            public void onCompleted(GraphResponse response) {
+                if (response.getError() != null || response.getJSONObject() == null) {
+                    photosCallback.done(null, response.getError());
+                }
+
+                List<JSONObject> photoImages = new ArrayList<JSONObject>();
+
+                JSONArray photosData = response.getJSONObject().optJSONArray("data");
+                if (photosData != null) {
+                    JSONObject photoObj = null;
+                    JSONArray photoImagesData = null;
+                    int j;
+                    for (int i = 0; i < photosData.length(); i++) {
+                        photoObj = photosData.optJSONObject(i);
+                        photoImagesData = photoObj.optJSONArray("images");
+                        for (j = 0; j < photoImagesData.length(); j++) {
+                            // TODO: How does the images array work? All the image sources returned seem to be the same so I'm just getting the first one here
+                            photoImages.add(photoImagesData.optJSONObject(j));
+                            break;
                         }
-
-                        List<JSONObject> photoImages = new ArrayList<JSONObject>();
-
-                        JSONArray photosData = response.getJSONObject().optJSONArray("data");
-                        if (photosData != null) {
-                            JSONObject photoObj = null;
-                            JSONArray photoImagesData = null;
-                            int j;
-                            for (int i = 0; i < photosData.length(); i++) {
-                                photoObj = photosData.optJSONObject(i);
-                                photoImagesData = photoObj.optJSONArray("images");
-                                for (j = 0; j < photoImagesData.length(); j++) {
-                                    // TODO: How does the images array work? All the image sources returned seem to be the same so I'm just getting the first one here
-                                    photoImages.add(photoImagesData.optJSONObject(j));
-                                    break;
-                                }
-                            }
-                        }
-
-                        photosCallback.done(photoImages, null);
                     }
-                });
+                }
 
-                photoRequest.executeAsync();
+                photosCallback.done(photoImages, null);
             }
+        });
 
-            public interface GetMePhotosInfoCallback {
-                void done(JSONObject firstPhotoImageObj, int numPhotos, Object err);
-            }
+        Bundle parameters = new Bundle();
+        parameters.putInt("limit", REQUEST_MAX_NUM_PHOTOS);
+        photoRequest.setParameters(parameters);
+        photoRequest.executeAsync();
+    }
 
-            public interface FetchPhotosCallback {
-                void done(List<JSONObject> photoImageObjs, Object err);
-            }
+    public interface GetMePhotosInfoCallback {
+        void done(JSONObject firstPhotoImageObj, int numPhotos, Object err);
+    }
 
-            public interface BuildProfileCallback {
-                void done(ParseUser user, Object err);
-            }
-        }
+    public interface FetchPhotosCallback {
+        void done(List<JSONObject> photoImageObjs, Object err);
+    }
+
+    public interface BuildProfileCallback {
+        void done(ParseUser user, Object err);
+    }
+}

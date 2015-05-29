@@ -9,11 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.adapters.AlbumAdapter;
 import com.mrcornman.otp.models.AlbumItem;
-import com.mrcornman.otp.utils.AlbumsBuilder;
+import com.mrcornman.otp.utils.AlbumBuilder;
 
 import java.util.List;
 
@@ -56,15 +57,20 @@ public class AlbumListFragment extends Fragment {
         aa = new AlbumAdapter(getActivity());
         myListView.setAdapter(aa);
 
-        AlbumsBuilder.findCurrentAlbums(getActivity(), new AlbumsBuilder.FindAlbumsCallback() {
+        final ProgressBar albumProgress = (ProgressBar) rootView.findViewById(R.id.album_progress);
+        albumProgress.setVisibility(View.VISIBLE);
+
+        AlbumBuilder.findCurrentAlbums(getActivity(), new AlbumBuilder.FindAlbumsCallback() {
             @Override
             public void done(List<AlbumItem> albumItems, Object err) {
                 if (err != null) {
-                    Log.e("AlbumListActivity", "Accessing profile albums from Facebook failed: " + err.toString());
+                    Log.e("AlbumListFragment", "Accessing profile albums from Facebook failed: " + err.toString());
                     return;
                 }
 
                 aa.setAlbumItems(albumItems);
+
+                albumProgress.setVisibility(View.INVISIBLE);
             }
         });
 

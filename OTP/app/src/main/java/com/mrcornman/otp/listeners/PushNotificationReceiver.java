@@ -8,7 +8,7 @@ import android.net.Uri;
 
 import com.google.gson.Gson;
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.items.gson.PushDataItem;
+import com.mrcornman.otp.models.gson.PushData;
 import com.parse.ParseAnalytics;
 import com.parse.ParsePushBroadcastReceiver;
 
@@ -22,6 +22,8 @@ public class PushNotificationReceiver extends ParsePushBroadcastReceiver {
     @Override
     protected Notification getNotification(Context context, Intent intent) {
         Notification n = super.getNotification(context, intent);
+        if(n == null) return null;
+
         n.defaults = Notification.DEFAULT_VIBRATE;
         n.sound = Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.sound_notification_default);
         return n;
@@ -36,7 +38,7 @@ public class PushNotificationReceiver extends ParsePushBroadcastReceiver {
         //Here is data you sent
         String rawData = intent.getStringExtra(KEY_PUSH_DATA);
         Gson gson = new Gson();
-        gson.fromJson(rawData, PushDataItem.class);
+        gson.fromJson(rawData, PushData.class);
 
         Intent i = new Intent(context, getActivity(context, intent));
         i.putExtras(intent.getExtras());

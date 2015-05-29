@@ -3,8 +3,8 @@ package com.mrcornman.otp;
 import android.app.Application;
 
 import com.facebook.FacebookSdk;
-import com.mrcornman.otp.items.models.MatchItem;
-import com.mrcornman.otp.items.models.PhotoItem;
+import com.mrcornman.otp.models.models.MatchItem;
+import com.mrcornman.otp.models.models.PhotoItem;
 import com.parse.Parse;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseInstallation;

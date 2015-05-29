@@ -2,12 +2,13 @@ package com.mrcornman.otp.utils;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.mrcornman.otp.models.gson.PhotoFile;
 import com.mrcornman.otp.models.AlbumItem;
-import com.mrcornman.otp.models.PhotoFile;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,7 +19,7 @@ import java.util.List;
 /**
  * Created by Aprusa on 5/23/2015.
  */
-public class AlbumsBuilder {
+public class AlbumBuilder {
 
     public final static int DEFAULT_NUM_ALBUMS = 25;
 
@@ -71,12 +72,12 @@ public class AlbumsBuilder {
                             @Override
                             public void done(JSONObject firstPhotoImageObj, int numPhotos, Object err) {
                                 if (err != null || firstPhotoImageObj == null || numPhotos < 0) {
+                                    Log.e("AlbumBuilder", "Getting my photos info failed.");
                                     buildCallback.done(null, err);
                                     return;
                                 }
 
                                 if (numPhotos > 0) {
-
                                     PhotoFile coverPhoto = new PhotoFile();
                                     coverPhoto.height = firstPhotoImageObj.optInt("height");
                                     coverPhoto.width = firstPhotoImageObj.optInt("width");
@@ -86,13 +87,12 @@ public class AlbumsBuilder {
 
                                     albumItems.add(0, meAlbum);
                                     albumsCount++;
-
+                                    Log.i("AlbumBuilder", "Got a new album (" + meAlbum.name + ") " + albumsCount + " / " + albumsThreshold);
                                     if (albumsCount >= albumsThreshold) {
                                         findAlbumsCallback.done(albumItems, null);
                                     }
                                 } else {
                                     albumsCount++;
-
                                     if (albumsCount >= albumsThreshold) {
                                         findAlbumsCallback.done(albumItems, null);
                                     }
@@ -116,6 +116,16 @@ public class AlbumsBuilder {
 
                                 for (i = 0; i < albumsData.length(); i++) {
                                     albumObj = albumsData.optJSONObject(i);
+                                    int count = albumObj.optInt("count");
+
+                                    if(count == 0) {
+                                        albumsCount++;
+                                        if (albumsCount >= albumsThreshold) {
+                                            findAlbumsCallback.done(albumItems, null);
+                                        }
+                                        continue;
+                                    }
+
                                     final AlbumItem albumItem = new AlbumItem();
 
                                     albumItem.albumId = albumObj.optString("id");
@@ -128,6 +138,7 @@ public class AlbumsBuilder {
                                         @Override
                                         public void done(JSONObject photoImageObj, Object err) {
                                             if (err != null || photoImageObj == null) {
+                                                Log.e("AlbumBuilder", "Fetching cover photos from an album failed.");
                                                 buildCallback.done(null, err);
                                                 return;
                                             }
@@ -140,8 +151,7 @@ public class AlbumsBuilder {
 
                                             albumItems.add(albumItem);
                                             albumsCount++;
-
-                                            if(albumsCount >= albumsThreshold) {
+                                            if (albumsCount >= albumsThreshold) {
                                                 findAlbumsCallback.done(albumItems, null);
                                             }
                                         }
@@ -159,14 +169,15 @@ public class AlbumsBuilder {
         meRequest.executeAsync();
     }
 
-    public static void findCurrentPhotos(FindPhotosCallback callback) {
+    public static void findCurrentPhotosFromAlbum(String albumId, FindPhotosCallback callback) {
 
         final FindPhotosCallback mCallback = callback;
 
-        ProfileBuilder.fetchPhotosFromAlbum(AccessToken.getCurrentAccessToken(), "", new ProfileBuilder.FetchPhotosCallback() {
+        ProfileBuilder.fetchPhotoImageObjsFromAlbum(AccessToken.getCurrentAccessToken(), albumId, new ProfileBuilder.FetchPhotosCallback() {
             @Override
             public void done(List<JSONObject> photoImageObjs, Object err) {
                 if (err != null || photoImageObjs == null) {
+                    Log.e("AlbumBuilder", "Fetching photos from album failed.");
                     mCallback.done(null, err);
                     return;
                 }
@@ -196,43 +207,6 @@ public class AlbumsBuilder {
         });
     }
 
-    public static void findCurrentPhotosFromAlbum(String albumId, FindPhotosCallback callback) {
-
-        final FindPhotosCallback mCallback = callback;
-
-        ProfileBuilder.fetchPhotosFromAlbum(AccessToken.getCurrentAccessToken(), albumId, new ProfileBuilder.FetchPhotosCallback() {
-            @Override
-            public void done(List<JSONObject> photoImageObjs, Object err) {
-                if (err != null || photoImageObjs == null) {
-                    mCallback.done(null, err);
-                    return;
-                }
-
-                final List<PhotoFile> photoFiles = new ArrayList<PhotoFile>();
-
-                if(photoImageObjs.size() == 0) {
-                    mCallback.done(null, null);
-                }
-
-                JSONObject photoImageObj = null;
-
-                // download each photo then upload to Parse
-                for(int i = 0; i < photoImageObjs.size(); i++) {
-                    photoImageObj = photoImageObjs.get(i);
-
-                    PhotoFile photoFile = new PhotoFile();
-                    photoFile.height = photoImageObj.optInt("height");
-                    photoFile.width = photoImageObj.optInt("width");
-                    photoFile.url = photoImageObj.optString("source");
-
-                    photoFiles.add(photoFile);
-                }
-
-                mCallback.done(photoFiles, null);
-            }
-        });
-    }
-
     /**
      * Fetches albums from a user's album.
      * @param accessToken The access token for the user.
@@ -247,6 +221,7 @@ public class AlbumsBuilder {
             public void onCompleted(GraphResponse response) {
                 if (response.getError() != null || response.getJSONObject() == null) {
                     coverPhotoCallback.done(null, response.getError());
+                    return;
                 }
 
                 JSONObject coverPhotoImageObj = null;
