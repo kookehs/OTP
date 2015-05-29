@@ -17,15 +17,14 @@
             android:id="@+id/tableLayout">
 
             <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/picture_frame_0"
-                    android:layout_column="0"
-                    android:layout_weight="1">
+                    android:layout_column="0">
 
                     <com.mrcornman.otp.views.SquareImageView
                         android:layout_width="match_parent"
@@ -49,8 +48,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/picture_frame_1"
-                    android:layout_column="1"
-                    android:layout_weight="1">
+                    android:layout_column="1">
 
                     <com.mrcornman.otp.views.SquareImageView
                         android:layout_width="match_parent"
@@ -78,8 +76,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/picture_frame_2"
-                    android:layout_column="0"
-                    android:layout_weight="1">
+                    android:layout_column="0">
 
                     <com.mrcornman.otp.views.SquareImageView
                         android:layout_width="match_parent"
@@ -102,8 +99,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/picture_frame_3"
-                    android:layout_column="1"
-                    android:layout_weight="1">
+                    android:layout_column="1" >
 
                     <com.mrcornman.otp.views.SquareImageView
                         android:layout_width="match_parent"
@@ -160,98 +156,46 @@
             android:orientation="vertical"
             android:id="@+id/editText_container">
 
-<<<<<<< HEAD
-            <RelativeLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/about_me_container"
-                android:layout_below="@+id/age_text"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="About Me"
-                    android:id="@+id/about_me__text"
-                    android:layout_gravity="bottom"
-                    android:singleLine="true"
-                    android:layout_centerVertical="true" />
-
-                <EditText
-                    android:id="@+id/editText_about_me"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:layout_gravity="bottom"
-                    android:inputType="text"
-                    android:hint="About Me"
-                    android:maxLength="140"
-                    android:imeActionId="@+id/EditorInfo.IME_ACTION_DONE"
-                    android:singleLine="false"
-                    android:imeOptions="actionDone"
-                    android:layout_toRightOf="@+id/about_me__text"
-                    android:paddingLeft="8dp"
-                    android:layout_centerVertical="true"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/interested_in_container"
-                android:layout_below="@+id/about_me_container"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Interested In"
-                    android:id="@+id/want_text"
-                    android:layout_gravity="bottom"
-                    android:singleLine="true"
-                    android:layout_centerVertical="true" />
-
-                <EditText
-                    android:id="@+id/editText_want"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:inputType="text"
-                    android:hint="Interested in"
-                    android:maxLength="140"
-                    android:layout_toRightOf="@+id/want_text"
-                    android:paddingLeft="8dp"
-                    android:layout_centerVertical="true"/>
-
-            </RelativeLayout>
-=======
-            <EditText
-                android:id="@+id/about_edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="What should people know about you?"
-                android:inputType="textCapSentences|textAutoCorrect"
-                android:textSize="14sp"
-                android:ems="10"
-                android:textColor="@color/edit_text"
-                android:layout_marginRight="10dp"
-                android:background="@android:color/white"/>
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Ability"
+                android:id="@+id/about_me__text"
+                android:layout_gravity="bottom"
+                android:singleLine="true" />
 
             <EditText
-                android:id="@+id/want_edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="What are you looking for?"
-                android:inputType="textCapSentences|textAutoCorrect"
-                android:textSize="14sp"
-                android:ems="10"
-                android:textColor="@color/edit_text"
-                android:layout_marginRight="10dp"
-                android:background="@android:color/white"/>
->>>>>>> 10cd9dfbd28373278b3e3bdb5f6763e7b04ae69d
+                android:id="@+id/editText_about_me"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_gravity="bottom"
+                android:inputType="text"
+                android:hint="t"
+                android:maxLength="140"
+                android:imeActionId="@+id/EditorInfo.IME_ACTION_DONE"
+                android:singleLine="false"
+                android:imeOptions="actionDone"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Interested In"
+                android:id="@+id/want_text"
+                android:layout_gravity="bottom"
+                android:singleLine="true"
+                android:paddingTop="40dp" />
+
+            <EditText
+                android:id="@+id/editText_want"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:inputType="text"
+                android:hint="y"
+                android:maxLength="140"/>
 
         </LinearLayout>
 

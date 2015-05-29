@@ -20,13 +20,8 @@ import android.widget.Toast;
 
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.activities.PhotoSelectorActivity;
-<<<<<<< HEAD
-import com.mrcornman.otp.items.gson.PhotoFile;
-import com.mrcornman.otp.items.models.PhotoItem;
-=======
 import com.mrcornman.otp.models.gson.PhotoFile;
 import com.mrcornman.otp.models.models.PhotoItem;
->>>>>>> 10cd9dfbd28373278b3e3bdb5f6763e7b04ae69d
 import com.mrcornman.otp.utils.PrettyTime;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.parse.GetCallback;
@@ -43,7 +38,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class EditProfileFragment extends Fragment {
 
     public final static int REQUEST_PHOTO_SELECTOR = 1;
@@ -58,11 +52,6 @@ public class EditProfileFragment extends Fragment {
 
     private ParseUser user;
 
-<<<<<<< HEAD
-=======
-    private Target target;
-
->>>>>>> 10cd9dfbd28373278b3e3bdb5f6763e7b04ae69d
     public static EditProfileFragment newInstance() {
         EditProfileFragment fragment = new EditProfileFragment();
         return fragment;
@@ -131,7 +120,6 @@ public class EditProfileFragment extends Fragment {
         nameText.setText(user.getString(ProfileBuilder.PROFILE_KEY_NAME));
         ageText.setText(PrettyTime.getAgeFromBirthDate(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE)) + "");
 
-<<<<<<< HEAD
         //set the text the user wants
         final EditText aboutMe = (EditText) rootview.findViewById(R.id.editText_about_me);
         if(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT) != null) aboutMe.setText(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT));
@@ -167,35 +155,6 @@ public class EditProfileFragment extends Fragment {
                                     .getApplicationWindowToken(),
                             InputMethodManager.HIDE_NOT_ALWAYS);
                 }
-=======
-        // fill edit texts
-        final EditText aboutEditText = (EditText) rootview.findViewById(R.id.about_edit_text);
-        if(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT) != null) aboutEditText.setText(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT));
-        aboutEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                String editAboutStr = aboutEditText.getText().toString();
-                aboutEditText.clearFocus();
-                user.put(ProfileBuilder.PROFILE_KEY_ABOUT, editAboutStr);
-                return true;
-            }
-        });
-        final EditText wantEditText = (EditText) rootview.findViewById(R.id.want_edit_text);
-        if(user.getString(ProfileBuilder.PROFILE_KEY_WANT) != null) wantEditText.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT));
-        wantEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                String editWantStr = wantEditText.getText().toString();
-                user.put(ProfileBuilder.PROFILE_KEY_WANT, editWantStr);
-
-                //hide keyboard
-                    /*InputMethodManager in = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-
-                    in.hideSoftInputFromWindow(interestedIn
-                                    .getApplicationWindowToken(),
-                            InputMethodManager.HIDE_NOT_ALWAYS);*/
-                return true;
->>>>>>> 10cd9dfbd28373278b3e3bdb5f6763e7b04ae69d
             }
         });
 
@@ -235,13 +194,17 @@ public class EditProfileFragment extends Fragment {
             return;
         }
 
-        final ProgressBar pictureProgress = pictureProgressBars[index];
-        pictureProgress.setVisibility(View.VISIBLE);
+
+        final ProgressBar pBar = pictureProgressBars[index];
+        pBar.setVisibility(View.VISIBLE);
 
         final int mIndex = index;
         final String mUrl = url;
 
-        target = new Target() {
+        final List<PhotoFile> photoFiles = new ArrayList<PhotoFile>();
+
+        final Target target = new Target(){
+
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                 final Bitmap mBitmap = bitmap;
@@ -249,14 +212,11 @@ public class EditProfileFragment extends Fragment {
                 mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                 final byte[] imageBytes = stream.toByteArray();
 
-                final List<PhotoFile> photoFiles = new ArrayList<PhotoFile>();
-
                 final ParseFile imageFile = new ParseFile("prof_" + mIndex + ".jpg", imageBytes);
                 imageFile.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
                         if (e != null) {
-                            Log.e("EditProfileFragment", "There was a problem editing a picture: " + e.toString());
                             return;
                         }
 
@@ -283,7 +243,7 @@ public class EditProfileFragment extends Fragment {
                                 PhotoFile photoFile = photo.getPhotoFiles().get(0);
                                 if (getActivity() != null) {
                                     Picasso.with(getActivity()).load(photoFile.url).fit().centerCrop().into(pictureImages[mIndex]);
-                                    pictureProgress.setVisibility(View.INVISIBLE);
+                                    pBar.setVisibility(View.INVISIBLE);
                                 }
                             }
                         });

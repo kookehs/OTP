@@ -37,18 +37,11 @@ public class ProfileBuilder {
     public final static String PROFILE_KEY_GENDER = "gender";
     public final static String PROFILE_KEY_BIRTHDATE = "birthdate";
     public final static String PROFILE_KEY_INTERESTED_IN = "interested_in";
-<<<<<<< HEAD
-    public final static String PROFILE_KEY_WANT = "want";
-    public final static String PROFILE_KEY_ABOUT = "about_me";
-    public final static String PROFILE_KEY_PHOTOS = "photos";
-    public final static String PROFILE_KEY_ALBUMS = "albums";
-=======
     public final static String PROFILE_KEY_LOCATION = "location";
     public final static String PROFILE_KEY_PHOTOS = "photos";
     public final static String PROFILE_KEY_ABOUT = "about";
     public final static String PROFILE_KEY_WANT = "want";
     public final static String PROFILE_KEY_SCORE = "score";
->>>>>>> 10cd9dfbd28373278b3e3bdb5f6763e7b04ae69d
 
     private final static String FACEBOOK_KEY_NAME = "first_name";
     private final static String FACEBOOK_KEY_GENDER = "gender";
