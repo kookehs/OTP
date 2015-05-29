@@ -1,0 +1,191 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/profile_container">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="*"
+            android:id="@+id/tableLayout">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/picture_frame_0"
+                    android:layout_column="0"
+                    android:layout_weight="1">
+
+                    <com.mrcornman.otp.views.SquareImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/picture_image_0"
+                        android:contentDescription="@string/content_missing_description"
+                        android:src="@drawable/com_facebook_profile_picture_blank_portrait"
+                        android:layout_gravity="center_horizontal|bottom" />
+
+                    <ProgressBar
+                        style="?android:attr/progressBarStyleLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/progress_0"
+                        android:layout_centerInParent="true"
+                        android:visibility="invisible" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/picture_frame_1"
+                    android:layout_column="1"
+                    android:layout_weight="1">
+
+                    <com.mrcornman.otp.views.SquareImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/picture_image_1"
+                        android:contentDescription="@string/content_missing_description"
+                        android:src="@drawable/com_facebook_profile_picture_blank_portrait" />
+
+                    <ProgressBar
+                        style="?android:attr/progressBarStyleLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/progress_1"
+                        android:layout_centerInParent="true"
+                        android:visibility="invisible" />
+                </RelativeLayout>
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/picture_frame_2"
+                    android:layout_column="0"
+                    android:layout_weight="1">
+
+                    <com.mrcornman.otp.views.SquareImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/picture_image_2"
+                        android:contentDescription="@string/content_missing_description"
+                        android:src="@drawable/com_facebook_profile_picture_blank_portrait"/>
+
+                    <ProgressBar
+                        style="?android:attr/progressBarStyleLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/progress_2"
+                        android:layout_centerInParent="true"
+                        android:visibility="invisible" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/picture_frame_3"
+                    android:layout_column="1"
+                    android:layout_weight="1">
+
+                    <com.mrcornman.otp.views.SquareImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/picture_image_3"
+                        android:contentDescription="@string/content_missing_description"
+                        android:src="@drawable/com_facebook_profile_picture_blank_portrait"/>
+
+                    <ProgressBar
+                        style="?android:attr/progressBarStyleLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/progress_3"
+                        android:layout_centerInParent="true"
+                        android:visibility="invisible" />
+                </RelativeLayout>
+            </TableRow>
+        </TableLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/header_container"
+            android:layout_below="@+id/picture_container"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Name"
+                android:id="@+id/name_text"
+                android:layout_gravity="bottom"
+                android:singleLine="true"
+                android:layout_centerVertical="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Age"
+                android:id="@+id/age_text"
+                android:layout_gravity="bottom"
+                android:singleLine="true"
+                android:layout_toRightOf="@+id/name_text"
+                android:paddingLeft="8dp"
+                android:layout_centerVertical="true" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/about_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="What should people know about you?"
+                android:inputType="textCapSentences|textAutoCorrect"
+                android:textSize="14sp"
+                android:ems="10"
+                android:textColor="@color/edit_text"
+                android:layout_marginRight="10dp"
+                android:background="@android:color/white"/>
+
+            <EditText
+                android:id="@+id/want_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="What are you looking for?"
+                android:inputType="textCapSentences|textAutoCorrect"
+                android:textSize="14sp"
+                android:ems="10"
+                android:textColor="@color/edit_text"
+                android:layout_marginRight="10dp"
+                android:background="@android:color/white"/>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

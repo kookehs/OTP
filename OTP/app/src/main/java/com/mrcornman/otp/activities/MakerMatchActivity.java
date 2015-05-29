@@ -12,8 +12,8 @@ import android.view.MenuItem;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.adapters.MakerMatchPagerAdapter;
-import com.mrcornman.otp.items.models.MatchItem;
+import com.mrcornman.otp.adapters.pagers.MakerMatchPagerAdapter;
+import com.mrcornman.otp.models.models.MatchItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.parse.GetCallback;
@@ -33,8 +33,9 @@ public class MakerMatchActivity extends ActionBarActivity {
         Intent intent = getIntent();
         String matchId = intent.getStringExtra("match_id");
 
-        // Set up toolbar and tabs
+        // Set up toolbar_generic and tabs
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.mipmap.ic_nav_up);
         setSupportActionBar(toolbar);
 
         mPagerAdapter = new MakerMatchPagerAdapter(this, getSupportFragmentManager(), matchId);
@@ -45,7 +46,7 @@ public class MakerMatchActivity extends ActionBarActivity {
         final PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabStrip.setViewPager(mViewPager);
 
-        // populate toolbar with header about recipient
+        // populate toolbar_generic with header about recipient
         DatabaseHelper.getMatchById(matchId, new GetCallback<MatchItem>() {
             @Override
             public void done(MatchItem matchItem, ParseException e) {

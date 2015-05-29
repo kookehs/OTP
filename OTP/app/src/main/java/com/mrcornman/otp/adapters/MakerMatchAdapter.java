@@ -9,9 +9,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.items.models.MatchItem;
-import com.mrcornman.otp.items.gson.PhotoFileItem;
-import com.mrcornman.otp.items.models.PhotoItem;
+import com.mrcornman.otp.models.models.MatchItem;
+import com.mrcornman.otp.models.gson.PhotoFile;
+import com.mrcornman.otp.models.models.PhotoItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.mrcornman.otp.utils.PrettyNumbers;
 import com.mrcornman.otp.utils.ProfileBuilder;
@@ -92,7 +92,7 @@ public class MakerMatchAdapter extends BaseAdapter {
                     mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
                         @Override
                         public void done(PhotoItem photoItem, ParseException e) {
-                            PhotoFileItem mainFile = photoItem.getPhotoFiles().get(0);
+                            PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
                             Picasso.with(mContext).load(mainFile.url).resize(thumbImageFirst.getWidth(), thumbImageFirst.getHeight()).centerCrop().into(thumbImageFirst);
                         }
                     });
@@ -112,7 +112,7 @@ public class MakerMatchAdapter extends BaseAdapter {
                     mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
                         @Override
                         public void done(PhotoItem photoItem, ParseException e) {
-                            PhotoFileItem mainFile = photoItem.getPhotoFiles().get(0);
+                            PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
                             Picasso.with(mContext).load(mainFile.url).fit().centerCrop().into(thumbImageSecond);
                         }
                     });

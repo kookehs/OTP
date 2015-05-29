@@ -9,11 +9,13 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.services.MessageService;
+import com.mrcornman.otp.utils.LocationHandler;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseGeoPoint;
+import com.parse.ParseInstallation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -56,7 +58,7 @@ public class LoginActivity extends Activity {
         }
 
         loginButton = (Button) findViewById(R.id.login_button);
-
+        final LoginActivity context = this;
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,12 +111,45 @@ public class LoginActivity extends Activity {
     }
 
     private void onSuccessfulLogin() {
-        final Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
+        final ParseUser user = ParseUser.getCurrentUser();
 
-        final Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
-        getApplicationContext().startService(serviceIntent);
+        ParseGeoPoint quickLocation = LocationHandler.getQuickLocation(getApplicationContext());
 
-        //finish();
+        if (quickLocation != null) {
+            user.put(ProfileBuilder.PROFILE_KEY_LOCATION, quickLocation);
+            user.saveInBackground();
+        }
+
+        LocationHandler.requestLocation(getApplicationContext(), new LocationHandler.OnLocationReceivedListener() {
+            @Override
+            public void done(ParseGeoPoint geoPoint, Exception e) {
+                if (e == null && geoPoint != null) {
+                    user.put(ProfileBuilder.PROFILE_KEY_LOCATION, geoPoint);
+                    user.saveInBackground();
+                }
+            }
+        });
+
+        if(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE) != null) {
+            if(!user.isNew()) {
+                final Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+            } else {
+                final Intent intent = new Intent(getApplicationContext(), CompleteProfileActivity.class);
+                startActivity(intent);
+            }
+        } else {
+            final Intent intent = new Intent(getApplicationContext(), MissingInfoActivity.class);
+            startActivity(intent);
+        }
+
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        String currUserId = installation.getString("userId");
+        if(currUserId == null || !currUserId.equals(user.getObjectId())) {
+            installation.put("userId", user.getObjectId());
+            installation.saveInBackground();
+        }
+
+        finish();
     }
 }

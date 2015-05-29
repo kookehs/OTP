@@ -15,7 +15,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.adapters.ClientMatchPagerAdapter;
+import com.mrcornman.otp.adapters.pagers.ClientMatchPagerAdapter;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.parse.GetCallback;
@@ -35,8 +35,9 @@ public class ClientMatchActivity extends ActionBarActivity {
         Intent intent = getIntent();
         String otherId = intent.getStringExtra("other_id");
 
-        // Set up toolbar and tabs
+        // Set up toolbar_generic and tabs
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.mipmap.ic_nav_up);
         setSupportActionBar(toolbar);
 
         mPagerAdapter = new ClientMatchPagerAdapter(this, getSupportFragmentManager(), otherId);
@@ -51,7 +52,7 @@ public class ClientMatchActivity extends ActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
 
-        // populate toolbar with header about recipient
+        // populate toolbar_generic with header about recipient
         DatabaseHelper.getUserById(otherId, new GetCallback<ParseUser>() {
             @Override
             public void done(ParseUser parseUser, ParseException e) {

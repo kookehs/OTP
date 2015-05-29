@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/name_text_first"
             android:textSize="16sp"
-            android:textColor="#333"
+            android:textColor="@color/very_dark_gray"
             tools:text="Denise"
             android:textStyle="bold"
             android:singleLine="true"

@@ -25,7 +25,31 @@
     <!--Maker Match Action Bar-->
     <string name="action_stats">Stats</string>
 
+    <!--Album Action Bar-->
+    <string name="action_album">Albums</string>
+
     <!--Login-->
     <string name="login_disclaimer">We do not post to Facebook.</string>
+
+    <!--Missing Information-->
+    <string name="missing_information_title">Missing Information</string>
+    <string name="missing_information_sub">There was some required information hidden from us when we created your profile from Facebook. Please fill out the fields below to continue.</string>
+
+    <string name="missing_birthdate_title">Birthday</string>
+    <string name="missing_birthdate_under_threshold_warning">You must be at least 13 years of age to use Seedr.</string>
+
+    <!--Complete Profile-->
+    <string name="page_title_arrival">Arrival</string>
+    <string name="page_title_about">About</string>
+    <string name="page_title_want">Wanted</string>
+
+    <string name="complete_profile_arrival_title">Almost there!</string>
+    <string name="complete_profile_arrival_sub">You\'re almost ready to join the super awesome community that is Seedr. Before you enter though, we\'d like to know a little more about you, so that we can provide you with the best possible experience. And so we know that you\'re old enough to be on here.</string>
+
+    <string name="complete_profile_about_title">Tell us about yourself.</string>
+    <string name="complete_profile_about_sub">Write a little blurb about who you are as a person. You can be as silly or as serious as you\'d like. Just keep in mind that actual people are going to be using this to judge you.\nProtip - write about these things:\nYour personality\nYour interests\nYour dog</string>
+
+    <string name="complete_profile_want_title">Tell us about what you want.</string>
+    <string name="complete_profile_want_sub">Now that you\'ve hopefully explored a bit about yourself, let\'s turn the tables around. Tell us about what you\'re looking for. It\'s okay if your description isn\'t spectacular, just give people something to work with. After this you\'re done!</string>
 
 </resources>

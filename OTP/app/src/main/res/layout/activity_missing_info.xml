@@ -1,0 +1,102 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.sinch.messagingtutorial.app.LoginActivity"
+    android:paddingBottom="@dimen/activity_vertical_margin">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/title_container">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/missing_information_title"
+            android:id="@+id/complete_profile_title"
+            android:textAlignment="center"
+            android:singleLine="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_centerHorizontal="true"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/missing_information_sub"
+            android:id="@+id/complete_profile_sub"
+            android:textAlignment="center"
+            android:singleLine="false"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_below="@+id/complete_profile_title" />
+
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="340dp"
+        android:id="@+id/want_container"
+        android:layout_below="@+id/title_container"
+        android:paddingBottom="8dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/splash_image"
+            android:src="@drawable/mj" />
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/birthdate_container"
+        android:layout_below="@+id/title_container">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/missing_birthdate_title"
+            android:id="@+id/birthday_title"
+            android:textAlignment="center"
+            android:singleLine="true"
+            android:layout_gravity="center"
+            android:layout_centerHorizontal="true"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="\??/??/????"
+            android:id="@+id/birthdate_text"
+            android:textAlignment="center"
+            android:singleLine="false"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp"
+            android:layout_below="@+id/birthday_title"
+            android:textSize="20dp"
+            android:background="@drawable/inputbox"
+            android:padding="4dp"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/submit_button"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/themed_submit_button"
+        android:text="Continue"
+        android:textColor="@color/white"
+        android:layout_below="@+id/birthdate_container" />
+</RelativeLayout>
