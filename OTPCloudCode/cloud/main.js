@@ -1,3 +1,31 @@
+var PUSH_TYPE_MESSAGE = 1;
+var PUSH_TYPE_NEW_MATCH = 2;
+var PUSH_TYPE_MATCH_LIKED = 3;
+
+Parse.Cloud.job("userMigration", function(request, status) {
+  // Set up to modify user data
+  Parse.Cloud.useMasterKey();
+  var counter = 0;
+  // Query for all users
+  var query = new Parse.Query(Parse.User);
+  query.each(function(user) {
+      // Update to plan value passed in
+      user.set("plan", request.params.plan);
+      if (counter % 100 === 0) {
+        // Set the  job's progress status
+        status.message(counter + " users processed.");
+      }
+      counter += 1;
+      return user.save();
+  }).then(function() {
+    // Set the job's success status
+    status.success("Migration completed successfully.");
+  }, function(error) {
+    // Set the job's error status
+    status.error("Uh oh, something went wrong.");
+  });
+});
+
 Parse.Cloud.define("findPotentialUsers", function(request, response) {
   var otherId = request.params.otherId;
   var excludedIds = request.params.excludedIds;
@@ -88,45 +116,68 @@ Parse.Cloud.define("findMakerMatches", function(request, response) {
 });
 
 Parse.Cloud.afterSave("Match", function(request) {
-  var firstId = request.object.get("first_id");
-  var secondId = request.object.get("second_id");
-  var followers = request.object.relation("followers");
+  var match = request.object;
+  var firstId = match.get("first_id");
+  var secondId = match.get("second_id");
+  var followers = match.relation("followers");
   if(!firstId || !secondId || !followers) {
     console.log("Problem with Match afterSave!");
     return;
   }
-  console.log(followers);
   
-  // send push notifications to followers of the match
-  var followerQuery = followers.query();
-  followerQuery.find({
-    success: function(results) {
-      var resultIds = [];
-      var resultId = "";
-      for(var i = 0, il = results.length; i < il; i++) {
-        resultIds.push(results[i].id);
+  var isNew = !match.existed();
+  if(isNew) {
+    // send push notifications to the matched pair
+    var pushQuery = new Parse.Query(Parse.Installation);
+    var pair = [ firstId, secondId ]
+    pushQuery.containedIn('userId', pair);
+    Parse.Push.send({
+      where: pushQuery,
+      data: {
+        notificationType: PUSH_TYPE_NEW_MATCH,
+        title: "New Seed!",
+        alert: "Someone just paired you up!"
       }
-      var pushQuery = new Parse.Query(Parse.Installation);
-      pushQuery.containedIn('userId', resultIds);
-      Parse.Push.send({
-        where: pushQuery,
-        data: {
-          title: "More likes!",
-          alert: "Someone just liked your seed!"
+    }, {
+      success: function() {
+        console.log("New match push to: " + pair);
+      },
+      error: function(err) {
+        console.log(err);
+      }
+    });
+  } else {
+    // send push notifications to followers of the match
+    var followerQuery = followers.query();
+    followerQuery.find({
+      success: function(results) {
+        var resultIds = [];
+        for(var i = 0, il = results.length; i < il; i++) {
+          resultIds.push(results[i].id);
         }
-      }, {
-        success: function() {
-          console.log("Match push to " + resultIds.length + " makers: " + resultIds);
-        },
-        error: function(err) {
-          console.log(err);
-        }
-      });
-    },
-    error : function(err) {
-      console.log(err);
-    }
-  });
+        var pushQuery = new Parse.Query(Parse.Installation);
+        pushQuery.containedIn('userId', resultIds);
+        Parse.Push.send({
+          where: pushQuery,
+          data: {
+            notificationType: PUSH_TYPE_MATCH_LIKED,
+            title: "More likes!",
+            alert: "Someone just liked your seed!"
+          }
+        }, {
+          success: function() {
+            console.log("Match liked push to " + resultIds.length + " makers: " + resultIds);
+          },
+          error: function(err) {
+            console.log(err);
+          }
+        });
+      },
+      error : function(err) {
+        console.log(err);
+      }
+    });
+  }
 });
 
 Parse.Cloud.afterSave("ParseMessage", function(request) {
@@ -134,7 +185,7 @@ Parse.Cloud.afterSave("ParseMessage", function(request) {
   var recipientId = request.object.get("recipientId");
   var messageText = request.object.get("messageText");
   if(!senderId || !recipientId || !messageText) {
-    console.log("Problem with Match afterSave!");
+    console.log("Problem with Message afterSave!");
     return;
   }
   
@@ -147,6 +198,7 @@ Parse.Cloud.afterSave("ParseMessage", function(request) {
       Parse.Push.send({
         where: pushQuery,
         data: {
+          notificationType: PUSH_TYPE_MESSAGE,
           title: "New message from " + user.get("name"),
           alert: messageText
         }

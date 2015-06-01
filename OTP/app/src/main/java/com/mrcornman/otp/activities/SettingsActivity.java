@@ -12,6 +12,10 @@ import com.mrcornman.otp.R;
 
 public class SettingsActivity extends ActionBarActivity {
 
+    public final static String PREF_NOTIFICATIONS_NEW_MATCH = "notifications_checkbox_new_match";
+    public final static String PREF_NOTIFICATIONS_MATCH_LIKED = "notifications_checkbox_match_liked";
+    public final static String PREF_NOTIFICATIONS_MESSAGES = "notifications_checkbox_messages";
+
     private String mTitle;
 
     @Override
@@ -34,10 +38,6 @@ public class SettingsActivity extends ActionBarActivity {
     }
 
     public static class SettingsPreferenceFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
-
-        private final static String PREF_NOTIFICATIONS_NEW_MATCH = "notifications_checkbox_new_match";
-        private final static String PREF_NOTIFICATIONS_MATCH_LIKED = "notifications_checkbox_match_liked";
-        private final static String PREF_NOTIFICATIONS_MESSAGES = "notifications_checkbox_messages";
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
