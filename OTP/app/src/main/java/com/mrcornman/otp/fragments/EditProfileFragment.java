@@ -122,6 +122,8 @@ public class EditProfileFragment extends Fragment {
 
         //set the text the user wants
         final EditText aboutMe = (EditText) rootview.findViewById(R.id.about_edit_text);
+        aboutMe.setHorizontallyScrolling(false);
+
         if(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT) != null) aboutMe.setText(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT));
         aboutMe.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -139,8 +141,15 @@ public class EditProfileFragment extends Fragment {
                 }
             }
         });
+
+        //EditText for the interested in section of the profile page
         final EditText interestedIn = (EditText) rootview.findViewById(R.id.want_edit_text);
-        if(user.getString(ProfileBuilder.PROFILE_KEY_WANT) != null) interestedIn.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT));
+        interestedIn.setHorizontallyScrolling(false);
+
+        if(user.getString(ProfileBuilder.PROFILE_KEY_WANT) != null) {
+            Log.i("EditProfileFragment", user.getString(ProfileBuilder.PROFILE_KEY_WANT));
+            interestedIn.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT));
+        }
         interestedIn.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
