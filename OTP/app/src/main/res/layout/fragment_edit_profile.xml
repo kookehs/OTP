@@ -171,13 +171,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="What should people know about you?"
-                android:inputType="textCapSentences|textAutoCorrect"
+                android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
+                android:lines="2"
+                android:gravity="top|left"
+                android:maxLines="4"
+                android:scrollbars="vertical"
                 android:textSize="14sp"
                 android:ems="10"
                 android:textColor="@color/edit_text"
                 android:layout_marginRight="10dp"
                 android:paddingLeft="8dp"
-                android:maxLength="60"
+                android:maxLength="160"
                 android:background="@android:color/darker_gray"/>
 
             <TextView
@@ -187,7 +191,7 @@
                 android:id="@+id/want_text"
                 android:layout_gravity="bottom"
                 android:singleLine="true"
-                android:paddingTop="40dp"
+                android:paddingTop="30dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:paddingLeft="8dp"
                 android:layout_centerVertical="true"/>
@@ -197,14 +201,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="What are you looking for?"
-                android:inputType="textCapSentences|textAutoCorrect"
+                android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
                 android:textSize="14sp"
                 android:maxLength="160"
-                android:maxLines="2"
+                android:lines="2"
+                android:gravity="top|left"
+                android:maxLines="4"
+                android:scrollbars="vertical"
                 android:ems="10"
                 android:textColor="@color/edit_text"
                 android:layout_marginRight="10dp"
                 android:paddingLeft="8dp"
+                android:paddingRight="8dp"
                 android:background="@android:color/darker_gray"/>
 
         </LinearLayout>
