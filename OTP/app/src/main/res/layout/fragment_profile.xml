@@ -14,6 +14,9 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/picture_container"
+            android:scrollbars="none"
+            android:nextFocusLeft="@layout/fragment_messaging"
+            android:scrollbarTrackHorizontal="@layout/fragment_messaging"
             tools:context="com.mrcornman.otp.fragments.ThemProfileFragment">
 
             <com.mrcornman.otp.views.SquareImageView

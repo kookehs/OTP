@@ -65,22 +65,24 @@ public class ThemProfileFragment extends Fragment {
         final TextView aboutText = (TextView) rootView.findViewById(R.id.about_user_info);
 
         final ImageView pictureImage = (ImageView) rootView.findViewById(R.id.picture_image);
+
         pictureImage.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(final View v, MotionEvent event) {
-                if (event.getEventTime() > (SWIPE_MIN_TIME + 120)) {
+                if (event.getEventTime() > SWIPE_MIN_TIME) {
                     if (event.getX() - x1 > SWIPE_MIN_DISTANCE && currImage < ProfileBuilder.MAX_NUM_PHOTOS - 1) {
                         currImage += 1;
                         swipPhoto(v);
                     }
-                    else if (x1 - event.getX() > SWIPE_MIN_DISTANCE && currImage >= 0){
+                    else if (x1 - event.getX() > SWIPE_MIN_DISTANCE && currImage > 0){
                         currImage -= 1;
                         swipPhoto(v);
                     }
                 }
 
-                SWIPE_MIN_TIME = event.getEventTime();
+                pictureImage.getParent().requestDisallowInterceptTouchEvent(true);
+                SWIPE_MIN_TIME = event.getEventTime() + 120;
                 x1 = event.getX();
                 return true;
             }
