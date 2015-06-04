@@ -10,30 +10,17 @@
         android:orientation="vertical"
         android:id="@+id/user_profile_container">
 
-        <FrameLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/picture_container"
-            android:scrollbars="none"
-            android:nextFocusLeft="@layout/fragment_messaging"
-            android:scrollbarTrackHorizontal="@layout/fragment_messaging"
-            tools:context="com.mrcornman.otp.fragments.ThemProfileFragment">
-
-            <com.mrcornman.otp.views.SquareImageView
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:id="@+id/picture_image"
-                android:contentDescription="@string/content_missing_description"
-                android:src="@drawable/com_facebook_profile_picture_blank_portrait"/>
-
-        </FrameLayout>
+        <android.support.v4.view.ViewPager
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/header_container"
-            android:padding="16dp">
-
+            android:padding="8dp">
 
             <TextView
                 android:layout_width="wrap_content"
