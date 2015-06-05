@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -24,6 +23,7 @@ import com.mrcornman.otp.models.gson.PhotoFile;
 import com.mrcornman.otp.models.models.PhotoItem;
 import com.mrcornman.otp.utils.PrettyTime;
 import com.mrcornman.otp.utils.ProfileBuilder;
+import com.mrcornman.otp.views.EditTextBorder;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -121,7 +121,7 @@ public class EditProfileFragment extends Fragment {
         ageText.setText(PrettyTime.getAgeFromBirthDate(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE)) + "");
 
         //set the text the user wants
-        final EditText aboutMe = (EditText) rootview.findViewById(R.id.about_edit_text);
+        final EditTextBorder aboutMe = (EditTextBorder) rootview.findViewById(R.id.about_edit_text);
         aboutMe.setHorizontallyScrolling(false);
 
         if(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT) != null) aboutMe.setText(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT));
@@ -143,7 +143,7 @@ public class EditProfileFragment extends Fragment {
         });
 
         //EditText for the interested in section of the profile page
-        final EditText interestedIn = (EditText) rootview.findViewById(R.id.want_edit_text);
+        final EditTextBorder interestedIn = (EditTextBorder) rootview.findViewById(R.id.want_edit_text);
         interestedIn.setHorizontallyScrolling(false);
 
         if(user.getString(ProfileBuilder.PROFILE_KEY_WANT) != null) {

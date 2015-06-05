@@ -166,7 +166,7 @@
                 android:paddingLeft="8dp"
                 android:layout_centerVertical="true" />
 
-            <EditText
+            <com.mrcornman.otp.views.EditTextBorder
                 android:id="@+id/about_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -179,10 +179,10 @@
                 android:textSize="14sp"
                 android:ems="10"
                 android:textColor="@color/edit_text"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="8dp"
                 android:paddingLeft="8dp"
                 android:maxLength="160"
-                android:background="@android:color/darker_gray"/>
+                android:layout_marginLeft="8dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -196,7 +196,7 @@
                 android:paddingLeft="8dp"
                 android:layout_centerVertical="true"/>
 
-            <EditText
+            <com.mrcornman.otp.views.EditTextBorder
                 android:id="@+id/want_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -210,10 +210,11 @@
                 android:scrollbars="vertical"
                 android:ems="10"
                 android:textColor="@color/edit_text"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="8dp"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
-                android:background="@android:color/darker_gray"/>
+                android:layout_marginLeft="8dp"
+                android:layout_marginBottom="8dp" />
 
         </LinearLayout>
 
