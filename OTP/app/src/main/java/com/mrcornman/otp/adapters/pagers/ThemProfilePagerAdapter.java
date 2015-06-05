@@ -1,5 +1,6 @@
 package com.mrcornman.otp.adapters.pagers;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -20,14 +21,15 @@ public class ThemProfilePagerAdapter extends FragmentPagerAdapter {
     private final static int PAGE_PROFILE_Image_3 = 3;
 
     private Context mContext;
-
+    private Activity mAct;
     private String mOtherId;
 
-    public ThemProfilePagerAdapter(Context context, FragmentManager fragmentManager, String otherId) {
+    public ThemProfilePagerAdapter(Context context, FragmentManager fragmentManager, String otherId, Activity act) {
         super(fragmentManager);
 
         mContext = context;
         mOtherId = otherId;
+        mAct = act;
     }
 
     @Override
@@ -38,6 +40,7 @@ public class ThemProfilePagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         Fragment fragment = null;
+
         switch(position) {
             case PAGE_MAIN:
                 fragment = MatchesProfileImageFragment.newInstance(mOtherId, PAGE_MAIN);
@@ -52,6 +55,7 @@ public class ThemProfilePagerAdapter extends FragmentPagerAdapter {
                 fragment = MatchesProfileImageFragment.newInstance(mOtherId, PAGE_PROFILE_Image_3);
                 break;
         }
+
         return fragment;
     }
 

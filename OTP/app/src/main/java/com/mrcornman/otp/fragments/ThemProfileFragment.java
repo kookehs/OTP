@@ -20,6 +20,7 @@ import com.mrcornman.otp.adapters.pagers.ThemProfilePagerAdapter;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.mrcornman.otp.utils.PrettyTime;
 import com.mrcornman.otp.utils.ProfileBuilder;
+import com.mrcornman.otp.views.CirclePageIndicator;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -67,13 +68,15 @@ public class ThemProfileFragment extends Fragment {
         int width = size.x;
         int height = size.y;
 
-        mPagerAdapter = new ThemProfilePagerAdapter(getActivity(), getChildFragmentManager(), userId);
+        mPagerAdapter = new ThemProfilePagerAdapter(getActivity(), getChildFragmentManager(), userId, getActivity());
         mViewPager = (ViewPager) rootView.findViewById(R.id.pager);
         mViewPager.getLayoutParams().height = (height*3)/5;
         mViewPager.getLayoutParams().width = width;
         mViewPager.requestLayout();
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.setOffscreenPageLimit(ThemProfilePagerAdapter.NUM_PAGES);
+        final CirclePageIndicator circles = (CirclePageIndicator) rootView.findViewById(R.id.circles);
+        circles.setViewPager(mViewPager);
 
         DatabaseHelper.getUserById(userId, new GetCallback<ParseUser>() {
             @Override

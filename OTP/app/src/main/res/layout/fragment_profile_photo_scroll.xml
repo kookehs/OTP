@@ -10,6 +10,8 @@
         android:id="@+id/picture_image"
         android:scaleType="centerCrop"
         android:contentDescription="@string/content_missing_description"
-        android:src="@drawable/com_facebook_profile_picture_blank_portrait"/>
+        android:src="@drawable/com_facebook_profile_picture_blank_portrait">
+
+    </com.mrcornman.otp.views.SquareImageView>
 
 </FrameLayout>
