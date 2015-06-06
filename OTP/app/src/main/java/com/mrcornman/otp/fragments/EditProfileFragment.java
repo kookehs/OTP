@@ -106,8 +106,10 @@ public class EditProfileFragment extends Fragment {
                     photo.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
                         @Override
                         public void done(PhotoItem photoItem, com.parse.ParseException e) {
-                            PhotoFile photoFile = photoItem.getPhotoFiles().get(0);
-                            Picasso.with(getActivity().getApplicationContext()).load(photoFile.url).fit().centerCrop().into(pictureImages[index]);
+                            if(photoItem != null && e == null) {
+                                PhotoFile photoFile = photoItem.getPhotoFiles().get(0);
+                                Picasso.with(getActivity().getApplicationContext()).load(photoFile.url).fit().centerCrop().into(pictureImages[index]);
+                            }
                         }
                     });
                 }

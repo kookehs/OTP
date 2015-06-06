@@ -2,7 +2,6 @@ package com.mrcornman.otp.activities;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
 import android.support.v4.preference.PreferenceFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -44,28 +43,19 @@ public class SettingsActivity extends ActionBarActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.prefs_settings);
 
+            getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
             onSharedPreferenceChanged(null, "");
         }
 
         @Override
-        public void onResume() {
-            super.onResume();
-            // Set up a listener whenever a key changes
-            getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-        }
-
-        @Override
-        public void onPause() {
-            super.onPause();
-            // Set up a listener whenever a key changes
+        public void onDestroy() {
             getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+
+            super.onDestroy();
         }
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            // just update all
-            CheckBoxPreference messageNotificationsPref = (CheckBoxPreference) findPreference(PREF_NOTIFICATIONS_MESSAGES);
-            //messageNotificationsPref.setSummary(sharedPreferences.getBoolean(PREF_NOTIFICATIONS_MESSAGES, false));
         }
     }
 }

@@ -41,13 +41,13 @@ import java.util.List;
 public class NavFragment extends Fragment {
 
     private final static String[] titles = {
-            "Preferences",
+            //"Preferences",
             "Settings",
             "Share"
     };
 
     private final static int[] iconIds = {
-            R.mipmap.ic_nav_prefs,
+            //R.mipmap.ic_nav_prefs,
             R.mipmap.ic_nav_settings,
             R.mipmap.ic_nav_share
     };
@@ -105,8 +105,10 @@ public class NavFragment extends Fragment {
             mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
                 @Override
                 public void done(PhotoItem photoItem, ParseException e) {
-                    PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
-                    Picasso.with(getActivity().getApplicationContext()).load(mainFile.url).fit().centerCrop().into(navProfileImage);
+                    if(photoItem != null && e == null) {
+                        PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
+                        Picasso.with(getActivity().getApplicationContext()).load(mainFile.url).fit().centerCrop().into(navProfileImage);
+                    }
                 }
             });
         }

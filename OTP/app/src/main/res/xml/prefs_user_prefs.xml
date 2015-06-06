@@ -2,12 +2,19 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-        android:title="@string/user_prefs_age_range">
+        android:title="@string/user_prefs_age_range_title">
+
+        <com.mrcornman.otp.views.RangeSeekBarPreference
+            android:key="age_range_slider" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/user_prefs_search_distance">
+        android:title="@string/user_prefs_search_distance_title"
+        android:summary="16">
+
+        <com.mrcornman.otp.views.SeekBarPreference
+            android:key="search_distance_slider" />
 
     </PreferenceCategory>
 

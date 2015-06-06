@@ -22,16 +22,6 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/settings_distance_units_section_title">
-
-        <SwitchPreference
-            android:title="Switch">
-
-        </SwitchPreference>
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
         android:title="@string/settings_misc_section_title">
 
         <Preference

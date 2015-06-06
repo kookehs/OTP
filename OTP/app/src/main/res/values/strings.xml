@@ -13,6 +13,10 @@
     <!--General-->
     <string name="content_missing_description">Missing</string>
 
+    <!--Range Seek Bar-->
+    <string name="demo_min_label">Min</string>
+    <string name="demo_max_label">Max</string>
+
     <!--Main Action Bar-->
     <string name="action_game">Game</string>
     <string name="action_client">Seeds</string>
@@ -64,7 +68,7 @@
     <string name="settings_misc_item_title_sex">Check us out!</string>
 
     <!--User Prefs-->
-    <string name="user_prefs_age_range">Age Range</string>
-    <string name="user_prefs_search_distance">Search Distance</string>
+    <string name="user_prefs_age_range_title">Age Range</string>
+    <string name="user_prefs_search_distance_title">Search Distance</string>
 
 </resources>

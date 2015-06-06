@@ -33,10 +33,15 @@ public class RangeSeekBarPreference extends Preference implements RangeSeekBar.O
     protected View onCreateView(ViewGroup parent)	{
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.preference_range_seekbar, parent, false);
+        return view;
+    }
+
+    @Override
+    protected void onBindView(View view) {
         mRangeSeekBar = (RangeSeekBar) view.findViewById(R.id.range_seekbar);
         mRangeSeekBar.setNotifyWhileDragging(true);
+        //Log.i("RangeSeekBarPreference", "hi");
         mRangeSeekBar.setOnRangeSeekBarChangeListener(this);
-        return view;
     }
 
     @Override
@@ -44,7 +49,7 @@ public class RangeSeekBarPreference extends Preference implements RangeSeekBar.O
         setMinValue(minValue);
         setMaxValue(maxValue);
 
-        setSummary(getSummary());
+        //setSummary(getSummary());
     }
 
     @Override
@@ -56,11 +61,6 @@ public class RangeSeekBarPreference extends Preference implements RangeSeekBar.O
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
         setMinValue(mMin);
         setMaxValue(mMax);
-    }
-
-    @Override
-    public CharSequence getSummary() {
-        return String.format(summaryFormat, mMin, mMax);
     }
 
     public void setSummaryFormat(String format) {

@@ -91,9 +91,11 @@ public class ThemProfileFragment extends Fragment {
                     mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
                         @Override
                         public void done(PhotoItem photoItem, ParseException e) {
-                            PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
-                            if (getActivity() != null)
-                                Picasso.with(getActivity().getApplicationContext()).load(mainFile.url).fit().centerCrop().into(pictureImage);
+                            if(photoItem != null && e == null) {
+                                PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
+                                if (getActivity() != null)
+                                    Picasso.with(getActivity().getApplicationContext()).load(mainFile.url).fit().centerCrop().into(pictureImage);
+                            }
                         }
                     });
                 }

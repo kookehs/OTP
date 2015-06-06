@@ -89,8 +89,10 @@ public class ClientMatchAdapter extends BaseAdapter {
                     mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
                         @Override
                         public void done(PhotoItem photoItem, ParseException e) {
-                            PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
-                            Picasso.with(mContext).load(mainFile.url).fit().centerCrop().into(thumbImage);
+                            if (photoItem != null && e == null) {
+                                PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
+                                Picasso.with(mContext).load(mainFile.url).fit().centerCrop().into(thumbImage);
+                            }
                         }
                     });
                 }
