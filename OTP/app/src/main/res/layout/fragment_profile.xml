@@ -1,53 +1,114 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.mrcornman.otp.fragments.ThemProfileFragment"
-    android:id="@+id/profile_container">
+    tools:context="com.mrcornman.otp.fragments.ThemProfileFragment">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/picture_container"
-        android:layout_centerHorizontal="true"
-        tools:context="com.mrcornman.otp.fragments.ThemProfileFragment" >
+        android:orientation="vertical"
+        android:id="@+id/user_profile_container">
 
-        <ImageView
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v4.view.ViewPager
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/pager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.mrcornman.otp.views.CirclePageIndicator
+                android:id="@+id/circles"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignBottom="@+id/pager"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/header_container"
+            android:padding="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Name"
+                android:id="@+id/name_text"
+                android:layout_gravity="bottom"
+                android:singleLine="true"
+                android:layout_centerVertical="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Age"
+                android:id="@+id/age_text"
+                android:layout_gravity="bottom"
+                android:singleLine="true"
+                android:layout_toRightOf="@+id/name_text"
+                android:paddingLeft="8dp"
+                android:layout_centerVertical="true" />
+        </RelativeLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/picture_image"
-            android:contentDescription="@string/content_missing_description" />
+            android:orientation="vertical">
 
-    </FrameLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ability"
+                android:id="@+id/about_user__text"
+                android:layout_gravity="bottom"
+                android:singleLine="true"
+                android:paddingTop="40dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:paddingLeft="8dp"
+                android:layout_centerVertical="true" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/header_container"
-        android:layout_below="@+id/picture_container"
-        android:padding="16dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:id="@+id/about_user_info"
+                android:layout_gravity="bottom"
+                android:singleLine="true"
+                android:paddingTop="10dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:paddingLeft="8dp"
+                android:layout_centerVertical="true" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Interested In"
+                android:id="@+id/want_text"
+                android:layout_gravity="bottom"
+                android:singleLine="true"
+                android:paddingTop="40dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:paddingLeft="8dp"
+                android:layout_centerVertical="true"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Name"
-            android:id="@+id/name_text"
-            android:layout_gravity="bottom"
-            android:singleLine="true"
-            android:layout_centerVertical="true" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Age"
-            android:id="@+id/age_text"
-            android:layout_gravity="bottom"
-            android:singleLine="true"
-            android:layout_toRightOf="@+id/name_text"
-            android:paddingLeft="8dp"
-            android:layout_centerVertical="true" />
-    </RelativeLayout>
-</RelativeLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:id="@+id/want_info"
+                android:layout_gravity="bottom"
+                android:singleLine="true"
+                android:paddingTop="10dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:paddingLeft="8dp"
+                android:layout_centerVertical="true"/>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

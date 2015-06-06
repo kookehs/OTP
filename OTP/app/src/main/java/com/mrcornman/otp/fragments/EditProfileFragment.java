@@ -1,17 +1,17 @@
 package com.mrcornman.otp.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -23,6 +23,7 @@ import com.mrcornman.otp.models.gson.PhotoFile;
 import com.mrcornman.otp.models.models.PhotoItem;
 import com.mrcornman.otp.utils.PrettyTime;
 import com.mrcornman.otp.utils.ProfileBuilder;
+import com.mrcornman.otp.views.EditTextBorder;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -36,7 +37,6 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class EditProfileFragment extends Fragment {
 
@@ -52,8 +52,6 @@ public class EditProfileFragment extends Fragment {
 
     private ParseUser user;
 
-    private Target target;
-
     public static EditProfileFragment newInstance() {
         EditProfileFragment fragment = new EditProfileFragment();
         return fragment;
@@ -63,7 +61,7 @@ public class EditProfileFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View rootview = inflater.inflate(R.layout.fragment_edit_profile, container, false);
 
@@ -124,33 +122,50 @@ public class EditProfileFragment extends Fragment {
         nameText.setText(user.getString(ProfileBuilder.PROFILE_KEY_NAME));
         ageText.setText(PrettyTime.getAgeFromBirthDate(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE)) + "");
 
-        // fill edit texts
-        final EditText aboutEditText = (EditText) rootview.findViewById(R.id.about_edit_text);
-        if(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT) != null) aboutEditText.setText(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT));
-        aboutEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        //set the text the user wants
+        final EditTextBorder aboutMe = (EditTextBorder) rootview.findViewById(R.id.about_edit_text);
+        aboutMe.setHorizontallyScrolling(false);
+
+        if(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT) != null) aboutMe.setText(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT));
+        aboutMe.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                String editAboutStr = aboutEditText.getText().toString();
-                aboutEditText.clearFocus();
-                user.put(ProfileBuilder.PROFILE_KEY_ABOUT, editAboutStr);
-                return true;
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    String aboutMeText = aboutMe.getText().toString();
+                    user.put(ProfileBuilder.PROFILE_KEY_ABOUT, aboutMeText);
+
+                    //hide keyboard
+                    InputMethodManager in = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                    in.hideSoftInputFromWindow(aboutMe
+                                    .getApplicationWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                }
             }
         });
-        final EditText wantEditText = (EditText) rootview.findViewById(R.id.want_edit_text);
-        if(user.getString(ProfileBuilder.PROFILE_KEY_WANT) != null) wantEditText.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT));
-        wantEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                String editWantStr = wantEditText.getText().toString();
-                user.put(ProfileBuilder.PROFILE_KEY_WANT, editWantStr);
 
-                //hide keyboard
-                    /*InputMethodManager in = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        //EditText for the interested in section of the profile page
+        final EditTextBorder interestedIn = (EditTextBorder) rootview.findViewById(R.id.want_edit_text);
+        interestedIn.setHorizontallyScrolling(false);
+
+        if(user.getString(ProfileBuilder.PROFILE_KEY_WANT) != null) {
+            Log.i("EditProfileFragment", user.getString(ProfileBuilder.PROFILE_KEY_WANT));
+            interestedIn.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT));
+        }
+        interestedIn.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    String interestedInText = interestedIn.getText().toString();
+                    user.put(ProfileBuilder.PROFILE_KEY_WANT, interestedInText);
+
+                    //hide keyboard
+                    InputMethodManager in = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
                     in.hideSoftInputFromWindow(interestedIn
                                     .getApplicationWindowToken(),
-                            InputMethodManager.HIDE_NOT_ALWAYS);*/
-                return true;
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                }
             }
         });
 
@@ -158,7 +173,7 @@ public class EditProfileFragment extends Fragment {
     }
 
     @Override
-     public void onAttach(Activity activity) {
+    public void onAttach(Activity activity) {
         super.onAttach(activity);
 
         try {
@@ -190,13 +205,17 @@ public class EditProfileFragment extends Fragment {
             return;
         }
 
-        final ProgressBar pictureProgress = pictureProgressBars[index];
-        pictureProgress.setVisibility(View.VISIBLE);
+
+        final ProgressBar pBar = pictureProgressBars[index];
+        pBar.setVisibility(View.VISIBLE);
 
         final int mIndex = index;
         final String mUrl = url;
 
-        target = new Target() {
+        final List<PhotoFile> photoFiles = new ArrayList<PhotoFile>();
+
+        final Target target = new Target(){
+
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                 final Bitmap mBitmap = bitmap;
@@ -204,14 +223,11 @@ public class EditProfileFragment extends Fragment {
                 mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                 final byte[] imageBytes = stream.toByteArray();
 
-                final List<PhotoFile> photoFiles = new ArrayList<PhotoFile>();
-
                 final ParseFile imageFile = new ParseFile("prof_" + mIndex + ".jpg", imageBytes);
                 imageFile.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
                         if (e != null) {
-                            Log.e("EditProfileFragment", "There was a problem editing a picture: " + e.toString());
                             return;
                         }
 
@@ -238,7 +254,7 @@ public class EditProfileFragment extends Fragment {
                                 PhotoFile photoFile = photo.getPhotoFiles().get(0);
                                 if (getActivity() != null) {
                                     Picasso.with(getActivity()).load(photoFile.url).fit().centerCrop().into(pictureImages[mIndex]);
-                                    pictureProgress.setVisibility(View.INVISIBLE);
+                                    pBar.setVisibility(View.INVISIBLE);
                                 }
                             }
                         });
