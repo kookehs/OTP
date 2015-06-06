@@ -1,7 +1,5 @@
 package com.mrcornman.otp.utils;
 
-import android.util.Log;
-
 import com.mrcornman.otp.models.models.MatchItem;
 import com.parse.FindCallback;
 import com.parse.FunctionCallback;
@@ -10,7 +8,6 @@ import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
-import com.parse.ParseRelation;
 import com.parse.ParseUser;
 
 import java.util.Arrays;
@@ -26,30 +23,13 @@ public class DatabaseHelper {
     private DatabaseHelper() {}
 
     public static void insertMatchByPair(String makerId, String firstId, String secondId) {
-        final String mMakerId = makerId;
-        final String mFirstId = firstId;
-        final String mSecondId = secondId;
-        Log.i("DatabaseHelper", "Attempting to match " + mFirstId + " : " + mSecondId);
-        // TODO: Possibly make it update on insert match instead of doing a costly check beforehand
-        DatabaseHelper.getMatchByPair(firstId, secondId, new GetCallback<MatchItem>() {
-            @Override
-            public void done(MatchItem matchItem, ParseException e) {
-                if (matchItem == null) {
-                    matchItem = new MatchItem();
-                    matchItem.setFirstId(mFirstId);
-                    matchItem.setSecondId(mSecondId);
-                    matchItem.setNumLikes(1);
-                    matchItem.setNumMessages(0);
-                } else {
-                    matchItem.incrNumLikes();
-                }
 
-                ParseRelation<ParseUser> relation = matchItem.getRelation(MatchItem.MATCH_KEY_FOLLOWERS);
-                relation.add(ParseUser.getCurrentUser());
+        Map<String, Object> params = new HashMap<>();
+        params.put("makerId", makerId);
+        params.put("firstId", firstId);
+        params.put("secondId", secondId);
 
-                matchItem.saveInBackground();
-            }
-        });
+        ParseCloud.callFunctionInBackground("insertMatch", params);
     }
 
     public static void getUserById(String id, GetCallback<ParseUser> getCallback){

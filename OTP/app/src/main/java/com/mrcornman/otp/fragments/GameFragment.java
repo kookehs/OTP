@@ -144,6 +144,11 @@ public class GameFragment extends Fragment {
         }
     }
 
+    private boolean getStackChoice(CardStackLayout cardStack) {
+        //cardStack.de
+        return false;
+    }
+
     private void buildPotentialMatch(String firstId, String secondId) {
         potentialFirstId = firstId != null ? firstId : "";
         potentialSecondId = secondId != null ? secondId : "";
