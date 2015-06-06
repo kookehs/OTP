@@ -19,25 +19,31 @@
             android:layout_height="match_parent"
             android:id="@+id/basic_container">
 
-            <android.support.v4.view.ViewPager
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/pager"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <com.mrcornman.otp.views.CirclePageIndicator
-                android:id="@+id/circles"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="48dp"
-                android:layout_alignParentBottom="true" />
+                android:id="@+id/carousel_container">
+
+                <com.mrcornman.otp.views.WrappedViewPager
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/pager"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <com.mrcornman.otp.views.CirclePageIndicator
+                    android:id="@+id/circles"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/pager"
+                    android:paddingBottom="24dp" />
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/header_container"
                 android:padding="16dp"
-                android:layout_below="@+id/pager">
+                android:layout_below="@+id/carousel_container">
 
                 <TextView
                     android:layout_width="wrap_content"

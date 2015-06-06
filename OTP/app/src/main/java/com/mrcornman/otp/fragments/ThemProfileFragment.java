@@ -1,13 +1,11 @@
 package com.mrcornman.otp.fragments;
 
 import android.content.Context;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -71,12 +69,6 @@ public class ThemProfileFragment extends Fragment {
         final TextView wantText = (TextView) rootView.findViewById(R.id.want_value_text);
         final TextView aboutText = (TextView) rootView.findViewById(R.id.about_value_text);
 
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        final int width = size.x;
-        final int height = size.y;
-
         DatabaseHelper.getUserById(userId, new GetCallback<ParseUser>() {
             @Override
             public void done(ParseUser parseUser, ParseException e) {
@@ -89,8 +81,8 @@ public class ThemProfileFragment extends Fragment {
 
                 nameText.setText(user.getString(ProfileBuilder.PROFILE_KEY_NAME) + ",");
                 ageText.setText(PrettyTime.getAgeFromBirthDate(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE)) + "");
-                wantText.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT) + ",");
-                aboutText.setText(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT) + ",");
+                wantText.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT));
+                aboutText.setText(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT));
 
                 List<PhotoItem> photoItems = user.getList(ProfileBuilder.PROFILE_KEY_PHOTOS);
 
@@ -120,9 +112,6 @@ public class ThemProfileFragment extends Fragment {
                                         if(numLoadedImages >= loadedImagesThreshold) {
                                             mPagerAdapter = new CarouselPagerAdapter(getActivity(), getChildFragmentManager(), loadedUrls);
                                             mViewPager = (ViewPager) rootView.findViewById(R.id.pager);
-                                            mViewPager.getLayoutParams().height = (height * 3) / 5;
-                                            mViewPager.getLayoutParams().width = width;
-                                            mViewPager.requestLayout();
                                             mViewPager.setAdapter(mPagerAdapter);
                                             final CirclePageIndicator circles = (CirclePageIndicator) rootView.findViewById(R.id.circles);
                                             circles.setViewPager(mViewPager);

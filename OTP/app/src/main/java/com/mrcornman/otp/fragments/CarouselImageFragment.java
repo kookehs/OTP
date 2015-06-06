@@ -37,7 +37,7 @@ public class CarouselImageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_profile_photo_scroll, container, false);
+        View rootView = inflater.inflate(R.layout.carousel_photo_item, container, false);
 
         if(getArguments() == null) return rootView;
 
