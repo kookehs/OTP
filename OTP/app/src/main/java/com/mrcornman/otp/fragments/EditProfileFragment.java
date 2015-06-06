@@ -119,7 +119,7 @@ public class EditProfileFragment extends Fragment {
         TextView nameText = (TextView) rootview.findViewById(R.id.name_text);
         TextView ageText = (TextView) rootview.findViewById(R.id.age_text);
 
-        nameText.setText(user.getString(ProfileBuilder.PROFILE_KEY_NAME));
+        nameText.setText(user.getString(ProfileBuilder.PROFILE_KEY_NAME) + ", ");
         ageText.setText(PrettyTime.getAgeFromBirthDate(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE)) + "");
 
         //set the text the user wants

@@ -21,7 +21,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:id="@+id/pictures_container"
+                android:id="@+id/basic_container"
                 android:baselineAligned="false">
 
                 <RelativeLayout

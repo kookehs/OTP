@@ -32,9 +32,9 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
      * Navigation Identifiers
      */
     public static final int NAV_PROFILE = 0;
-    public static final int NAV_PREFERENCES = 1;
-    public static final int NAV_SETTINGS = 2;
-    public static final int NAV_SHARE = 3;
+    public static final int NAV_PREFERENCES = 3;
+    public static final int NAV_SETTINGS = 1;
+    public static final int NAV_SHARE = 2;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.

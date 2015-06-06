@@ -73,7 +73,7 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="64dp"
-            android:id="@+id/pictures_container">
+            android:id="@+id/basic_container">
 
             <FrameLayout
                 android:layout_width="0dp"
@@ -141,7 +141,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/blurbs_container"
-            android:layout_below="@+id/pictures_container"
+            android:layout_below="@+id/basic_container"
             android:showDividers="middle">
 
             <RelativeLayout
