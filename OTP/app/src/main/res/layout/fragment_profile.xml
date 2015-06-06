@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:scrollbars="none"
     tools:context="com.mrcornman.otp.fragments.ThemProfileFragment">
 
     <LinearLayout
@@ -42,6 +43,7 @@
                 android:id="@+id/name_text"
                 android:layout_gravity="bottom"
                 android:singleLine="true"
+                android:textStyle="bold"
                 android:layout_centerVertical="true" />
 
             <TextView
@@ -53,7 +55,7 @@
                 android:layout_gravity="bottom"
                 android:singleLine="true"
                 android:layout_toRightOf="@+id/name_text"
-                android:paddingLeft="8dp"
+                android:paddingLeft="4dp"
                 android:layout_centerVertical="true" />
         </RelativeLayout>
 
@@ -65,50 +67,51 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ability"
-                android:id="@+id/about_user__text"
+                android:text="@string/title_blurb"
+                android:id="@+id/about_title_text"
                 android:layout_gravity="bottom"
                 android:singleLine="true"
+                android:textStyle="bold"
                 android:paddingTop="40dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:paddingLeft="8dp"
-                android:layout_centerVertical="true" />
+                android:paddingRight="8dp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text=""
-                android:id="@+id/about_user_info"
+                android:id="@+id/about_value_text"
                 android:layout_gravity="bottom"
-                android:singleLine="true"
                 android:paddingTop="10dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:paddingLeft="8dp"
-                android:layout_centerVertical="true" />
+                android:paddingRight="8dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Interested In"
-                android:id="@+id/want_text"
-                android:layout_gravity="bottom"
+                android:text="@string/title_want_them"
+                android:textStyle="bold"
                 android:singleLine="true"
+                android:id="@+id/want_title_text"
+                android:layout_gravity="bottom"
                 android:paddingTop="40dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:paddingLeft="8dp"
-                android:layout_centerVertical="true"/>
+                android:paddingRight="8dp"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text=""
-                android:id="@+id/want_info"
+                android:id="@+id/want_value_text"
                 android:layout_gravity="bottom"
-                android:singleLine="true"
                 android:paddingTop="10dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:paddingLeft="8dp"
-                android:layout_centerVertical="true"/>
+                android:paddingRight="8dp"
+                android:paddingBottom="8dp"/>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

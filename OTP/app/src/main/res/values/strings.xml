@@ -12,6 +12,9 @@
 
     <!--General-->
     <string name="content_missing_description">Missing</string>
+    <string name="title_blurb">Blurb:</string>
+    <string name="title_want_you">What you\'re looking for:</string>
+    <string name="title_want_them">What they\'re looking for:</string>
 
     <!--Range Seek Bar-->
     <string name="demo_min_label">Min</string>

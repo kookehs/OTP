@@ -149,7 +149,6 @@ public class EditProfileFragment extends Fragment {
         interestedIn.setHorizontallyScrolling(false);
 
         if(user.getString(ProfileBuilder.PROFILE_KEY_WANT) != null) {
-            Log.i("EditProfileFragment", user.getString(ProfileBuilder.PROFILE_KEY_WANT));
             interestedIn.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT));
         }
         interestedIn.setOnFocusChangeListener(new View.OnFocusChangeListener() {

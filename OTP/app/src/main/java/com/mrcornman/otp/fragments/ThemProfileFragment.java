@@ -14,9 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.adapters.pagers.ThemProfilePagerAdapter;
+import com.mrcornman.otp.adapters.pagers.CarouselPagerAdapter;
+import com.mrcornman.otp.models.gson.PhotoFile;
+import com.mrcornman.otp.models.models.PhotoItem;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.mrcornman.otp.utils.PrettyTime;
 import com.mrcornman.otp.utils.ProfileBuilder;
@@ -25,13 +28,19 @@ import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
+import org.json.JSONObject;
+
+import java.util.List;
+
 public class ThemProfileFragment extends Fragment {
 
     private final static String KEY_USER_ID = "user_id";
 
     private String userId;
-    private ThemProfilePagerAdapter mPagerAdapter;
+    private CarouselPagerAdapter mPagerAdapter;
     private ViewPager mViewPager;
+
+    private int numLoadedImages = 0;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -53,30 +62,20 @@ public class ThemProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
         userId = getArguments().getString(KEY_USER_ID);
 
         final TextView nameText = (TextView) rootView.findViewById(R.id.name_text);
         final TextView ageText = (TextView) rootView.findViewById(R.id.age_text);
-        final TextView wantText = (TextView) rootView.findViewById(R.id.want_info);
-        final TextView aboutText = (TextView) rootView.findViewById(R.id.about_user_info);
+        final TextView wantText = (TextView) rootView.findViewById(R.id.want_value_text);
+        final TextView aboutText = (TextView) rootView.findViewById(R.id.about_value_text);
 
         Display display = getActivity().getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        int width = size.x;
-        int height = size.y;
-
-        mPagerAdapter = new ThemProfilePagerAdapter(getActivity(), getChildFragmentManager(), userId, getActivity());
-        mViewPager = (ViewPager) rootView.findViewById(R.id.pager);
-        mViewPager.getLayoutParams().height = (height*3)/5;
-        mViewPager.getLayoutParams().width = width;
-        mViewPager.requestLayout();
-        mViewPager.setAdapter(mPagerAdapter);
-        mViewPager.setOffscreenPageLimit(ThemProfilePagerAdapter.NUM_PAGES);
-        final CirclePageIndicator circles = (CirclePageIndicator) rootView.findViewById(R.id.circles);
-        circles.setViewPager(mViewPager);
+        final int width = size.x;
+        final int height = size.y;
 
         DatabaseHelper.getUserById(userId, new GetCallback<ParseUser>() {
             @Override
@@ -92,6 +91,50 @@ public class ThemProfileFragment extends Fragment {
                 ageText.setText(PrettyTime.getAgeFromBirthDate(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE)) + "");
                 wantText.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT) + ",");
                 aboutText.setText(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT) + ",");
+
+                List<PhotoItem> photoItems = user.getList(ProfileBuilder.PROFILE_KEY_PHOTOS);
+
+                numLoadedImages = 0;
+
+                int count = 0;
+                for(int i = 0; i < photoItems.size(); i++) if(photoItems.get(i) != null && photoItems.get(i) != JSONObject.NULL) count++;
+                final int loadedImagesThreshold = count;
+
+                final String[] loadedUrls = new String[loadedImagesThreshold];
+
+                if (photoItems != null && photoItems.size() == ProfileBuilder.MAX_NUM_PHOTOS) {
+                    for(int i = 0; i < ProfileBuilder.MAX_NUM_PHOTOS; i++) {
+                        final int index = i;
+
+                        // now fill the image
+                        if(photoItems.get(i) != null && photoItems.get(i) != JSONObject.NULL) {
+                            final PhotoItem photo = photoItems.get(i);
+                            photo.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
+                                @Override
+                                public void done(PhotoItem photoItem, com.parse.ParseException e) {
+                                    if(photoItem != null && e == null) {
+                                        PhotoFile photoFile = photoItem.getPhotoFiles().get(0);
+
+                                        loadedUrls[index] = photoFile.url;
+                                        numLoadedImages++;
+                                        if(numLoadedImages >= loadedImagesThreshold) {
+                                            mPagerAdapter = new CarouselPagerAdapter(getActivity(), getChildFragmentManager(), loadedUrls);
+                                            mViewPager = (ViewPager) rootView.findViewById(R.id.pager);
+                                            mViewPager.getLayoutParams().height = (height * 3) / 5;
+                                            mViewPager.getLayoutParams().width = width;
+                                            mViewPager.requestLayout();
+                                            mViewPager.setAdapter(mPagerAdapter);
+                                            final CirclePageIndicator circles = (CirclePageIndicator) rootView.findViewById(R.id.circles);
+                                            circles.setViewPager(mViewPager);
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+                } else {
+                    Toast.makeText(getActivity(), "Your account has become corrupted. Please contact us for assistance.", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
