@@ -108,6 +108,8 @@ public class MatchStatsFragment extends Fragment {
                                     }
                                 }
                             });
+                        } else {
+                            Picasso.with(getActivity().getApplicationContext()).load(R.drawable.com_facebook_profile_picture_blank_portrait).fit().centerCrop().into(pictureImageFirst);
                         }
                     }
                 });
@@ -129,6 +131,8 @@ public class MatchStatsFragment extends Fragment {
                                     }
                                 }
                             });
+                        } else {
+                            Picasso.with(getActivity().getApplicationContext()).load(R.drawable.com_facebook_profile_picture_blank_portrait).fit().centerCrop().into(pictureImageSecond);
                         }
                     }
                 });

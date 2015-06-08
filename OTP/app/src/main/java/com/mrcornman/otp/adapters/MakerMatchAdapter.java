@@ -20,6 +20,8 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,16 +90,20 @@ public class MakerMatchAdapter extends BaseAdapter {
                     nameTextFirst.setText(parseUser.getString(ProfileBuilder.PROFILE_KEY_NAME));
 
                     List<PhotoItem> photoItems = parseUser.getList(ProfileBuilder.PROFILE_KEY_PHOTOS);
-                    PhotoItem mainPhoto = photoItems.get(0);
-                    mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
-                        @Override
-                        public void done(PhotoItem photoItem, ParseException e) {
-                            if(photoItem != null && e == null) {
-                                PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
-                                Picasso.with(mContext).load(mainFile.url).resize(thumbImageFirst.getWidth(), thumbImageFirst.getHeight()).centerCrop().into(thumbImageFirst);
+                    if(photoItems != null && photoItems.size() > 0 && photoItems.get(0) != null && photoItems.get(0) != JSONObject.NULL) {
+                        PhotoItem mainPhoto = photoItems.get(0);
+                        mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
+                            @Override
+                            public void done(PhotoItem photoItem, ParseException e) {
+                                if(photoItem != null && e == null) {
+                                    PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
+                                    Picasso.with(mContext).load(mainFile.url).fit().centerCrop().into(thumbImageFirst);
+                                }
                             }
-                        }
-                    });
+                        });
+                    } else {
+                        Picasso.with(mContext).load(R.drawable.com_facebook_profile_picture_blank_portrait).fit().centerCrop().into(thumbImageFirst);
+                    }
                 }
             }
         });
@@ -110,16 +116,20 @@ public class MakerMatchAdapter extends BaseAdapter {
                     nameTextSecond.setText(parseUser.getString(ProfileBuilder.PROFILE_KEY_NAME));
 
                     List<PhotoItem> photoItems = parseUser.getList(ProfileBuilder.PROFILE_KEY_PHOTOS);
-                    PhotoItem mainPhoto = photoItems.get(0);
-                    mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
-                        @Override
-                        public void done(PhotoItem photoItem, ParseException e) {
-                            if(photoItem != null && e == null) {
-                                PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
-                                Picasso.with(mContext).load(mainFile.url).fit().centerCrop().into(thumbImageSecond);
+                    if(photoItems != null && photoItems.size() > 0 && photoItems.get(0) != null && photoItems.get(0) != JSONObject.NULL) {
+                        PhotoItem mainPhoto = photoItems.get(0);
+                        mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
+                            @Override
+                            public void done(PhotoItem photoItem, ParseException e) {
+                                if(photoItem != null && e == null) {
+                                    PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
+                                    Picasso.with(mContext).load(mainFile.url).fit().centerCrop().into(thumbImageSecond);
+                                }
                             }
-                        }
-                    });
+                        });
+                    } else {
+                        Picasso.with(mContext).load(R.drawable.com_facebook_profile_picture_blank_portrait).fit().centerCrop().into(thumbImageSecond);
+                    }
                 }
             }
         });

@@ -92,37 +92,45 @@ public class ThemProfileFragment extends Fragment {
                 for(int i = 0; i < photoItems.size(); i++) if(photoItems.get(i) != null && photoItems.get(i) != JSONObject.NULL) count++;
                 final int loadedImagesThreshold = count;
 
-                final String[] loadedUrls = new String[loadedImagesThreshold];
+                if(loadedImagesThreshold > 0) {
+                    final String[] loadedUrls = new String[loadedImagesThreshold];
 
-                if (photoItems != null && photoItems.size() == ProfileBuilder.MAX_NUM_PHOTOS) {
-                    for(int i = 0; i < ProfileBuilder.MAX_NUM_PHOTOS; i++) {
-                        final int index = i;
+                    if (photoItems != null && photoItems.size() == ProfileBuilder.MAX_NUM_PHOTOS) {
+                        for (int i = 0; i < ProfileBuilder.MAX_NUM_PHOTOS; i++) {
+                            final int index = i;
 
-                        // now fill the image
-                        if(photoItems.get(i) != null && photoItems.get(i) != JSONObject.NULL) {
-                            final PhotoItem photo = photoItems.get(i);
-                            photo.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
-                                @Override
-                                public void done(PhotoItem photoItem, com.parse.ParseException e) {
-                                    if(photoItem != null && e == null) {
-                                        PhotoFile photoFile = photoItem.getPhotoFiles().get(0);
+                            // now fill the image
+                            if (photoItems.get(i) != null && photoItems.get(i) != JSONObject.NULL) {
+                                final PhotoItem photo = photoItems.get(i);
+                                photo.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
+                                    @Override
+                                    public void done(PhotoItem photoItem, com.parse.ParseException e) {
+                                        if (photoItem != null && e == null) {
+                                            PhotoFile photoFile = photoItem.getPhotoFiles().get(0);
 
-                                        loadedUrls[index] = photoFile.url;
-                                        numLoadedImages++;
-                                        if(numLoadedImages >= loadedImagesThreshold) {
-                                            mPagerAdapter = new CarouselPagerAdapter(getActivity(), getChildFragmentManager(), loadedUrls);
-                                            mViewPager = (ViewPager) rootView.findViewById(R.id.pager);
-                                            mViewPager.setAdapter(mPagerAdapter);
-                                            final CirclePageIndicator circles = (CirclePageIndicator) rootView.findViewById(R.id.circles);
-                                            circles.setViewPager(mViewPager);
+                                            loadedUrls[index] = photoFile.url;
+                                            numLoadedImages++;
+                                            if (numLoadedImages >= loadedImagesThreshold) {
+                                                mPagerAdapter = new CarouselPagerAdapter(getActivity(), getChildFragmentManager(), loadedUrls);
+                                                mViewPager = (ViewPager) rootView.findViewById(R.id.pager);
+                                                mViewPager.setAdapter(mPagerAdapter);
+                                                final CirclePageIndicator circles = (CirclePageIndicator) rootView.findViewById(R.id.circles);
+                                                circles.setViewPager(mViewPager);
+                                            }
                                         }
                                     }
-                                }
-                            });
+                                });
+                            }
                         }
+                    } else {
+                        Toast.makeText(getActivity(), "Your account has become corrupted. Please contact us for assistance.", Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    Toast.makeText(getActivity(), "Your account has become corrupted. Please contact us for assistance.", Toast.LENGTH_LONG).show();
+                    mPagerAdapter = new CarouselPagerAdapter(getActivity(), getChildFragmentManager(), new String[1]);
+                    mViewPager = (ViewPager) rootView.findViewById(R.id.pager);
+                    mViewPager.setAdapter(mPagerAdapter);
+                    final CirclePageIndicator circles = (CirclePageIndicator) rootView.findViewById(R.id.circles);
+                    circles.setViewPager(mViewPager);
                 }
             }
         });

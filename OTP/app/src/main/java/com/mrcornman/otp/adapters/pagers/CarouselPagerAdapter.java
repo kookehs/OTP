@@ -4,8 +4,8 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.util.Log;
 
+import com.mrcornman.otp.R;
 import com.mrcornman.otp.fragments.CarouselImageFragment;
 
 /**
@@ -21,7 +21,6 @@ public class CarouselPagerAdapter extends FragmentPagerAdapter {
 
         mContext = context;
         mUrls = urls;
-        Log.i("CarouselPagerAdapter", urls.toString());
     }
 
     @Override
@@ -31,7 +30,12 @@ public class CarouselPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        Fragment fragment = CarouselImageFragment.newInstance(mUrls[position]);
+        Fragment fragment = null;
+        if(mUrls[position] != null)
+            fragment = CarouselImageFragment.newInstance(mUrls[position]);
+        else
+            fragment = CarouselImageFragment.newInstance(R.drawable.com_facebook_profile_picture_blank_portrait);
+
         return fragment;
     }
 

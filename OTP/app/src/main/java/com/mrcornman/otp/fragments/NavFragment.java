@@ -111,6 +111,8 @@ public class NavFragment extends Fragment {
                     }
                 }
             });
+        } else {
+            Picasso.with(getActivity().getApplicationContext()).load(R.drawable.com_facebook_profile_picture_blank_portrait).fit().centerCrop().into(navProfileImage);
         }
 
         List<NavItem> navItems = new ArrayList<>();

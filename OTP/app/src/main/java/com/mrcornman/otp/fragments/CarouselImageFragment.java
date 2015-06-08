@@ -16,6 +16,7 @@ import com.squareup.picasso.Picasso;
 public class CarouselImageFragment extends Fragment {
 
     private final static String KEY_URL = "url";
+    private final static String KEY_RESOURCE_ID = "resource_id";
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -27,6 +28,21 @@ public class CarouselImageFragment extends Fragment {
         // arguments
         Bundle arguments = new Bundle();
         arguments.putString(KEY_URL, url);
+        fragment.setArguments(arguments);
+
+        return fragment;
+    }
+
+    /**
+     * Returns a new instance of this fragment for the given section
+     * number. Overload to allow resource ids.
+     */
+    public static CarouselImageFragment newInstance(int resourceId) {
+        CarouselImageFragment fragment = new CarouselImageFragment();
+
+        // arguments
+        Bundle arguments = new Bundle();
+        arguments.putInt(KEY_RESOURCE_ID, resourceId);
         fragment.setArguments(arguments);
 
         return fragment;
@@ -44,9 +60,14 @@ public class CarouselImageFragment extends Fragment {
         final ImageView pictureImage = (ImageView) rootView.findViewById(R.id.picture_image);
 
         final String url = getArguments().getString(KEY_URL);
+        final int resourceId = getArguments().getInt(KEY_RESOURCE_ID);
 
-        if (getActivity() != null)
-            Picasso.with(getActivity().getApplicationContext()).load(url).fit().centerCrop().into(pictureImage);
+        if (getActivity() != null) {
+            if (url != null)
+                Picasso.with(getActivity().getApplicationContext()).load(url).fit().centerCrop().into(pictureImage);
+            else
+                Picasso.with(getActivity().getApplicationContext()).load(resourceId).fit().centerCrop().into(pictureImage);
+        }
 
         return rootView;
 

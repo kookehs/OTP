@@ -28,7 +28,6 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/picture_image_0"
                     android:contentDescription="@string/content_missing_description"
-                    android:src="@drawable/com_facebook_profile_picture_blank_portrait"
                     android:layout_gravity="center_horizontal|bottom" />
 
                 <ProgressBar
@@ -61,8 +60,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/picture_image_1"
-                            android:contentDescription="@string/content_missing_description"
-                            android:src="@drawable/com_facebook_profile_picture_blank_portrait" />
+                            android:contentDescription="@string/content_missing_description" />
 
                         <ProgressBar
                             style="?android:attr/progressBarStyleLarge"
@@ -85,8 +83,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/picture_image_2"
-                            android:contentDescription="@string/content_missing_description"
-                            android:src="@drawable/com_facebook_profile_picture_blank_portrait"/>
+                            android:contentDescription="@string/content_missing_description" />
 
                         <ProgressBar
                             style="?android:attr/progressBarStyleLarge"
@@ -109,8 +106,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/picture_image_3"
-                            android:contentDescription="@string/content_missing_description"
-                            android:src="@drawable/com_facebook_profile_picture_blank_portrait"/>
+                            android:contentDescription="@string/content_missing_description" />
 
                         <ProgressBar
                             style="?android:attr/progressBarStyleLarge"

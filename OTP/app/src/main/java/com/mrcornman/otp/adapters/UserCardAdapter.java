@@ -106,6 +106,8 @@ public class UserCardAdapter extends BaseAdapter {
                     }
                 }
             });
+        } else {
+            Picasso.with(mContext).load(R.drawable.com_facebook_profile_picture_blank_portrait).fit().centerCrop().into(pictureImageFront);
         }
 
         // back

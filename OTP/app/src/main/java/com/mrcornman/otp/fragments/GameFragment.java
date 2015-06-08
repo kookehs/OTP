@@ -1,13 +1,13 @@
 package com.mrcornman.otp.fragments;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -35,13 +35,15 @@ public class GameFragment extends Fragment {
     private ProgressBar secondProgress;
     private UserCardAdapter mUserCardAdapterFirst;
     private UserCardAdapter mUserCardAdapterSecond;
+    private ImageView progressIndicatorImage;
 
     private OnGameInteractionListener onGameInteractionListener;
 
-    private SharedPreferences sharedPreferences;
-
     private String potentialFirstId = "";
     private String potentialSecondId = "";
+
+    private float firstRatio;
+    private float secondRatio;
 
     public static GameFragment newInstance() {
         GameFragment fragment = new GameFragment();
@@ -65,8 +67,13 @@ public class GameFragment extends Fragment {
         mCardStackLayoutFirst = (CardStackLayout) view.findViewById(R.id.cardstack_first);
         mCardStackLayoutSecond = (CardStackLayout) view.findViewById(R.id.cardstack_second);
 
+        mCardStackLayoutFirst.setOrientation(CardStackLayout.ORIENTATION_DOWN);
+        mCardStackLayoutSecond.setOrientation(CardStackLayout.ORIENTATION_UP);
+
         firstProgress = (ProgressBar) view.findViewById(R.id.first_progress);
         secondProgress = (ProgressBar) view.findViewById(R.id.second_progress);
+
+        progressIndicatorImage = (ImageView) view.findViewById(R.id.progress_indicator_image);
 
         mCardStackLayoutFirst.setCardStackListener(new CardStackLayout.CardStackListener() {
             @Override
@@ -75,7 +82,9 @@ public class GameFragment extends Fragment {
             }
 
             @Override
-            public void onUpdateProgress(float percent) {
+            public void onUpdateProgress(float ratio) {
+                firstRatio = ratio;
+                progressIndicatorImage.setAlpha(Math.max(firstRatio, secondRatio));
             }
 
             @Override
@@ -85,11 +94,12 @@ public class GameFragment extends Fragment {
 
             @Override
             public void onChoiceAccepted() {
-                onCreateMatch();
+                if(getStackChoice(mCardStackLayoutFirst)) onCreateMatch();
+            }
 
-                if(!mCardStackLayoutFirst.hasMoreItems()) {
-                    refreshFirstStack();
-                }
+            @Override
+            public void onRefreshRequest() {
+                refreshFirstStack();
             }
         });
 
@@ -100,7 +110,10 @@ public class GameFragment extends Fragment {
             }
 
             @Override
-            public void onUpdateProgress(float percent) {
+            public void onUpdateProgress(float ratio) {
+                secondRatio = ratio;
+                progressIndicatorImage.setAlpha(Math.max(secondRatio, firstRatio));
+                Log.i("GameFragment", "Ratio: " + ratio);
             }
 
             @Override
@@ -110,16 +123,14 @@ public class GameFragment extends Fragment {
 
             @Override
             public void onChoiceAccepted() {
-                onCreateMatch();
+                if(getStackChoice(mCardStackLayoutSecond)) onCreateMatch();
+            }
 
-                if(!mCardStackLayoutSecond.hasMoreItems()) {
-                    refreshSecondStack();
-                }
+            @Override
+            public void onRefreshRequest() {
+                refreshSecondStack();
             }
         });
-
-        // init data
-        sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
 
         mUserCardAdapterFirst = new UserCardAdapter(getActivity().getApplicationContext());
         mCardStackLayoutFirst.setAdapter(mUserCardAdapterFirst);
@@ -145,7 +156,7 @@ public class GameFragment extends Fragment {
     }
 
     private boolean getStackChoice(CardStackLayout cardStack) {
-        //cardStack.de
+        if(cardStack != null) return cardStack.getChoice();
         return false;
     }
 
@@ -157,6 +168,12 @@ public class GameFragment extends Fragment {
     private void clearPotentialMatch() {
         potentialFirstId = "";
         potentialSecondId = "";
+
+        firstRatio = 0;
+        secondRatio = 0;
+        progressIndicatorImage.setAlpha(0);
+
+        Log.i("GameFragment", "Clearing");
     }
 
     private void onCreateMatch() {
