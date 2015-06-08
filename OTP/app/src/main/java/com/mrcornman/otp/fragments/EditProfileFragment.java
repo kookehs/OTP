@@ -110,8 +110,12 @@ public class EditProfileFragment extends Fragment {
                             }
                         }
                     });
-                } else if(index == 0) {
-                    Picasso.with(getActivity().getApplicationContext()).load(R.drawable.com_facebook_profile_picture_blank_portrait).fit().centerCrop().into(pictureImages[index]);
+                } else {
+                    if(index == 0) {
+                        Picasso.with(getActivity().getApplicationContext()).load(R.drawable.com_facebook_profile_picture_blank_portrait).fit().centerCrop().into(pictureImages[index]);
+                    } else {
+                        Picasso.with(getActivity().getApplicationContext()).load(R.mipmap.ic_add).fit().centerCrop().into(pictureImages[index]);
+                    }
                 }
             }
         } else {
