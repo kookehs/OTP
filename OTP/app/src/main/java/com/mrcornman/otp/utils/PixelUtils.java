@@ -19,9 +19,9 @@ import android.util.DisplayMetrics;
 /**
  * Util class for converting between dp, px and other magical pixel units
  */
-public class PixelUtil {
+public class PixelUtils {
 
-    private PixelUtil() {
+    private PixelUtils() {
     }
 
     public static int dpToPx(Context context, int dp) {

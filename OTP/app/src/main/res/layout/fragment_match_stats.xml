@@ -29,9 +29,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/container_first"
                     android:layout_weight="0.5"
-                    android:layout_alignParentLeft="false"
-                    android:layout_marginBottom="8dp"
-                    android:layout_alignParentTop="true">
+                    android:layout_marginBottom="8dp">
 
                     <FrameLayout
                         android:layout_width="match_parent"
@@ -56,11 +54,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/container_second"
-                    android:layout_weight="0.5"
-                    android:layout_toRightOf="@+id/container_first"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentRight="false"
-                    android:layout_alignParentTop="true">
+                    android:layout_weight="0.5">
 
                     <FrameLayout
                         android:layout_width="match_parent"
@@ -92,8 +86,8 @@
                     android:text="Likes"
                     android:id="@+id/likes_title_text"
                     android:layout_gravity="center_horizontal"
-                    android:textColor="@color/very_dark_gray"
-                    android:textSize="72dp"
+                    android:textColor="@color/primary"
+                    android:textSize="42sp"
                     android:paddingLeft="16dp"
                     android:layout_centerHorizontal="true" />
 
@@ -106,7 +100,7 @@
                     android:layout_gravity="center_horizontal"
                     android:textColor="@color/very_dark_gray"
                     android:paddingLeft="8dp"
-                    android:textSize="72dp"
+                    android:textSize="96sp"
                     android:layout_centerHorizontal="true"
                     android:layout_below="@+id/likes_title_text" />
             </RelativeLayout>
@@ -122,8 +116,8 @@
                     android:text="Messages"
                     android:id="@+id/num_messages_title_text"
                     android:layout_gravity="center_horizontal"
-                    android:textColor="@color/very_dark_gray"
-                    android:textSize="72dp"
+                    android:textColor="@color/primary"
+                    android:textSize="42sp"
                     android:paddingLeft="16dp"
                     android:layout_centerHorizontal="true" />
 
@@ -136,7 +130,7 @@
                     android:layout_gravity="center_horizontal"
                     android:textColor="@color/very_dark_gray"
                     android:paddingLeft="8dp"
-                    android:textSize="72dp"
+                    android:textSize="96sp"
                     android:layout_centerHorizontal="true"
                     android:layout_below="@+id/num_messages_title_text" />
             </RelativeLayout>

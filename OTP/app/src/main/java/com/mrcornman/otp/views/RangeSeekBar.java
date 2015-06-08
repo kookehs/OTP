@@ -31,7 +31,7 @@ import android.view.ViewConfiguration;
 import android.widget.ImageView;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.utils.PixelUtil;
+import com.mrcornman.otp.utils.PixelUtils;
 
 import java.math.BigDecimal;
 
@@ -149,14 +149,14 @@ public class RangeSeekBar<T extends Number> extends ImageView {
 
         setValuePrimAndNumberType();
 
-        INITIAL_PADDING = PixelUtil.dpToPx(context, INITIAL_PADDING_IN_DP);
+        INITIAL_PADDING = PixelUtils.dpToPx(context, INITIAL_PADDING_IN_DP);
 
-        mTextSize = PixelUtil.dpToPx(context, DEFAULT_TEXT_SIZE_IN_DP);
-        mDistanceToTop = PixelUtil.dpToPx(context, DEFAULT_TEXT_DISTANCE_TO_TOP_IN_DP);
-        mTextOffset = this.mTextSize + PixelUtil.dpToPx(context,
+        mTextSize = PixelUtils.dpToPx(context, DEFAULT_TEXT_SIZE_IN_DP);
+        mDistanceToTop = PixelUtils.dpToPx(context, DEFAULT_TEXT_DISTANCE_TO_TOP_IN_DP);
+        mTextOffset = this.mTextSize + PixelUtils.dpToPx(context,
                 DEFAULT_TEXT_DISTANCE_TO_BUTTON_IN_DP) + this.mDistanceToTop;
 
-        float lineHeight = PixelUtil.dpToPx(context, LINE_HEIGHT_IN_DP);
+        float lineHeight = PixelUtils.dpToPx(context, LINE_HEIGHT_IN_DP);
         mRect = new RectF(padding,
                 mTextOffset + thumbHalfHeight - lineHeight / 2,
                 getWidth() - padding,
@@ -438,7 +438,7 @@ public class RangeSeekBar<T extends Number> extends ImageView {
             width = MeasureSpec.getSize(widthMeasureSpec);
         }
 
-        int height = thumbImage.getHeight() + PixelUtil.dpToPx(getContext(), HEIGHT_IN_DP);
+        int height = thumbImage.getHeight() + PixelUtils.dpToPx(getContext(), HEIGHT_IN_DP);
         if (MeasureSpec.UNSPECIFIED != MeasureSpec.getMode(heightMeasureSpec)) {
             height = Math.min(height, MeasureSpec.getSize(heightMeasureSpec));
         }
@@ -493,7 +493,7 @@ public class RangeSeekBar<T extends Number> extends ImageView {
             paint.setTextSize(mTextSize);
             paint.setColor(Color.WHITE);
             // give text a bit more space here so it doesn't get cut off
-            int offset = PixelUtil.dpToPx(getContext(), TEXT_LATERAL_PADDING_IN_DP);
+            int offset = PixelUtils.dpToPx(getContext(), TEXT_LATERAL_PADDING_IN_DP);
 
             String minText = String.valueOf(getSelectedMinValue());
             String maxText = String.valueOf(getSelectedMaxValue());

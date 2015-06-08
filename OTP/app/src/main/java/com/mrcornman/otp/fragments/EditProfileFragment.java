@@ -45,6 +45,9 @@ public class EditProfileFragment extends Fragment {
     private final static String KEY_INDEX = "index";
     private final static String KEY_URL = "url";
 
+    private EditTextBorder aboutEditText;
+    private EditTextBorder wantEditText;
+
     private ImageView[] pictureImages;
     private ProgressBar[] pictureProgressBars;
 
@@ -57,7 +60,7 @@ public class EditProfileFragment extends Fragment {
         return fragment;
     }
 
-    public EditProfileFragment(){}
+    public EditProfileFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -114,7 +117,7 @@ public class EditProfileFragment extends Fragment {
                     if(index == 0) {
                         Picasso.with(getActivity().getApplicationContext()).load(R.drawable.com_facebook_profile_picture_blank_portrait).fit().centerCrop().into(pictureImages[index]);
                     } else {
-                        Picasso.with(getActivity().getApplicationContext()).load(R.mipmap.ic_add).fit().centerCrop().into(pictureImages[index]);
+                        Picasso.with(getActivity().getApplicationContext()).load(R.mipmap.placeholder_add).fit().centerCrop().into(pictureImages[index]);
                     }
                 }
             }
@@ -130,52 +133,77 @@ public class EditProfileFragment extends Fragment {
         ageText.setText(PrettyTime.getAgeFromBirthDate(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE)) + "");
 
         //set the text the user wants
-        final EditTextBorder aboutMe = (EditTextBorder) rootView.findViewById(R.id.about_edit_text);
-        aboutMe.setHorizontallyScrolling(false);
+        aboutEditText = (EditTextBorder) rootView.findViewById(R.id.about_edit_text);
+        aboutEditText.setHorizontallyScrolling(false);
 
-        if(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT) != null) aboutMe.setText(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT));
-        aboutMe.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        if(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT) != null) aboutEditText.setText(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT));
+        aboutEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    String aboutMeText = aboutMe.getText().toString();
-                    user.put(ProfileBuilder.PROFILE_KEY_ABOUT, aboutMeText);
-
                     //hide keyboard
                     InputMethodManager in = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-
-                    in.hideSoftInputFromWindow(aboutMe
-                                    .getApplicationWindowToken(),
-                            InputMethodManager.HIDE_NOT_ALWAYS);
+                    in.hideSoftInputFromWindow(aboutEditText.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 }
             }
         });
 
         //EditText for the interested in section of the profile page
-        final EditTextBorder interestedIn = (EditTextBorder) rootView.findViewById(R.id.want_edit_text);
-        interestedIn.setHorizontallyScrolling(false);
+        wantEditText = (EditTextBorder) rootView.findViewById(R.id.want_edit_text);
+        wantEditText.setHorizontallyScrolling(false);
 
         if(user.getString(ProfileBuilder.PROFILE_KEY_WANT) != null) {
-            interestedIn.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT));
+            wantEditText.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT));
         }
-        interestedIn.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        wantEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    String interestedInText = interestedIn.getText().toString();
-                    user.put(ProfileBuilder.PROFILE_KEY_WANT, interestedInText);
-
                     //hide keyboard
                     InputMethodManager in = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-
-                    in.hideSoftInputFromWindow(interestedIn
-                                    .getApplicationWindowToken(),
-                            InputMethodManager.HIDE_NOT_ALWAYS);
+                    in.hideSoftInputFromWindow(wantEditText.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 }
             }
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onPause() {
+        InputMethodManager in = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        in.hideSoftInputFromWindow(wantEditText.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+        boolean isDirty = false;
+
+        String aboutTextStr = aboutEditText.getText().toString();
+        if (!aboutTextStr.equals(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT))) {
+            user.put(ProfileBuilder.PROFILE_KEY_ABOUT, aboutTextStr);
+            isDirty = true;
+        }
+
+        String wantTextStr = wantEditText.getText().toString();
+        if (!wantTextStr.equals(user.getString(ProfileBuilder.PROFILE_KEY_WANT))) {
+            user.put(ProfileBuilder.PROFILE_KEY_WANT, wantTextStr);
+            isDirty = true;
+        }
+
+        if(isDirty) {
+            ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e != null) {
+                        Toast.makeText(getActivity().getApplicationContext(), "There was a problem saving your profile. Please try again.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    if (getActivity() != null)
+                        Toast.makeText(getActivity().getApplicationContext(), "Profile saved!", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
+        super.onPause();
     }
 
     @Override

@@ -33,6 +33,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.wasabeef.picasso.transformations.BlurTransformation;
+
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
  * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
@@ -107,12 +109,17 @@ public class NavFragment extends Fragment {
                 public void done(PhotoItem photoItem, ParseException e) {
                     if(photoItem != null && e == null) {
                         PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
-                        Picasso.with(getActivity().getApplicationContext()).load(mainFile.url).fit().centerCrop().into(navProfileImage);
+
+                        if(getActivity() != null) {
+                            Picasso.with(getActivity()).load(mainFile.url).fit().centerCrop().into(navProfileImage);
+                            Picasso.with(getActivity()).load(mainFile.url).fit().centerCrop().transform(new BlurTransformation(getActivity(), 25)).into(navProfileListenerImage);
+                        }
                     }
                 }
             });
-        } else {
-            Picasso.with(getActivity().getApplicationContext()).load(R.drawable.com_facebook_profile_picture_blank_portrait).fit().centerCrop().into(navProfileImage);
+        } else if(getActivity() != null) {
+            Picasso.with(getActivity()).load(R.drawable.com_facebook_profile_picture_blank_portrait).fit().centerCrop().into(navProfileImage);
+            Picasso.with(getActivity()).load(R.drawable.com_facebook_profile_picture_blank_portrait).fit().centerCrop().transform(new BlurTransformation(getActivity(), 25)).into(navProfileListenerImage);
         }
 
         List<NavItem> navItems = new ArrayList<>();

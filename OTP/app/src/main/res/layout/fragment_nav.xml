@@ -14,11 +14,11 @@
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="112dp"
+            android:layout_height="148dp"
             android:id="@+id/nav_profile_listener_backdrop"
             android:focusable="false"
             android:contentDescription="@string/content_missing_description"
-            android:src="@color/primary" />
+            android:src="@color/white" />
 
         <FrameLayout
             android:layout_width="wrap_content"
@@ -42,6 +42,7 @@
         </FrameLayout>
 
         <TextView
+            tools:text="Denise"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Name&apos;s Profile"
@@ -51,7 +52,11 @@
             android:enabled="false"
             android:textStyle="bold"
             android:textSize="18sp"
-            android:layout_centerVertical="true" />
+            android:layout_centerVertical="true"
+            android:shadowColor="#111"
+            android:shadowRadius="24"
+            android:singleLine="true"
+            android:padding="16dp" />
 
     </RelativeLayout>
 

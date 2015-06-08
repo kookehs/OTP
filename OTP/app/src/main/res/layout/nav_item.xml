@@ -17,13 +17,11 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.85"
         android:layout_centerVertical="true">
 
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.25"
             android:layout_centerVertical="true"
             android:id="@+id/icon_frame"
             android:padding="16dp"
@@ -45,7 +43,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/title_text"
             android:textSize="16sp"
-            android:textColor="#333"
+            android:textColor="@color/very_dark_gray"
             tools:text="Denise"
             android:textStyle="bold"
             android:singleLine="true"
