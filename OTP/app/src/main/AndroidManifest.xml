@@ -159,7 +159,7 @@
 
         <meta-data
             android:name="com.parse.push.notification_icon"
-            android:resource="@mipmap/ic_launcher" />
+            android:resource="@mipmap/ic_notification" />
     </application>
 
 </manifest>
