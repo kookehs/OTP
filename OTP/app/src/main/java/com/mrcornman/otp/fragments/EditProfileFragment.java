@@ -63,22 +63,22 @@ public class EditProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View rootview = inflater.inflate(R.layout.fragment_edit_profile, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_edit_profile, container, false);
 
         user = ParseUser.getCurrentUser();
 
         pictureProgressBars = new ProgressBar[] {
-                (ProgressBar) rootview.findViewById(R.id.progress_0),
-                (ProgressBar) rootview.findViewById(R.id.progress_1),
-                (ProgressBar) rootview.findViewById(R.id.progress_2),
-                (ProgressBar) rootview.findViewById(R.id.progress_3)
+                (ProgressBar) rootView.findViewById(R.id.progress_0),
+                (ProgressBar) rootView.findViewById(R.id.progress_1),
+                (ProgressBar) rootView.findViewById(R.id.progress_2),
+                (ProgressBar) rootView.findViewById(R.id.progress_3)
         };
 
         pictureImages = new ImageView[] {
-                (ImageView) rootview.findViewById(R.id.picture_image_0),
-                (ImageView) rootview.findViewById(R.id.picture_image_1),
-                (ImageView) rootview.findViewById(R.id.picture_image_2),
-                (ImageView) rootview.findViewById(R.id.picture_image_3)
+                (ImageView) rootView.findViewById(R.id.picture_image_0),
+                (ImageView) rootView.findViewById(R.id.picture_image_1),
+                (ImageView) rootView.findViewById(R.id.picture_image_2),
+                (ImageView) rootView.findViewById(R.id.picture_image_3)
         };
 
 
@@ -104,24 +104,29 @@ public class EditProfileFragment extends Fragment {
                     photo.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
                         @Override
                         public void done(PhotoItem photoItem, com.parse.ParseException e) {
-                            PhotoFile photoFile = photoItem.getPhotoFiles().get(0);
-                            Picasso.with(getActivity().getApplicationContext()).load(photoFile.url).fit().centerCrop().into(pictureImages[index]);
+                            if(photoItem != null && e == null) {
+                                PhotoFile photoFile = photoItem.getPhotoFiles().get(0);
+                                Picasso.with(getActivity().getApplicationContext()).load(photoFile.url).fit().centerCrop().into(pictureImages[index]);
+                            }
                         }
                     });
+                } else if(index == 0) {
+                    Picasso.with(getActivity().getApplicationContext()).load(R.drawable.com_facebook_profile_picture_blank_portrait).fit().centerCrop().into(pictureImages[index]);
                 }
             }
         } else {
             Toast.makeText(getActivity(), "Your account has become corrupted. Please contact us for assistance.", Toast.LENGTH_LONG).show();
+            return rootView;
         }
 
-        TextView nameText = (TextView) rootview.findViewById(R.id.name_text);
-        TextView ageText = (TextView) rootview.findViewById(R.id.age_text);
+        TextView nameText = (TextView) rootView.findViewById(R.id.name_text);
+        TextView ageText = (TextView) rootView.findViewById(R.id.age_text);
 
-        nameText.setText(user.getString(ProfileBuilder.PROFILE_KEY_NAME));
+        nameText.setText(user.getString(ProfileBuilder.PROFILE_KEY_NAME) + ", ");
         ageText.setText(PrettyTime.getAgeFromBirthDate(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE)) + "");
 
         //set the text the user wants
-        final EditTextBorder aboutMe = (EditTextBorder) rootview.findViewById(R.id.about_edit_text);
+        final EditTextBorder aboutMe = (EditTextBorder) rootView.findViewById(R.id.about_edit_text);
         aboutMe.setHorizontallyScrolling(false);
 
         if(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT) != null) aboutMe.setText(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT));
@@ -143,11 +148,10 @@ public class EditProfileFragment extends Fragment {
         });
 
         //EditText for the interested in section of the profile page
-        final EditTextBorder interestedIn = (EditTextBorder) rootview.findViewById(R.id.want_edit_text);
+        final EditTextBorder interestedIn = (EditTextBorder) rootView.findViewById(R.id.want_edit_text);
         interestedIn.setHorizontallyScrolling(false);
 
         if(user.getString(ProfileBuilder.PROFILE_KEY_WANT) != null) {
-            Log.i("EditProfileFragment", user.getString(ProfileBuilder.PROFILE_KEY_WANT));
             interestedIn.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT));
         }
         interestedIn.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -167,7 +171,7 @@ public class EditProfileFragment extends Fragment {
             }
         });
 
-        return rootview;
+        return rootView;
     }
 
     @Override

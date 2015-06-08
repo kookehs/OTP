@@ -1,70 +1,80 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.mrcornman.otp.fragments.GameFragment">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        android:id="@+id/stack_content">
+        android:id="@+id/stack_container"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            android:id="@+id/first_container">
 
-            <RelativeLayout
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/first_progress"
+                android:visibility="invisible"
+                android:layout_centerInParent="true" />
+
+            <com.mrcornman.otp.views.CardStackLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.5"
-                android:id="@+id/first_container">
+                android:layout_height="match_parent"
+                android:id="@+id/cardstack_first"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:layout_centerHorizontal="true">
+            </com.mrcornman.otp.views.CardStackLayout>
 
-                <ProgressBar
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/first_progress"
-                    android:visibility="invisible"
-                    android:layout_centerInParent="true" />
+        </RelativeLayout>
 
-                <com.mrcornman.otp.views.CardStackLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/cardstack_first"
-                    android:clipChildren="false"
-                    android:clipToPadding="false"
-                    android:layout_centerHorizontal="true">
-                </com.mrcornman.otp.views.CardStackLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/second_container"
+            android:layout_weight="0.5">
 
-            </RelativeLayout>
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/second_progress"
+                android:visibility="invisible"
+                android:layout_centerInParent="true" />
 
-            <RelativeLayout
+            <com.mrcornman.otp.views.CardStackLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:id="@+id/second_container"
-                android:layout_weight="0.5">
+                android:layout_height="match_parent"
+                android:id="@+id/cardstack_second"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:layout_centerHorizontal="true">
+            </com.mrcornman.otp.views.CardStackLayout>
 
-                <ProgressBar
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/second_progress"
-                    android:visibility="invisible"
-                    android:layout_centerInParent="true" />
+        </RelativeLayout>
 
-                <com.mrcornman.otp.views.CardStackLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/cardstack_second"
-                    android:clipChildren="false"
-                    android:clipToPadding="false"
-                    android:layout_centerHorizontal="true">
-                </com.mrcornman.otp.views.CardStackLayout>
+    </LinearLayout>
 
-            </RelativeLayout>
-        </LinearLayout>
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progress_indicator_frame"
+        android:layout_centerInParent="true">
 
-    </RelativeLayout>
+        <ImageView
+            android:layout_width="256dp"
+            android:layout_height="256dp"
+            android:id="@+id/progress_indicator_image"
+            android:contentDescription="@string/content_missing_description"
+            android:src="@mipmap/ic_action_maker"
+            android:tint="#00ff00"
+            android:alpha="0"
+            android:visibility="invisible" />
+    </FrameLayout>
 
-</FrameLayout>
+</RelativeLayout>

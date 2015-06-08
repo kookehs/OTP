@@ -100,10 +100,14 @@ public class UserCardAdapter extends BaseAdapter {
             mainPhoto.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
                 @Override
                 public void done(PhotoItem photoItem, ParseException e) {
-                    PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
-                    Picasso.with(mContext.getApplicationContext()).load(mainFile.url).fit().centerCrop().into(pictureImageFront);
+                    if(photoItem != null && e == null) {
+                        PhotoFile mainFile = photoItem.getPhotoFiles().get(0);
+                        Picasso.with(mContext.getApplicationContext()).load(mainFile.url).fit().centerCrop().into(pictureImageFront);
+                    }
                 }
             });
+        } else {
+            Picasso.with(mContext).load(R.drawable.com_facebook_profile_picture_blank_portrait).fit().centerCrop().into(pictureImageFront);
         }
 
         // back
@@ -118,9 +122,11 @@ public class UserCardAdapter extends BaseAdapter {
                     photo.fetchIfNeededInBackground(new GetCallback<PhotoItem>() {
                         @Override
                         public void done(PhotoItem photoItem, ParseException e) {
-                            PhotoFile photoFile = photoItem.getPhotoFiles().get(0);
-                            pictureImagesBack[index].setVisibility(View.VISIBLE);
-                            Picasso.with(mContext.getApplicationContext()).load(photoFile.url).fit().centerCrop().into(pictureImagesBack[index]);
+                            if(photoItem != null && e == null) {
+                                PhotoFile photoFile = photoItem.getPhotoFiles().get(0);
+                                pictureImagesBack[index].setVisibility(View.VISIBLE);
+                                Picasso.with(mContext.getApplicationContext()).load(photoFile.url).fit().centerCrop().into(pictureImagesBack[index]);
+                            }
                         }
                     });
                 }

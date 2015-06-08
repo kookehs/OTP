@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:rsb="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.mrcornman.otp.views.RangeSeekBar
+        android:id="@+id/range_seekbar"
+        rsb:absoluteMinValue="18"
+        rsb:absoluteMaxValue="60"
+        android:layout_width="0dp"
+        android:layout_weight="80"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@android:id/summary"
+        android:layout_width="0dp"
+        android:layout_weight="20"
+        android:singleLine="true"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

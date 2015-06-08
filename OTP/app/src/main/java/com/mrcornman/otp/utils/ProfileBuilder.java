@@ -42,6 +42,9 @@ public class ProfileBuilder {
     public final static String PROFILE_KEY_ABOUT = "about";
     public final static String PROFILE_KEY_WANT = "want";
     public final static String PROFILE_KEY_SCORE = "score";
+    public final static String PROFILE_KEY_WANTED_AGE_MIN = "wanted_age_min";
+    public final static String PROFILE_KEY_WANTED_AGE_MAX = "wanted_age_max";
+    public final static String PROFILE_KEY_WANTED_DISTANCE_MAX = "wanted_distance_max";
 
     private final static String FACEBOOK_KEY_NAME = "first_name";
     private final static String FACEBOOK_KEY_GENDER = "gender";

@@ -32,9 +32,9 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
      * Navigation Identifiers
      */
     public static final int NAV_PROFILE = 0;
-    public static final int NAV_PREFERENCES = 1;
-    public static final int NAV_SETTINGS = 2;
-    public static final int NAV_SHARE = 3;
+    public static final int NAV_PREFERENCES = 3;
+    public static final int NAV_SETTINGS = 1;
+    public static final int NAV_SHARE = 2;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -46,14 +46,10 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
 
     private TextView scoreText;
 
-    private CharSequence mTitle;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mTitle = getTitle();
 
         // Set up toolbar_generic and tabs
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -126,16 +122,16 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
 
         switch(position) {
             case NAV_PROFILE:
-                // start profile activity
-                Intent profile = new Intent(this, ProfileActivity.class);
-                startActivity(profile);
+                Intent profileIntent = new Intent(this, ProfileActivity.class);
+                startActivity(profileIntent);
                 break;
             case NAV_PREFERENCES:
-                // start prefs activity
+                Intent prefsIntent = new Intent(this, UserPrefsActivity.class);
+                startActivity(prefsIntent);
                 break;
             case NAV_SETTINGS:
-                final Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
-                startActivity(intent);
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
                 break;
             case NAV_SHARE:
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);

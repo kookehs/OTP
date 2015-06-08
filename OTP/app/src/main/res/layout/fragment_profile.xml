@@ -2,117 +2,129 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:scrollbars="none"
     tools:context="com.mrcornman.otp.fragments.ThemProfileFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:id="@+id/user_profile_container">
+        android:id="@+id/user_profile_container"
+        android:divider="?android:attr/dividerVertical"
+        android:dividerPadding="16dp"
+        android:showDividers="middle">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:id="@+id/basic_container">
 
-            <android.support.v4.view.ViewPager
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/pager"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:id="@+id/carousel_container">
 
-            <com.mrcornman.otp.views.CirclePageIndicator
-                android:id="@+id/circles"
+                <com.mrcornman.otp.views.WrappedViewPager
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/pager"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <com.mrcornman.otp.views.CirclePageIndicator
+                    android:id="@+id/circles"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/pager"
+                    android:paddingBottom="24dp" />
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignBottom="@+id/pager"/>
+                android:layout_height="wrap_content"
+                android:id="@+id/header_container"
+                android:padding="16dp"
+                android:layout_below="@+id/carousel_container">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Name"
+                    android:id="@+id/name_text"
+                    android:layout_gravity="bottom"
+                    android:singleLine="true"
+                    android:textStyle="bold"
+                    android:layout_centerVertical="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Age"
+                    android:id="@+id/age_text"
+                    android:layout_gravity="bottom"
+                    android:singleLine="true"
+                    android:layout_toRightOf="@+id/name_text"
+                    android:paddingLeft="4dp"
+                    android:layout_centerVertical="true" />
+            </RelativeLayout>
 
         </RelativeLayout>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            android:id="@+id/about_container">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_blurb"
+                android:id="@+id/about_title_text"
+                android:layout_gravity="bottom"
+                android:singleLine="true"
+                android:textStyle="bold"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:paddingBottom="8dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:id="@+id/about_value_text"
+                android:layout_gravity="bottom"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_below="@+id/about_title_text" />
+
+        </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/header_container"
-            android:padding="8dp">
-
+            android:id="@+id/want_container"
+            android:padding="16dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Name"
-                android:id="@+id/name_text"
-                android:layout_gravity="bottom"
+                android:text="@string/title_want_them"
+                android:textStyle="bold"
                 android:singleLine="true"
-                android:layout_centerVertical="true" />
+                android:id="@+id/want_title_text"
+                android:layout_gravity="bottom"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:paddingBottom="8dp" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Age"
-                android:id="@+id/age_text"
+                android:text=""
+                android:id="@+id/want_value_text"
                 android:layout_gravity="bottom"
-                android:singleLine="true"
-                android:layout_toRightOf="@+id/name_text"
-                android:paddingLeft="8dp"
-                android:layout_centerVertical="true" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:paddingBottom="8dp"
+                android:layout_below="@+id/want_title_text" />
         </RelativeLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ability"
-                android:id="@+id/about_user__text"
-                android:layout_gravity="bottom"
-                android:singleLine="true"
-                android:paddingTop="40dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:paddingLeft="8dp"
-                android:layout_centerVertical="true" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:maxLines="4"
-                android:minLines="1"
-                android:id="@+id/about_user_info"
-                android:layout_gravity="bottom"
-                android:singleLine="false"
-                android:paddingTop="10dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:paddingLeft="8dp"
-                android:layout_centerVertical="true" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Interested In"
-                android:id="@+id/want_text"
-                android:layout_gravity="bottom"
-                android:singleLine="true"
-                android:paddingTop="40dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:paddingLeft="8dp"
-                android:layout_centerVertical="true"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:maxLines="4"
-                android:minLines="1"
-                android:id="@+id/want_info"
-                android:layout_gravity="bottom"
-                android:singleLine="false"
-                android:paddingTop="10dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:paddingLeft="8dp"
-                android:layout_centerVertical="true"/>
-        </LinearLayout>
     </LinearLayout>
+
 </ScrollView>

@@ -35,7 +35,6 @@
                 android:id="@+id/thumb_image"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                android:src="@mipmap/picture_placeholder"
                 android:layout_gravity="center" />
         </FrameLayout>
 

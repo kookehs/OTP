@@ -22,6 +22,10 @@ import java.util.LinkedList;
 
 public class CardStackLayout extends RelativeLayout {
 
+    // the orientation determines which direction a swipe will register as a 'yes' choice
+    public final static int ORIENTATION_UP = 0;
+    public final static int ORIENTATION_DOWN = 1;
+
     private final static int STACK_SIZE = 4;
 
     public interface CardStackListener {
@@ -29,6 +33,7 @@ public class CardStackLayout extends RelativeLayout {
         void onUpdateProgress(float percent);
         void onCancelled();
         void onChoiceAccepted();
+        void onRefreshRequest();
     }
 
     private CardView draggedCard;
@@ -42,6 +47,9 @@ public class CardStackLayout extends RelativeLayout {
 
     // the maximum distance before the card gesture will be taken as a click
     private int mClickDistanceEpsilon;
+
+    // the orientation of the card stack
+    private int mOrientation;
 
     private float cardDelta;
     private float cardStartPosition;
@@ -185,6 +193,8 @@ public class CardStackLayout extends RelativeLayout {
                             card.flipCard();
                         }
                     } else {
+                        mCardStackListener.onChoiceAccepted();
+
                         draggedCard = null;
                         cardDelta = 0;
                         cardStartPosition = 0;
@@ -194,9 +204,10 @@ public class CardStackLayout extends RelativeLayout {
                         mCurrentPosition++;
 
                         requestLayout();
-
-                        mCardStackListener.onChoiceAccepted();
                     }
+
+                    if(!hasMoreItems())
+                        mCardStackListener.onRefreshRequest();
 
                     break;
                 case MotionEvent.ACTION_MOVE:
@@ -226,6 +237,13 @@ public class CardStackLayout extends RelativeLayout {
     private boolean canAcceptChoice() {
         return Math.abs(cardDelta) > mMinAcceptDistance;
     }
-
     private boolean isClickGesture() { return Math.abs(cardDelta) < mClickDistanceEpsilon; }
+
+    public void setOrientation(int orientation) {
+        mOrientation = orientation;
+    }
+
+    public boolean getChoice() {
+        return (mOrientation == 0) ? (cardDelta < 0) : (cardDelta > 0);
+    }
 }
