@@ -192,9 +192,6 @@ public class NavFragment extends Fragment {
     }
 
     private void selectItem(int position) {
-        if (mDrawerLayout != null) {
-            mDrawerLayout.closeDrawer(mFragmentContainerView);
-        }
         if (mCallbacks != null) {
             mCallbacks.onNavigationDrawerItemSelected(position);
         }

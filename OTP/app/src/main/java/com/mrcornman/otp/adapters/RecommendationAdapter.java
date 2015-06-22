@@ -10,13 +10,13 @@ import android.widget.TextView;
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.models.gson.PhotoFile;
 import com.mrcornman.otp.models.models.PhotoItem;
+import com.mrcornman.otp.models.gson.Recommendation;
 import com.mrcornman.otp.utils.PrettyTime;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.mrcornman.otp.views.CardView;
 import com.mrcornman.otp.views.CardView_;
 import com.parse.GetCallback;
 import com.parse.ParseException;
-import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
@@ -24,22 +24,21 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserCardAdapter extends BaseAdapter {
+public class RecommendationAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<ParseUser> mItems;
+    private List<Recommendation> mItems;
 
-    public UserCardAdapter(Context context) {
-        // fixme: should we download the json file here?
+    public RecommendationAdapter(Context context) {
         mContext = context;
         mItems = new ArrayList<>();
     }
 
-    public void setUsers(List<ParseUser> users) {
-        mItems = users;
+    public void setRecommendations(List<Recommendation> recommendations) {
+        mItems = recommendations;
     }
 
-    public List<ParseUser> getUsers() { return mItems; }
+    public List<Recommendation> getRecommendations() { return mItems; }
 
     @Override
     public int getCount() {
@@ -47,7 +46,7 @@ public class UserCardAdapter extends BaseAdapter {
     }
 
     @Override
-    public ParseUser getItem(int i) {
+    public Recommendation getItem(int i) {
         return mItems.get(i);
     }
 
@@ -65,8 +64,8 @@ public class UserCardAdapter extends BaseAdapter {
             cardView = (CardView_) convertView;
         }
 
-        final ParseUser user = getItem(position);
-        cardView.setTag(user.getObjectId());
+        final Recommendation recommendation = getItem(position);
+        cardView.setTag(recommendation.userId);
 
         // init views
 
@@ -89,11 +88,11 @@ public class UserCardAdapter extends BaseAdapter {
 
         // fill views
 
-        List<PhotoItem> photoItems = user.getList(ProfileBuilder.PROFILE_KEY_PHOTOS);
+        List<PhotoItem> photoItems = recommendation.photos;
 
         // front
-        nameText.setText(user.getString(ProfileBuilder.PROFILE_KEY_NAME) + ",");
-        ageText.setText(PrettyTime.getAgeFromBirthDate(user.getDate(ProfileBuilder.PROFILE_KEY_BIRTHDATE)) + "");
+        nameText.setText(recommendation.name + ",");
+        ageText.setText(PrettyTime.getAgeFromBirthDate(recommendation.birthdate) + "");
 
         if(photoItems != null && photoItems.size() > 0 && photoItems.get(0) != null && photoItems.get(0) != JSONObject.NULL) {
             PhotoItem mainPhoto = photoItems.get(0);
@@ -111,8 +110,8 @@ public class UserCardAdapter extends BaseAdapter {
         }
 
         // back
-        aboutText.setText(user.getString(ProfileBuilder.PROFILE_KEY_ABOUT));
-        wantText.setText(user.getString(ProfileBuilder.PROFILE_KEY_WANT));
+        aboutText.setText(recommendation.about);
+        wantText.setText(recommendation.want);
 
         if(photoItems != null && photoItems.size() == ProfileBuilder.MAX_NUM_PHOTOS) {
             for(int i = 0; i < Math.min(pictureImagesBack.length, photoItems.size()); i++) {

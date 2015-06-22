@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.RelativeLayout;
 
-import com.mrcornman.otp.adapters.UserCardAdapter;
+import com.mrcornman.otp.adapters.RecommendationAdapter;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -39,7 +39,7 @@ public class CardStackLayout extends RelativeLayout {
     private CardView draggedCard;
     private OnCardTouchListener onCardTouchListener = new OnCardTouchListener();;
 
-    private UserCardAdapter mAdapter;
+    private RecommendationAdapter mAdapter;
     private int mCurrentPosition;
 
     // the minimum distance before the card swipe gesture will be accepted as a choice
@@ -113,7 +113,7 @@ public class CardStackLayout extends RelativeLayout {
         this.mCardStackListener = mCardStackListener;
     }
 
-    public void setAdapter(UserCardAdapter adapter) {
+    public void setAdapter(RecommendationAdapter adapter) {
         mAdapter = adapter;
         mCards.clear();
         removeAllViews();

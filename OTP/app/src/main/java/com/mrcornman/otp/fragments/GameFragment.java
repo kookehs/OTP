@@ -12,7 +12,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.adapters.UserCardAdapter;
+import com.mrcornman.otp.adapters.RecommendationAdapter;
+import com.mrcornman.otp.models.gson.Recommendation;
 import com.mrcornman.otp.utils.DatabaseHelper;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.mrcornman.otp.views.CardStackLayout;
@@ -33,8 +34,8 @@ public class GameFragment extends Fragment {
     private CardStackLayout mCardStackLayoutSecond;
     private ProgressBar firstProgress;
     private ProgressBar secondProgress;
-    private UserCardAdapter mUserCardAdapterFirst;
-    private UserCardAdapter mUserCardAdapterSecond;
+    private RecommendationAdapter mRecommendationAdapterFirst;
+    private RecommendationAdapter mRecommendationAdapterSecond;
     private ImageView progressIndicatorImage;
 
     private OnGameInteractionListener onGameInteractionListener;
@@ -132,11 +133,11 @@ public class GameFragment extends Fragment {
             }
         });
 
-        mUserCardAdapterFirst = new UserCardAdapter(getActivity().getApplicationContext());
-        mCardStackLayoutFirst.setAdapter(mUserCardAdapterFirst);
+        mRecommendationAdapterFirst = new RecommendationAdapter(getActivity().getApplicationContext());
+        mCardStackLayoutFirst.setAdapter(mRecommendationAdapterFirst);
 
-        mUserCardAdapterSecond = new UserCardAdapter(getActivity().getApplicationContext());
-        mCardStackLayoutSecond.setAdapter(mUserCardAdapterSecond);
+        mRecommendationAdapterSecond = new RecommendationAdapter(getActivity().getApplicationContext());
+        mCardStackLayoutSecond.setAdapter(mRecommendationAdapterSecond);
 
         initStacks();
 
@@ -196,32 +197,40 @@ public class GameFragment extends Fragment {
         List<String> excludedIds = new ArrayList<>();
         excludedIds.add(user.getObjectId());
 
-        DatabaseHelper.findPotentialUsers(null, excludedIds, location, 10, 50, new FunctionCallback<List<ParseUser>>() {
+        DatabaseHelper.findRecommendations(null, excludedIds, location, 10, 50, new FunctionCallback<List<Recommendation>>() {
             @Override
-            public void done(List<ParseUser> parseUsers, ParseException e) {
-                if (e == null) {
-                    // must be at last 2 parse users for a potential match
-                    // we split the list in half and give each stack an equal share of users
-                    if (parseUsers != null && parseUsers.size() > 1) {
-                        int listSize = parseUsers.size();
-                        int halfSize = listSize / 2;
+            public void done(List<Recommendation> recommendations, ParseException e) {
 
-                        List<ParseUser> firstList = parseUsers.subList(0, halfSize);
-                        mUserCardAdapterFirst.setUsers(firstList);
-                        mCardStackLayoutFirst.refreshStack();
-
-                        List<ParseUser> secondList = parseUsers.subList(halfSize, listSize);
-                        mUserCardAdapterSecond.setUsers(secondList);
-                        mCardStackLayoutSecond.refreshStack();
-                    } else {
-                        Toast.makeText(getActivity(), "We're out of users to show you for now. Try again soon!", Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Toast.makeText(getActivity(), "Sorry, there was a problem loading users: " + e.toString(), Toast.LENGTH_LONG).show();
-                }
+                boolean resultErr = false;
 
                 firstProgress.setVisibility(View.INVISIBLE);
                 secondProgress.setVisibility(View.INVISIBLE);
+
+                if (e == null && recommendations != null) {
+                    // must be at last 2 parse recommendations for a potential match
+                    // we split the list in half and give each stack an equal share of recommendations
+                    if (recommendations.size() > 1) {
+                        int listSize = recommendations.size();
+                        int halfSize = listSize / 2;
+
+                        List<Recommendation> firstList = recommendations.subList(0, halfSize);
+                        mRecommendationAdapterFirst.setRecommendations(firstList);
+                        mCardStackLayoutFirst.refreshStack();
+
+                        List<Recommendation> secondList = recommendations.subList(halfSize, listSize);
+                        mRecommendationAdapterSecond.setRecommendations(secondList);
+                        mCardStackLayoutSecond.refreshStack();
+                    } else {
+                        Toast.makeText(getActivity(), "We're out of people to show you for now. Try again soon!", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    resultErr = true;
+                    Log.e("GameFragment", "Problem loading recommendations: " + e.toString());
+                }
+
+                if(resultErr) {
+                    Toast.makeText(getActivity(), "Sorry, there was a problem. Please contact us for assistance!", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
@@ -234,15 +243,25 @@ public class GameFragment extends Fragment {
         List<String> excludedIds = getSecondIds();
         excludedIds.add(user.getObjectId());
 
-        DatabaseHelper.findPotentialUsers(getCurrentSecondId(), excludedIds, location, 10, 50, new FunctionCallback<List<ParseUser>>() {
+        DatabaseHelper.findRecommendations(getCurrentSecondId(), excludedIds, location, 10, 50, new FunctionCallback<List<Recommendation>>() {
             @Override
-            public void done(List<ParseUser> parseUsers, ParseException e) {
-                if (e == null) {
-                    if (parseUsers != null && parseUsers.size() > 0) {
-                        mUserCardAdapterFirst.setUsers(parseUsers);
+            public void done(List<Recommendation> recommendations, ParseException e) {
+                if (e == null && recommendations != null) {
+                    // must be at last 2 parse recommendations for a potential match
+                    // we split the list in half and give each stack an equal share of recommendations
+                    if (recommendations.size() > 1) {
+                        int listSize = recommendations.size();
+                        int halfSize = listSize / 2;
+
+                        List<Recommendation> firstList = recommendations.subList(0, halfSize);
+                        mRecommendationAdapterFirst.setRecommendations(firstList);
                         mCardStackLayoutFirst.refreshStack();
+
+                        List<Recommendation> secondList = recommendations.subList(halfSize, listSize);
+                        mRecommendationAdapterSecond.setRecommendations(secondList);
+                        mCardStackLayoutSecond.refreshStack();
                     } else {
-                        Toast.makeText(getActivity(), "We're out of users to show you for now. Try again soon!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "We're out of people to show you for now. Try again soon!", Toast.LENGTH_LONG).show();
                     }
                 } else {
                     Toast.makeText(getActivity(), "Sorry, there was a problem loading users: " + e.toString(), Toast.LENGTH_LONG).show();
@@ -261,12 +280,12 @@ public class GameFragment extends Fragment {
         List<String> excludedIds = getFirstIds();
         excludedIds.add(user.getObjectId());
 
-        DatabaseHelper.findPotentialUsers(getCurrentFirstId(), excludedIds, location, 10, 50, new FunctionCallback<List<ParseUser>>() {
+        DatabaseHelper.findRecommendations(getCurrentFirstId(), excludedIds, location, 10, 50, new FunctionCallback<List<Recommendation>>() {
             @Override
-            public void done(List<ParseUser> parseUsers, ParseException e) {
-                if (e == null) {
-                    if (parseUsers != null && parseUsers.size() > 0) {
-                        mUserCardAdapterSecond.setUsers(parseUsers);
+            public void done(List<Recommendation> recommendations, ParseException e) {
+                if (e == null && recommendations != null) {
+                    if (recommendations.size() > 0) {
+                        mRecommendationAdapterSecond.setRecommendations(recommendations);
                         mCardStackLayoutSecond.refreshStack();
                     } else {
                         Toast.makeText(getActivity(), "We're out of users to show you for now. Try again soon!", Toast.LENGTH_LONG).show();
@@ -291,19 +310,19 @@ public class GameFragment extends Fragment {
     }
 
     public List<String> getFirstIds() {
-        List<ParseUser> users = mUserCardAdapterFirst.getUsers();
+        List<Recommendation> recommendations = mRecommendationAdapterFirst.getRecommendations();
         List<String> result = new ArrayList<>();
-        for(ParseUser user : users) {
-            result.add(user.getObjectId());
+        for(Recommendation recommendation : recommendations) {
+            result.add(recommendation.userId);
         }
         return result;
     }
 
     public List<String> getSecondIds() {
-        List<ParseUser> users = mUserCardAdapterSecond.getUsers();
+        List<Recommendation> recommendations = mRecommendationAdapterSecond.getRecommendations();
         List<String> result = new ArrayList<>();
-        for(ParseUser user : users) {
-            result.add(user.getObjectId());
+        for(Recommendation recommendation : recommendations) {
+            result.add(recommendation.userId);
         }
         return result;
     }

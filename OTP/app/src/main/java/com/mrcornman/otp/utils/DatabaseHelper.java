@@ -1,5 +1,8 @@
 package com.mrcornman.otp.utils;
 
+import android.util.Log;
+
+import com.mrcornman.otp.models.gson.Recommendation;
 import com.mrcornman.otp.models.models.MatchItem;
 import com.parse.FindCallback;
 import com.parse.FunctionCallback;
@@ -10,6 +13,7 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -92,7 +96,7 @@ public class DatabaseHelper {
      *                 ignored and the other user's location will be used.
      * @param callback Callback when the users are found.
      */
-    public static void findPotentialUsers(String otherId, List<String> excludedIds, ParseGeoPoint location, int limit, int searchDistance, FunctionCallback<List<ParseUser>> callback) {
+    public static void findRecommendations(String otherId, List<String> excludedIds, ParseGeoPoint location, int limit, int searchDistance, final FunctionCallback<List<Recommendation>> callback) {
         Map<String, Object> params = new HashMap<>();
         params.put("otherId", otherId);
         params.put("excludedIds", excludedIds);
@@ -100,7 +104,32 @@ public class DatabaseHelper {
         params.put("searchDistance", searchDistance + "");
         params.put("limit", limit + "");
 
-        ParseCloud.callFunctionInBackground("findPotentialUsers", params, callback);
+        ParseCloud.callFunctionInBackground("findRecommendations", params, new FunctionCallback<HashMap<String, Object>>() {
+            @Override
+            public void done(HashMap<String, Object> result, ParseException e) {
+                if (e == null && result != null) {
+                    ArrayList<HashMap<String, Object>> resultData = (ArrayList<HashMap<String, Object>>) result.get("data");
+                    if(resultData != null) {
+                        List<Recommendation> recommendations = new ArrayList<>();
+                        HashMap<String, Object> resultDataMap = null;
+                        Recommendation newRecommendation = null;
+                        for(int i = 0; i < resultData.size(); i++) {
+                            resultDataMap = resultData.get(i);
+                            newRecommendation = new Recommendation();
+                            newRecommendation.name = resultDataMap.get("name").toString();
+                            Log.i("DatabaseHelper", newRecommendation.name);
+
+                            recommendations.add(newRecommendation);
+                        }
+
+                       callback.done(recommendations, null);
+                    }
+                } else {
+                    Log.e("GameFragment", "Problem loading recommendations: " + e.toString());
+                    callback.done(null, e);
+                }
+            }
+        });
     }
 
     public static void updateMatchNumMessages(String matchId, final int numMessages){
