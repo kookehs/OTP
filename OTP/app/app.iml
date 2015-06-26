@@ -109,7 +109,6 @@
     <orderEntry type="library" exported="" name="renderscript-v8" level="project" />
     <orderEntry type="library" exported="" name="play-services-safetynet-7.5.0" level="project" />
     <orderEntry type="library" exported="" name="sinch-android-rtc-3.6.0" level="project" />
-    <orderEntry type="library" exported="" name="support-v4-preferencefragment-1.0.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-base-7.5.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-7.5.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-gcm-7.5.0" level="project" />
@@ -128,5 +127,6 @@
     <orderEntry type="library" exported="" name="play-services-games-7.5.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-identity-7.5.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-maps-7.5.0" level="project" />
+    <orderEntry type="module" module-name="android-support-v4-preferencefragment" exported="" />
   </component>
 </module>

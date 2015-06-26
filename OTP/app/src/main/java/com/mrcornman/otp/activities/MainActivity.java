@@ -11,6 +11,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +28,7 @@ import com.mrcornman.otp.utils.ProfileBuilder;
 import com.parse.ParseUser;
 
 public class MainActivity extends ActionBarActivity implements NavFragment.NavigationDrawerCallbacks,
-        GameFragment.OnGameInteractionListener, ClientListFragment.OnClientListInteractionListener, MakerListFragment.OnMakerListInteractionListener {
+        GameFragment.OnGameInteractionListener, ClientListFragment.OnClientListInteractionListener, MakerListFragment.OnMakerListInteractionListener, ScoreActivity.OnScoreInteractionListener {
 
     /**
      * Navigation Identifiers
@@ -56,6 +58,12 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
         toolbar.setNavigationIcon(R.mipmap.ic_drawer);
         scoreText = (TextView) findViewById(R.id.score_text);
         scoreText.setText(ParseUser.getCurrentUser().getInt(ProfileBuilder.PROFILE_KEY_SCORE) + "");
+        scoreText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onRequestOpenScore(ParseUser.getCurrentUser().getString(ProfileBuilder.PROFILE_KEY_NAME));
+            }
+        });
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
@@ -140,6 +148,14 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
                 startActivity(Intent.createChooser(shareIntent, "Share with"));
                 break;
         }
+    }
+
+    @Override
+    public void onRequestOpenScore(String userId){
+        Intent scoreIntent = new Intent(MainActivity.this, ScoreActivity.class);
+        scoreIntent.putExtra("user_id", userId);
+        Log.i("MainActivity", "Score activity should start");
+        startActivity(scoreIntent);
     }
 
     // fragment interface actions

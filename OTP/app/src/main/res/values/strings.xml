@@ -29,6 +29,10 @@
     <string name="action_messaging">Messages</string>
     <string name="action_profile">Profile</string>
 
+    <!--Score Action Bar-->
+    <string name="action_leaderboard">LeaderBoard</string>
+    <string name="action_score">Score</string>
+
     <!--Maker Match Action Bar-->
     <string name="action_stats">Stats</string>
 
@@ -73,5 +77,8 @@
     <!--User Prefs-->
     <string name="user_prefs_age_range_title">Age Range</string>
     <string name="user_prefs_search_distance_title">Search Distance</string>
+    <string name="title_activity_score">Score</string>
+
+    <string name="hello_world">Hello world!</string>
 
 </resources>
