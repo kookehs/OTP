@@ -1,29 +1,115 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.mrcornman.otp.activities.ScoreActivity" >
+    tools:context="com.mrcornman.otp.activities.ScoreActivity">
 
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar_generic"/>
 
-    <com.astuetz.PagerSlidingTabStrip
-        android:id="@+id/tabs"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:pstsPaddingMiddle="false"
-        app:pstsShouldExpand="true"
-        app:pstsIndicatorColor="@color/very_dark_gray"
-        app:pstsIndicatorHeight="4dp" />
+        android:layout_height="wrap_content"
+        android:layout_weight="0.40">
 
-    <android.support.v4.view.ViewPager
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/pager"
+        <View
+            android:id="@+id/score_rectangle"
+            android:layout_width="124dp"
+            android:layout_height="57dp"
+            android:background="@drawable/rectangle"
+            android:layout_gravity="center_horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="43dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Score"
+            android:id="@+id/score_text"
+            android:layout_alignTop="@+id/score_rectangle"
+            android:layout_centerHorizontal="true" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_nav_share"
+            android:contentDescription="Share Logo"
+            android:layout_alignTop="@+id/score_text"
+            android:layout_alignBottom="@+id/score_rectangle"
+            android:layout_alignRight="@+id/score_rectangle"
+            android:layout_alignEnd="@+id/score_rectangle" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:layout_weight="0.20">
+
+        <View
+            android:id="@+id/matches_total_rectangle"
+            android:layout_width="124dp"
+            android:layout_height="57dp"
+            android:background="@drawable/rectangle"
+            android:layout_gravity="center_horizontal"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total Seeds"
+            android:id="@+id/matches_total_text"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.20">
+
+        <View
+            android:id="@+id/matches_successful_rectangle"
+            android:layout_width="124dp"
+            android:layout_height="57dp"
+            android:background="@drawable/rectangle"
+            android:layout_gravity="center_horizontal"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Successful Seeds"
+            android:id="@+id/matches_successful_text"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.20">
+
+        <View
+            android:id="@+id/popular_rectangle"
+            android:layout_width="124dp"
+            android:layout_height="57dp"
+            android:background="@drawable/rectangle"
+            android:layout_gravity="center_horizontal"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Popluar Seeds"
+            android:id="@+id/popular_text"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
 
 </LinearLayout>

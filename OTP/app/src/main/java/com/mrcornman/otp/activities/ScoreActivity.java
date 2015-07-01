@@ -1,29 +1,27 @@
 package com.mrcornman.otp.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.mrcornman.otp.R;
-import com.mrcornman.otp.adapters.pagers.MakerMatchPagerAdapter;
-import com.mrcornman.otp.adapters.pagers.ScorePagerAdapter;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.parse.ParseUser;
 
 public class ScoreActivity extends ActionBarActivity {
 
-    private ScorePagerAdapter mPagerAdapter;
-    private ViewPager mViewPager;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_score);
+
+        //userStats = new CalculateUserStats(ScoreActivity.this);
 
         // Set up toolbar_generic and tabs
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -33,15 +31,38 @@ public class ScoreActivity extends ActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
 
-        String userScore = ParseUser.getCurrentUser().getString(ProfileBuilder.PROFILE_KEY_SCORE);
+        //Set the usersScore to the chart
+        TextView score = (TextView) findViewById(R.id.score_text);
+        final String userScore = ParseUser.getCurrentUser().getInt(ProfileBuilder.PROFILE_KEY_SCORE) + "";
+        score.setText(userScore);
 
-        mPagerAdapter = new ScorePagerAdapter(this, getSupportFragmentManager(), userScore);
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mPagerAdapter);
-        mViewPager.setOffscreenPageLimit(MakerMatchPagerAdapter.NUM_PAGES);
+        View scoreShare = (View) findViewById(R.id.score_rectangle);
+        scoreShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_TEXT, "Check out my score " + userScore + " on Seedr");
+                shareIntent.setType("text/plain");
+                startActivity(Intent.createChooser(shareIntent, "Share with"));
+            }
+        });
 
-        final PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-        tabStrip.setViewPager(mViewPager);
+        Intent matchData = getIntent();
+
+        //Set the total matches made to the chart
+        TextView totalMatches = (TextView) findViewById(R.id.matches_total_text);
+        totalMatches.setText("Total Seeds \n Made: " + matchData.getIntExtra("total_match", 0));
+        //userStats.getTotalMatches(totalMatches);
+
+        //Set the successful matches made to the chart
+        TextView successfulMatches = (TextView) findViewById(R.id.matches_successful_text);
+        successfulMatches.setText("Successful Seeds \n Made: " + matchData.getIntExtra("successful_match", 0));
+        //userStats.getSuccessfulMatches(successfulMatches);
+
+        //Set the popular matches made to the chart
+        TextView popMatches = (TextView) findViewById(R.id.popular_text);
+        popMatches.setText("Popular Seeds \n Made: " + matchData.getIntExtra("popular_match", 0));
+        //userStats.getPopularMatches(popMatches);
     }
 
     @Override
@@ -67,6 +88,6 @@ public class ScoreActivity extends ActionBarActivity {
     }
 
     public interface OnScoreInteractionListener {
-        void onRequestOpenScore(String userId);
+        void onRequestOpenScore(int totalMatch, int successfulMatch, int popularMatch);
     }
 }

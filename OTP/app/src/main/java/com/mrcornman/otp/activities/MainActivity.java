@@ -24,6 +24,7 @@ import com.mrcornman.otp.fragments.GameFragment;
 import com.mrcornman.otp.fragments.MakerListFragment;
 import com.mrcornman.otp.fragments.NavFragment;
 import com.mrcornman.otp.services.MessageService;
+import com.mrcornman.otp.utils.CalculateUserStats;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.parse.ParseUser;
 
@@ -47,6 +48,9 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
     private ViewPager mViewPager;
 
     private TextView scoreText;
+    private View scoreRectangleClick;
+
+    private CalculateUserStats userStats;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,14 +60,20 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
         // Set up toolbar_generic and tabs
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.mipmap.ic_drawer);
-        scoreText = (TextView) findViewById(R.id.score_text);
+
+        scoreText = (TextView) findViewById(R.id.main_score_text);
         scoreText.setText(ParseUser.getCurrentUser().getInt(ProfileBuilder.PROFILE_KEY_SCORE) + "");
-        scoreText.setOnClickListener(new View.OnClickListener() {
+        userStats = new CalculateUserStats(MainActivity.this);
+        userStats.calculateScore(scoreText);
+
+        scoreRectangleClick = (View) findViewById(R.id.score_click_frame);
+        scoreRectangleClick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onRequestOpenScore(ParseUser.getCurrentUser().getString(ProfileBuilder.PROFILE_KEY_NAME));
+                onRequestOpenScore(userStats.totalMatches, userStats.successfulMatches, userStats.popularMatches);
             }
         });
+
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
@@ -120,6 +130,12 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        userStats.checkIfUpdated(scoreText);
+    }
+
+    @Override
     public void onDestroy() {
         getApplicationContext().stopService(new Intent(getApplicationContext(), MessageService.class));
         super.onDestroy();
@@ -151,9 +167,11 @@ public class MainActivity extends ActionBarActivity implements NavFragment.Navig
     }
 
     @Override
-    public void onRequestOpenScore(String userId){
+    public void onRequestOpenScore(int totalMatch, int successfulMatch, int popularMatch){
         Intent scoreIntent = new Intent(MainActivity.this, ScoreActivity.class);
-        scoreIntent.putExtra("user_id", userId);
+        scoreIntent.putExtra("total_match", totalMatch);
+        scoreIntent.putExtra("successful_match", successfulMatch);
+        scoreIntent.putExtra("popular_match", popularMatch);
         Log.i("MainActivity", "Score activity should start");
         startActivity(scoreIntent);
     }
