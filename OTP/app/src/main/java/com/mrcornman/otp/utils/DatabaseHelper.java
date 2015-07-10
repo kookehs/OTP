@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.mrcornman.otp.models.gson.Recommendation;
 import com.mrcornman.otp.models.models.MatchItem;
+import com.mrcornman.otp.models.models.PhotoItem;
 import com.parse.FindCallback;
 import com.parse.FunctionCallback;
 import com.parse.GetCallback;
@@ -15,6 +16,7 @@ import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,8 +118,15 @@ public class DatabaseHelper {
                         for(int i = 0; i < resultData.size(); i++) {
                             resultDataMap = resultData.get(i);
                             newRecommendation = new Recommendation();
+                            newRecommendation.userId = resultDataMap.get("userId").toString();
                             newRecommendation.name = resultDataMap.get("name").toString();
-                            Log.i("DatabaseHelper", newRecommendation.name);
+                            newRecommendation.gender = (int) resultDataMap.get("gender");
+                            newRecommendation.birthdate = (Date) resultDataMap.get("birthdate");
+                            newRecommendation.location = (ParseGeoPoint) resultDataMap.get("location");
+                            newRecommendation.photos = (List<PhotoItem>) resultDataMap.get("photos");
+                            newRecommendation.about = resultDataMap.get("about").toString();
+                            newRecommendation.want = resultDataMap.get("want").toString();
+                            Log.i("DatabaseHelper", newRecommendation.gender + "");
 
                             recommendations.add(newRecommendation);
                         }

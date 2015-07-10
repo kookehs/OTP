@@ -1,6 +1,7 @@
 package com.mrcornman.otp.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -9,8 +10,8 @@ import android.widget.TextView;
 
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.models.gson.PhotoFile;
-import com.mrcornman.otp.models.models.PhotoItem;
 import com.mrcornman.otp.models.gson.Recommendation;
+import com.mrcornman.otp.models.models.PhotoItem;
 import com.mrcornman.otp.utils.PrettyTime;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.mrcornman.otp.views.CardView;
@@ -93,6 +94,7 @@ public class RecommendationAdapter extends BaseAdapter {
         // front
         nameText.setText(recommendation.name + ",");
         ageText.setText(PrettyTime.getAgeFromBirthDate(recommendation.birthdate) + "");
+        Log.i("Recommendation", recommendation.birthdate.toString());
 
         if(photoItems != null && photoItems.size() > 0 && photoItems.get(0) != null && photoItems.get(0) != JSONObject.NULL) {
             PhotoItem mainPhoto = photoItems.get(0);

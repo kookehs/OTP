@@ -2,7 +2,7 @@ package com.mrcornman.otp.activities;
 
 import android.os.Bundle;
 import android.preference.Preference;
-import android.support.v4.preference.PreferenceFragment;
+import android.preference.PreferenceFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -36,7 +36,7 @@ public class UserPrefsActivity extends ActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new UserPrefsPreferenceFragment()).commit();
+        getFragmentManager().beginTransaction().replace(R.id.content_frame, new UserPrefsPreferenceFragment()).commit();
     }
 
     public static class UserPrefsPreferenceFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
