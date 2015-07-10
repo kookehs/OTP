@@ -34,16 +34,32 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true" />
 
-                <TextView
+                <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="999"
-                    android:id="@+id/score_text"
-                    android:textColor="@color/primary_text"
                     android:layout_alignParentRight="true"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
-                    android:visibility="gone" />
+                    android:id="@+id/score_click_frame">
+
+                    <View
+                        android:id="@+id/score_rectangle_click"
+                        android:layout_width="56dp"
+                        android:layout_height="41dp"
+                        android:background="@drawable/rectangle"
+                        android:layout_gravity="bottom"
+                        android:visibility="invisible"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="999"
+                        android:id="@+id/main_score_text"
+                        android:layout_gravity="center"
+                        android:textColor="@color/primary_text"
+                        android:visibility="visible" />
+
+                </FrameLayout>
 
             </RelativeLayout>
 
@@ -72,6 +88,7 @@
         android:layout_width="@dimen/nav_drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:name="com.mrcornman.otp.fragments.NavFragment" />
+        android:name="com.mrcornman.otp.fragments.NavFragment"
+        tools:layout="@layout/fragment_nav" />
 
 </android.support.v4.widget.DrawerLayout>

@@ -87,6 +87,7 @@ public class MakerListFragment extends Fragment implements OnRefreshListener {
 
                     for (MatchItem match : matchItems) {
                         makerMatchAdapter.addMatch(match);
+
                     }
                 }
             }
