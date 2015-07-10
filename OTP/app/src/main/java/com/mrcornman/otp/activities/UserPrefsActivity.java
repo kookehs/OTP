@@ -11,10 +11,10 @@ import android.widget.Toast;
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.utils.ProfileBuilder;
 import com.mrcornman.otp.views.RangeSeekBarPreference;
-import com.mrcornman.otp.views.SeekBarPreference;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.pavelsikun.seekbarpreference.SeekBarPreference;
 
 public class UserPrefsActivity extends ActionBarActivity {
 
@@ -61,7 +61,6 @@ public class UserPrefsActivity extends ActionBarActivity {
             ageRangePreference.setOnPreferenceChangeListener(this);
 
             SeekBarPreference searchDistancePreference = (SeekBarPreference) findPreference(KEY_SEARCH_DISTANCE);
-            searchDistancePreference.setMax(100);
             searchDistancePreference.setOnPreferenceChangeListener(this);
         }
 
@@ -87,7 +86,8 @@ public class UserPrefsActivity extends ActionBarActivity {
             ParseUser user = ParseUser.getCurrentUser();
 
             SeekBarPreference searchDistancePref = (SeekBarPreference) findPreference(KEY_SEARCH_DISTANCE);
-            int searchDistance = searchDistancePref.getProgress();
+
+            int searchDistance = searchDistancePref.
             user.put(ProfileBuilder.PROFILE_KEY_WANTED_DISTANCE_MAX, searchDistance);
 
             RangeSeekBarPreference ageRangePref = (RangeSeekBarPreference) findPreference(KEY_AGE_RANGE);

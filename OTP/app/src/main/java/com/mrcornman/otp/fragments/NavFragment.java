@@ -43,13 +43,13 @@ import jp.wasabeef.picasso.transformations.BlurTransformation;
 public class NavFragment extends Fragment {
 
     private final static String[] titles = {
-            //"Preferences",
+            "Preferences",
             "Settings",
             "Share"
     };
 
     private final static int[] iconIds = {
-            //R.mipmap.ic_nav_prefs,
+            R.mipmap.ic_nav_prefs,
             R.mipmap.ic_nav_settings,
             R.mipmap.ic_nav_share
     };
