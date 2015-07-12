@@ -63,6 +63,9 @@
     <string name="complete_profile_want_title">Tell us about what you want.</string>
     <string name="complete_profile_want_sub">Now that you\'ve hopefully explored a bit about yourself, let\'s turn the tables around. Tell us about what you\'re looking for. It\'s okay if your description isn\'t spectacular, just give people something to work with. After this you\'re done!</string>
 
+    <!--Score-->
+    <string name="title_activity_score">Score</string>
+
     <!--Settings-->
     <string name="settings_notifications_section_title">Notifications</string>
     <string name="settings_notifications_messages_checkbox_title">Messaged</string>
@@ -75,9 +78,8 @@
     <string name="settings_misc_item_title_sex">Check us out!</string>
 
     <!--User Prefs-->
-    <string name="user_prefs_age_range_title">Age Range</string>
-    <string name="user_prefs_search_distance_title">Search Distance</string>
-    <string name="title_activity_score">Score</string>
+    <string name="user_prefs_age_range_title">Age Range:</string>
+    <string name="user_prefs_search_distance_title">Search Distance:</string>
 
     <string name="hello_world">Hello world!</string>
 

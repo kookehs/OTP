@@ -1,31 +1,53 @@
 package com.mrcornman.otp.activities;
 
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mrcornman.otp.R;
 import com.mrcornman.otp.utils.ProfileBuilder;
-import com.mrcornman.otp.views.RangeSeekBarPreference;
+import com.mrcornman.otp.views.RangeSeekBar;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import com.pavelsikun.seekbarpreference.SeekBarPreference;
 
-public class UserPrefsActivity extends ActionBarActivity {
+/**
+ * Created by Jonathan on 5/9/2015.
+ */
+public class UserPrefsActivity extends ActionBarActivity implements RangeSeekBar.OnRangeSeekBarChangeListener<Integer>, SeekBar.OnSeekBarChangeListener {
 
-    private String mTitle;
+    private String mTitle = "Preferences";
+
+    // Views
+    private TextView ageRangeSub;
+    private RangeSeekBar ageRangeSeekBar;
+
+    private TextView searchDistanceSub;
+    private SeekBar searchDistanceSeekBar;
+
+    // Calculated defaults
+    private int absSearchDistanceMin;
+    private int absSearchDistanceMax;
+
+    // Meta
+    private boolean shouldSave;
+
+    // Data
+    private int ageRangeMin;
+    private int ageRangeMax;
+    private int searchDistance;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_prefs);
 
-        mTitle = "Preferences";
+        absSearchDistanceMin = getResources().getInteger(R.integer.pref_search_distance_min);
+        absSearchDistanceMax = getResources().getInteger(R.integer.pref_search_distance_max);
 
         // Set up toolbar_generic and tabs
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -36,78 +58,90 @@ public class UserPrefsActivity extends ActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
 
-        getFragmentManager().beginTransaction().replace(R.id.content_frame, new UserPrefsPreferenceFragment()).commit();
+        ParseUser user = ParseUser.getCurrentUser();
+        shouldSave = false;
+
+        // init age range views
+        ageRangeSub = (TextView) findViewById(R.id.age_range_sub);
+        ageRangeSeekBar = (RangeSeekBar) findViewById(R.id.age_range_seekbar);
+
+        ageRangeSeekBar.setNotifyWhileDragging(true);
+        ageRangeSeekBar.setOnRangeSeekBarChangeListener(this);
+
+        // fill age range views
+        ageRangeMin = user.getInt(ProfileBuilder.PROFILE_KEY_WANTED_AGE_MIN);
+        ageRangeMax = user.getInt(ProfileBuilder.PROFILE_KEY_WANTED_AGE_MAX);
+
+        ageRangeSeekBar.setSelectedMinValue(ageRangeMin);
+        ageRangeSeekBar.setSelectedMaxValue(ageRangeMax);
+
+        ageRangeSub.setText(ageRangeMin + " - " + ageRangeMax);
+
+        // init search distance views
+        searchDistanceSub = (TextView) findViewById(R.id.search_distance_sub);
+        searchDistanceSeekBar = (SeekBar) findViewById(R.id.search_distance_seekbar);
+
+        searchDistanceSeekBar.setOnSeekBarChangeListener(this);
+
+        // fill search distance views
+        searchDistance = user.getInt(ProfileBuilder.PROFILE_KEY_WANTED_DISTANCE_MAX);
+        int searchDistanceProgress = (int)((searchDistance - absSearchDistanceMin) / (absSearchDistanceMax - absSearchDistanceMin) * 100f);
+
+        searchDistanceSub.setText(searchDistance + "mi");
+        searchDistanceSeekBar.setProgress(searchDistanceProgress);
     }
 
-    public static class UserPrefsPreferenceFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
+    @Override
+    public void onPause() {
+        savePrefs();
 
-        private final static String KEY_AGE_RANGE = "age_range_slider";
-        private final static String KEY_SEARCH_DISTANCE = "search_distance_slider";
+        super.onPause();
+    }
 
-        private final static String SUMMARY_FORMAT_AGE_RANGE = "%d - %d";
-        private final static String SUMMARY_FORMAT_SEARCH_DISTANCE = "%d";
+    public void onStartTrackingTouch(SeekBar seekBar) {
 
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.prefs_user_prefs);
+    }
 
-            ParseUser user = ParseUser.getCurrentUser();
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if(!shouldSave) shouldSave = true;
 
-            RangeSeekBarPreference ageRangePreference = (RangeSeekBarPreference) findPreference(KEY_AGE_RANGE);
-            ageRangePreference.setMinValue(user.getInt(ProfileBuilder.PROFILE_KEY_WANTED_AGE_MIN));
-            ageRangePreference.setMaxValue(user.getInt(ProfileBuilder.PROFILE_KEY_WANTED_AGE_MAX));
-            ageRangePreference.setSummaryFormat(SUMMARY_FORMAT_AGE_RANGE);
-            ageRangePreference.setOnPreferenceChangeListener(this);
+        float normalizedProgress = (float)progress / 100f;
 
-            SeekBarPreference searchDistancePreference = (SeekBarPreference) findPreference(KEY_SEARCH_DISTANCE);
-            searchDistancePreference.setOnPreferenceChangeListener(this);
-        }
+        searchDistance = (int)((absSearchDistanceMax - absSearchDistanceMin) * normalizedProgress + absSearchDistanceMin);
 
-        @Override
-        public void onPause() {
-            savePrefs();
+        searchDistanceSub.setText(searchDistance + "mi");
+    }
 
-            super.onPause();
-        }
+    public void onStopTrackingTouch(SeekBar seekBar) {
 
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object newValue) {
-            switch (preference.getKey()) {
-                case KEY_SEARCH_DISTANCE:
-                    preference.setSummary(String.format(SUMMARY_FORMAT_SEARCH_DISTANCE, (int)newValue));
-                    break;
-            }
+    }
 
-            return true;
-        }
+    public void onRangeSeekBarValuesChanged(RangeSeekBar rangeSeekBar, Integer minValue, Integer maxValue) {
+        if(!shouldSave) shouldSave = true;
 
-        private void savePrefs() {
-            ParseUser user = ParseUser.getCurrentUser();
+        ageRangeMin = minValue;
+        ageRangeMax = maxValue;
 
-            SeekBarPreference searchDistancePref = (SeekBarPreference) findPreference(KEY_SEARCH_DISTANCE);
+        ageRangeSub.setText(ageRangeMin + " - " + ageRangeMax);
+    }
 
-            int searchDistance = searchDistancePref.
-            user.put(ProfileBuilder.PROFILE_KEY_WANTED_DISTANCE_MAX, searchDistance);
+    private void savePrefs() {
+        ParseUser user = ParseUser.getCurrentUser();
 
-            RangeSeekBarPreference ageRangePref = (RangeSeekBarPreference) findPreference(KEY_AGE_RANGE);
-            int ageRangeMin = ageRangePref.getMinValue();
-            int ageRangeMax = ageRangePref.getMaxValue();
-            user.put(ProfileBuilder.PROFILE_KEY_WANTED_AGE_MIN, ageRangeMin);
-            user.put(ProfileBuilder.PROFILE_KEY_WANTED_AGE_MAX, ageRangeMax);
+        user.put(ProfileBuilder.PROFILE_KEY_WANTED_DISTANCE_MAX, searchDistance);
 
-            user.saveInBackground(new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if(e != null) {
-                        Toast.makeText(getActivity().getApplicationContext(), "There was a problem saving preferences. Please try again.", Toast.LENGTH_LONG).show();
-                        return;
-                    }
+        user.put(ProfileBuilder.PROFILE_KEY_WANTED_AGE_MIN, ageRangeMin);
+        user.put(ProfileBuilder.PROFILE_KEY_WANTED_AGE_MAX, ageRangeMax);
 
-                    if(getActivity() != null)
-                        Toast.makeText(getActivity().getApplicationContext(), "Preferences saved!", Toast.LENGTH_LONG).show();
+        user.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if(e != null) {
+                    Toast.makeText(UserPrefsActivity.this, "There was a problem saving preferences. Please try again.", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(UserPrefsActivity.this, "Preferences saved!", Toast.LENGTH_LONG).show();
                 }
-            });
-        }
+            }
+        });
     }
 }

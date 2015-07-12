@@ -16,13 +16,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:id="@+id/title_container">
+            android:id="@+id/age_range_pref">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/complete_profile_about_title"
-                android:id="@+id/complete_profile_title"
+                android:id="@+id/age_range_title"
                 android:textColor="@color/very_dark_gray"
                 android:textAlignment="center"
                 android:singleLine="true"
@@ -43,7 +43,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
-                android:layout_below="@+id/complete_profile_title" />
+                android:layout_below="@+id/age_range_title" />
 
         </RelativeLayout>
 
@@ -51,7 +51,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/about_container"
-            android:layout_below="@+id/title_container">
+            android:layout_below="@+id/age_range_pref">
 
             <EditText
                 android:layout_width="match_parent"

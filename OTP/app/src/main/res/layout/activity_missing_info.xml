@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:id="@+id/title_container">
+        android:id="@+id/complete_profile_container">
 
         <TextView
             android:layout_width="wrap_content"
@@ -41,27 +41,12 @@
 
     </RelativeLayout>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="340dp"
-        android:id="@+id/want_container"
-        android:layout_below="@+id/title_container"
-        android:paddingBottom="8dp"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/splash_image"
-            android:src="@drawable/complete_profile_stock" />
-    </FrameLayout>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:id="@+id/birthdate_container"
-        android:layout_below="@+id/title_container">
+        android:layout_below="@+id/complete_profile_container">
 
         <TextView
             android:layout_width="wrap_content"

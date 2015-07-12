@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="pref_age_range_min">18</integer>
+    <integer name="pref_age_range_max">65</integer>
+    <integer name="pref_search_distance_min">10</integer>
+    <integer name="pref_search_distance_max">100</integer>
+</resources>

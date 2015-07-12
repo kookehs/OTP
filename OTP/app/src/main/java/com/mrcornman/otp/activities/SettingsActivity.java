@@ -15,14 +15,12 @@ public class SettingsActivity extends ActionBarActivity {
     public final static String PREF_NOTIFICATIONS_MATCH_LIKED = "notifications_checkbox_match_liked";
     public final static String PREF_NOTIFICATIONS_MESSAGES = "notifications_checkbox_messages";
 
-    private String mTitle;
+    private String mTitle = "Settings";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-
-        mTitle = "Settings";
 
         // Set up toolbar_generic and tabs
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
